@@ -36,7 +36,7 @@ import {
 } from '@vocdoni/react-components'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { SuccessIcon } from '~theme/icons'
+import { CheckIcon } from '~theme/icons'
 import { ConfirmDialogContent } from '~components/ui/ConfirmDialog'
 import { Markdown } from '~components/ui/Markdown'
 import { StatusBadge, type StatusBadgeProps } from '~components/ui/StatusBadge'
@@ -47,6 +47,27 @@ type ElectionTitleVariantProps = RecipeVariantProps<typeof electionTitleRecipe>
 // A literal style prop next to a spread of all the style props overflows TypeScript (TS2590), so it is typed once and spread.
 const hrStyle: BoxProps = { as: 'hr', borderColor: 'border' }
 const questionsErrorStyle: TextProps = { color: 'ballot.error' }
+// The ballot's one filled action is taller than the dashboard buttons: `xl` draws the same control as `md`, so the
+// extra height is set here and the button recipe is not touched. `control.floating` is the taller control token.
+const ballotAction: ButtonProps = {
+  size: 'xl',
+  h: 'control.floating',
+  minH: 'control.floating',
+  borderRadius: 'xl',
+  fontSize: 'ballot.option',
+  fontWeight: 'semibold',
+}
+
+// A result's tally as a number (the SDK hands it over as a string, possibly with separators). NaN when there is none.
+const tally = (votes?: string) => Number((votes ?? '').replace(/[^\d.]/g, ''))
+
+// The index of the one choice with the most votes, or -1 on a tie at the top, no votes or no tally.
+const clearLeader = (choices: { votes?: string }[]) => {
+  const counts = choices.map((choice) => tally(choice.votes))
+  const top = Math.max(...counts)
+  if (!(top > 0)) return -1
+  return counts.filter((count) => count === top).length === 1 ? counts.indexOf(top) : -1
+}
 
 const markdown = (value?: string) => (value ? <Markdown>{value}</Markdown> : null)
 
@@ -207,7 +228,9 @@ export const electionComponents: ComponentsPartialDefinition = {
 
       const body = (
         <Box data-choice-body={dataAttrs?.['data-choice-body']} data-compact={compact ? '' : undefined}>
-          <Text css={styles.label}>{label}</Text>
+          <Text css={styles.label} data-choice-label=''>
+            {label}
+          </Text>
           {description ? <Box css={styles.description}>{markdown(description)}</Box> : null}
         </Box>
       )
@@ -286,12 +309,12 @@ export const electionComponents: ComponentsPartialDefinition = {
                 style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}
               />
               <Box
-                w='4.5'
-                h='4.5'
-                borderWidth='thick'
-                borderColor={selected ? 'colorPalette.solid' : 'ballot.choice.ring'}
+                boxSize='icon.lg'
+                borderWidth={selected ? '[0]' : 'mark'}
+                borderColor='ballot.choice.ring'
                 borderRadius='full'
-                bg='ballot.choice.bg'
+                bg={selected ? 'colorPalette.solid' : 'transparent'}
+                color='accent.contrast'
                 // The input is invisible, so its keyboard focus is drawn here, as Chakra's radiomark draws it.
                 _peerFocusVisible={{
                   outlineWidth: '{borderWidths.focusRing}',
@@ -303,7 +326,7 @@ export const electionComponents: ComponentsPartialDefinition = {
                 alignItems='center'
                 justifyContent='center'
               >
-                {selected ? <Box w='2' h='2' borderRadius='full' bg='colorPalette.solid' /> : null}
+                {selected ? <Icon as={CheckIcon} boxSize='4' /> : null}
               </Box>
             </Box>
             {media}
@@ -408,7 +431,9 @@ export const electionComponents: ComponentsPartialDefinition = {
             </Box>
           ) : null}
           <Box data-choice-body={dataAttrs?.['data-choice-body']} data-compact={compact ? '' : undefined}>
-            <Text css={styles.label}>{label}</Text>
+            <Text css={styles.label} data-choice-label=''>
+              {label}
+            </Text>
             {/* The SDK default renders `description` as raw HTML; keep it on the markdown path. */}
             {description ? <Box css={styles.description}>{markdown(description)}</Box> : null}
             {layout === 'grid' ? select : null}
@@ -460,6 +485,8 @@ export const electionComponents: ComponentsPartialDefinition = {
   )),
   QuestionsConfirmation: defineComponent<'QuestionsConfirmation', BoxProps>(
     ({ election, answersView, onConfirm, onCancel }) => {
+      const recipe = useSlotRecipe({ key: 'QuestionsConfirmation' })
+      const styles = recipe()
       const { t } = useTranslation()
 
       return (
@@ -485,17 +512,17 @@ export const electionComponents: ComponentsPartialDefinition = {
                 gap='3'
                 alignItems='flex-start'
               >
-                <Icon as={SuccessIcon} mt='1' />
+                <Flex css={styles.check}>
+                  <Icon as={CheckIcon} boxSize='3.5' />
+                </Flex>
                 <Flex direction='column' gap='1' flex='1'>
-                  <Text fontWeight='extrabold'>{item.question}</Text>
+                  <Text fontWeight='semibold'>{item.question}</Text>
                   {item.answers.length <= 1 ? (
-                    <Text color='fg.muted'>{item.answers[0] || '-'}</Text>
+                    <Text>{item.answers[0] || '-'}</Text>
                   ) : (
                     <Flex direction='column' gap='1'>
                       {item.answers.map((answer, answerIndex) => (
-                        <Text key={`${item.question}-${index}-${answerIndex}`} color='fg.muted'>
-                          {answer}
-                        </Text>
+                        <Text key={`${item.question}-${index}-${answerIndex}`}>{answer}</Text>
                       ))}
                     </Flex>
                   )}
@@ -525,18 +552,21 @@ export const electionComponents: ComponentsPartialDefinition = {
         justifyContent='center'
         textAlign='center'
         status='success'
+        variant='outline'
         flexDir='column'
         css={styles.container}
         {...props}
       >
-        <Alert.Indicator css={styles.icon} />
+        <Alert.Indicator css={styles.icon}>
+          <Icon as={CheckIcon} />
+        </Alert.Indicator>
         <Alert.Title css={styles.title}>{title}</Alert.Title>
         <Alert.Description css={styles.description} display='flex' flexDirection='column' gap='1'>
           {votes.map((vote, index) => (
             <Text key={vote.questionId || index}>{vote.description}</Text>
           ))}
           {anonymous && (
-            <Text textStyle='body-sm' fontWeight='bold'>
+            <Text textStyle='body-sm' fontWeight='semibold'>
               {t('vote.anonymous_receipt', {
                 defaultValue: 'Anonymous vote: save this receipt now, the platform cannot show it to you again.',
               })}
@@ -546,11 +576,14 @@ export const electionComponents: ComponentsPartialDefinition = {
       </Alert.Root>
     )
   }),
-  VoteButton: defineComponent<'VoteButton', ButtonProps>(({ label, loading, ...props }) => (
-    <Button loading={loading} {...props}>
-      {label}
-    </Button>
-  )),
+  VoteButton: defineComponent<'VoteButton', ButtonProps>(({ label, loading, ...props }) => {
+    const merged = Object.assign<ButtonProps, ButtonProps, ButtonProps>({}, ballotAction, props)
+    return (
+      <Button loading={loading} {...merged}>
+        {label}
+      </Button>
+    )
+  }),
   VoteWeight: defineComponent<'VoteWeight', FlexProps>(({ label, weight, ...props }) => {
     const recipe = useSlotRecipe({ key: 'VoteWeight' })
     const styles = recipe()
@@ -566,46 +599,60 @@ export const electionComponents: ComponentsPartialDefinition = {
     const styles = recipe()
     const { t } = useTranslation('react-components')
     const hasMultipleQuestions = (questions?.length ?? 0) > 1
+    // Only a question whose tally is final has a leader; a live or provisional one keeps every bar in full ink,
+    // even once the vote has ended. The library passes `questions` in the election's order.
+    const { election, results } = useElection()
+    const finalIds = new Set(results?.questions.filter((result) => result.finalResults).map((r) => r.questionId))
     return (
       <Box css={[styles.wrapper, !hasMultipleQuestions ? { gridTemplateColumns: '1fr' } : undefined]} {...props}>
         {secretText ? <Text css={styles.secret}>{secretText}</Text> : null}
-        {questions?.map((question) => (
-          <Box key={question.title} css={styles.question}>
-            <Box css={styles.header}>
-              <Text css={styles.title}>{question.title}</Text>
-            </Box>
-            <Flex direction='column' css={styles.body}>
-              {question.choices.map((choice) => {
-                const percent = Number(choice.percent.replace('%', '')) || 0
-                return (
-                  <Box key={choice.title}>
-                    {/* `votes` is empty for a question whose ballot type can't be inferred (e.g. a legacy
+        {questions?.map((question, questionIndex) => {
+          const isFinal = finalIds.has(election?.questions[questionIndex]?.id ?? '')
+          const leader = isFinal ? clearLeader(question.choices) : -1
+          return (
+            <Box key={question.title} css={styles.question}>
+              <Box css={styles.header}>
+                <Text css={styles.title}>{question.title}</Text>
+              </Box>
+              <Flex direction='column' css={styles.body}>
+                {question.choices.map((choice, index) => {
+                  const percent = Number(choice.percent.replace('%', '')) || 0
+                  const isLeader = index === leader
+                  return (
+                    <Box
+                      key={choice.title}
+                      css={styles.choice}
+                      data-leading={isLeader ? '' : undefined}
+                      data-dimmed={leader >= 0 && !isLeader ? '' : undefined}
+                    >
+                      {/* `votes` is empty for a question whose ballot type can't be inferred (e.g. a legacy
                         process with no type nor ballotProtocol): there is no tally to show, not a zero one. */}
-                    <Flex css={styles.choiceHeader}>
-                      <Text css={styles.choiceTitle}>{choice.title}</Text>
+                      <Flex css={styles.choiceHeader}>
+                        <Text css={styles.choiceTitle}>{choice.title}</Text>
+                        {choice.votes ? (
+                          <Text css={styles.choiceVotes} data-result-figure=''>
+                            {t('results.votes', {
+                              votes: choice.votes,
+                              percent: choice.percent,
+                            })}
+                          </Text>
+                        ) : null}
+                      </Flex>
                       {choice.votes ? (
-                        <Text css={styles.choiceVotes}>
-                          {t('results.votes', {
-                            votes: choice.votes,
-                            percent: choice.percent,
-                          })}
-                        </Text>
+                        <Progress.Root variant='results' value={percent} max={100}>
+                          <Progress.Track>
+                            <Progress.Range />
+                          </Progress.Track>
+                        </Progress.Root>
                       ) : null}
-                    </Flex>
-                    {choice.votes ? (
-                      <Progress.Root variant='results' value={percent} max={100}>
-                        <Progress.Track>
-                          <Progress.Range />
-                        </Progress.Track>
-                      </Progress.Root>
-                    ) : null}
-                    {choice.description ? <Box mt='2'>{markdown(choice.description)}</Box> : null}
-                  </Box>
-                )
-              })}
-            </Flex>
-          </Box>
-        ))}
+                      {choice.description ? <Box mt='2'>{markdown(choice.description)}</Box> : null}
+                    </Box>
+                  )
+                })}
+              </Flex>
+            </Box>
+          )
+        })}
       </Box>
     )
   }),

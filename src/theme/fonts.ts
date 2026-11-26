@@ -1,11 +1,13 @@
 /**
  * The one font config: each family, the files it ships and the weight ladder. `tokens.ts` builds the font and
  * weight tokens from it, `Theme.tsx` holds one static import per file and fonts.test.ts keeps them in sync. A static
- * family loads its Latin files up front; lazyFonts.ts declares Inter's other subsets after hydration.
+ * family loads its Latin files up front; a variable family's CSS gives each subset a unicode-range, so the browser
+ * downloads only the subsets a page uses.
  * No CSS imports here: `chakra typegen` loads this via system.ts.
  */
 
-// One `<package>/latin-<weight>.css` per static weight (Latin only: the files the page preloads), or one CSS file that covers a variable family's whole range.
+// One `<package>/latin-<weight>.css` per static weight (Latin only), or one CSS file that covers a variable family's
+// whole range, every subset behind its own unicode-range.
 type FontFiles =
   | { kind: 'static'; weights: readonly number[] }
   | { kind: 'variable'; range: readonly [min: number, max: number]; css: string }
@@ -15,13 +17,20 @@ export type WebFont = { family: string; package: string; files: FontFiles }
 // Text and headings. A variable family is `files: { kind: 'variable', range: [400, 700], css: 'wght.css' }`
 // with its `@fontsource-variable/<name>` package.
 export const SANS = {
-  family: 'Inter',
-  package: '@fontsource/inter',
-  files: { kind: 'static', weights: [300, 400, 500] },
+  family: 'Commissioner Variable',
+  package: '@fontsource-variable/commissioner',
+  files: { kind: 'variable', range: [400, 700], css: 'wght.css' },
+} as const satisfies WebFont
+
+// Numerals, dates, counts and codes (text style `figure`).
+const MONO = {
+  family: 'JetBrains Mono Variable',
+  package: '@fontsource-variable/jetbrains-mono',
+  files: { kind: 'variable', range: [400, 700], css: 'wght.css' },
 } as const satisfies WebFont
 
 // Every family the app downloads, in the order Theme.tsx imports them.
-export const WEB_FONTS: readonly WebFont[] = [SANS]
+export const WEB_FONTS: readonly WebFont[] = [SANS, MONO]
 
 const SYSTEM_SANS = '-apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif'
 
@@ -30,9 +39,8 @@ const stack = (font: WebFont, fallback: string) => `"${font.family}", ${fallback
 export const FONT_STACKS = {
   body: stack(SANS, SYSTEM_SANS),
   heading: stack(SANS, SYSTEM_SANS),
-  // Numerals, dates, counts and codes (text style `figure`): the text family today, so a mono family can take over.
-  figure: stack(SANS, SYSTEM_SANS),
-  mono: `'Menlo', monospace`,
+  figure: stack(MONO, 'ui-monospace, monospace'),
+  mono: stack(MONO, 'ui-monospace, monospace'),
 } as const
 
 // The CSS a family needs, which is what Theme.tsx must import.
@@ -47,21 +55,21 @@ export const shipsWeight = ({ files }: WebFont, weight: number) =>
 type ShippedWeight<F extends WebFont> = F['files'] extends { weights: readonly (infer W)[] } ? W : number
 
 /**
- * Which weight each name renders on the text family. Inter ships 300, 400 and 500, so `normal`, `normal-plus` and
- * `medium` share 400 and everything from `medium-plus` up renders 500. `normal-plus` and `medium-plus` are the
- * half steps (450, 550) of a variable family; components may not use numbers, so they need names.
+ * Which weight each name renders on the text family: 400 to 600, the most the interface uses; the names above
+ * `bold` stop at 600 too. `normal-plus` and `medium-plus` are the half steps (450, 550) of a variable family; components may
+ * not use numbers, so they need names.
  */
 export const FONT_WEIGHTS = {
-  thin: 300,
-  extralight: 300,
-  light: 300,
+  thin: 400,
+  extralight: 400,
+  light: 400,
   normal: 400,
-  'normal-plus': 400,
-  medium: 400,
-  'medium-plus': 500,
-  semibold: 500,
-  bold: 500,
-  bolder: 500,
-  extrabold: 500,
-  black: 500,
+  'normal-plus': 450,
+  medium: 500,
+  'medium-plus': 550,
+  semibold: 600,
+  bold: 600,
+  bolder: 600,
+  extrabold: 600,
+  black: 600,
 } as const satisfies Record<string, ShippedWeight<typeof SANS>>

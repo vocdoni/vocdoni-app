@@ -178,7 +178,7 @@ const DashboardMenuContent = ({
           </IconButton>
         </Flex>
         {menu.newVote && (
-          <Button asChild w='full' minW='0' mt='2' mb='8' size={'xs'}>
+          <Button asChild w='full' minW='0' mt='2' mb='8' size={'xs'} variant='outline'>
             <RouterLink
               to={generatePath(Routes.processes.create)}
               onMouseEnter={() => prefetch(generatePath(Routes.processes.create))}

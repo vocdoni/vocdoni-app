@@ -2,7 +2,7 @@ import { defineRecipe } from '@chakra-ui/react'
 
 export const OrganizationName = defineRecipe({
   base: {
-    fontWeight: 'bold',
+    fontWeight: 'semibold',
   },
 })
 

@@ -2,14 +2,15 @@ import {
   AlertRoot as Alert,
   AlertDescription,
   Box,
+  chakra,
   FieldErrorText as FormErrorMessage,
   FieldLabel as FormLabel,
   FieldRoot as FormControl,
   Flex,
-  FlexProps,
   HStack,
   Link,
   Text,
+  useRecipe,
 } from '@chakra-ui/react'
 import { chakraComponents } from 'chakra-react-select'
 import { useEffect, useState } from 'react'
@@ -30,39 +31,17 @@ import { StepStatus, useCensusSteps } from '../useCensusSteps'
 
 type GroupsQuery = ReturnType<typeof useGroups>
 
-const stepMarkerStyles: Record<StepStatus, FlexProps> = {
-  idle: { borderColor: 'border.emphasized', color: 'fg.muted' },
-  current: { colorPalette: 'warning', borderColor: 'colorPalette.solid', color: 'colorPalette.fg' },
-  error: { colorPalette: 'danger', borderColor: 'colorPalette.solid', color: 'colorPalette.fg' },
-  done: {
-    colorPalette: 'success',
-    borderColor: 'colorPalette.solid',
-    bg: 'colorPalette.solid',
-    color: 'colorPalette.contrast',
-  },
-}
-
 // Numbers the census' two parts (group, then voter authentication) so picking a
 // group doesn't read as the whole job. Decorative: the section badge and the
 // pending notice carry the same status in words.
-const StepMarker = ({ step, status }: { step: number; status: StepStatus }) => (
-  <Flex
-    as='span'
-    aria-hidden
-    boxSize={4.5}
-    mt='[1px]'
-    flexShrink={0}
-    align='center'
-    justify='center'
-    borderRadius='full'
-    borderWidth='[1.5px]'
-    fontSize='xs'
-    fontWeight='bold'
-    {...stepMarkerStyles[status]}
-  >
-    {status === 'done' ? <CheckIcon /> : step}
-  </Flex>
-)
+const StepMarker = ({ step, status }: { step: number; status: StepStatus }) => {
+  const recipe = useRecipe({ key: 'stepMark' })
+  return (
+    <chakra.span aria-hidden css={recipe({ status })}>
+      {status === 'done' ? <CheckIcon /> : step}
+    </chakra.span>
+  )
+}
 
 // Headline status of the census for the sidebar section title: how many of its
 // two steps are still missing, or ready once both are done.

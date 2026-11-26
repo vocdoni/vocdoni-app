@@ -1,14 +1,12 @@
 import { tooltipAnatomy } from '@chakra-ui/react/anatomy'
 import { defineSlotRecipe, defineStyle } from '@chakra-ui/react'
 
+// Chakra's inverted tooltip (`bg.inverted` on `fg.inverted`, `xs` text), kept flat: no ring, no shadow.
 const baseStyle = defineStyle({
-  boxShadow: 'shadow.raised.tooltip',
-  border: 'sm',
-  borderColor: 'border',
+  boxShadow: '[none]',
+  borderRadius: 'sm',
   px: '2',
   py: '1',
-  bgColor: 'surface.raised.tooltip',
-  color: 'fg',
 })
 
 export const Tooltip = defineSlotRecipe({

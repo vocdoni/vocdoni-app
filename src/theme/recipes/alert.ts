@@ -3,9 +3,15 @@ import { alertAnatomy } from '@chakra-ui/react/anatomy'
 
 // Merged into chakra's alert recipe, whose `status`, `variant` and `size` stay as they are. `layout`
 // is the alert's shape; chakra's `md` size already gives the inline padding (px 4, py 4).
+// Only warnings and errors are tinted: the colour says something is wrong. Success and info stay on the quiet fill.
 export const Alert = defineSlotRecipe({
   slots: alertAnatomy.keys(),
   variants: {
+    // Chakra's own status looks stay; the axis is declared so the compound variants below type-check.
+    status: { info: {}, warning: {}, success: {}, error: {}, neutral: {} },
+    size: {
+      md: { root: { textStyle: 'control' } },
+    },
     layout: {
       // An alert among the page's content.
       inline: {},
@@ -17,6 +23,28 @@ export const Alert = defineSlotRecipe({
       panel: { root: { px: '6', py: '6' } },
     },
   },
+  // After chakra's `variant`, so the look holds whichever variant is asked for.
+  compoundVariants: [
+    {
+      status: 'warning',
+      css: { root: { bg: 'status.warning.bg', color: 'status.warning.fg' }, indicator: { color: 'status.warning.fg' } },
+    },
+    {
+      status: 'error',
+      css: { root: { bg: 'status.error.bg', color: 'status.error.fg' }, indicator: { color: 'status.error.fg' } },
+    },
+    {
+      status: 'success',
+      css: {
+        root: { bg: 'bg.subtle', color: 'fg', borderWidth: 'hairline', borderColor: 'border' },
+        indicator: { color: 'status.success.fg' },
+      },
+    },
+    {
+      status: ['info', 'neutral'],
+      css: { root: { bg: 'bg.subtle', color: 'fg.muted' }, indicator: { color: 'fg.muted' } },
+    },
+  ],
   defaultVariants: {
     layout: 'inline',
   },

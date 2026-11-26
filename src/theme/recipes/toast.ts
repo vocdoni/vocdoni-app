@@ -1,18 +1,32 @@
-import { defineSlotRecipe } from '@chakra-ui/react'
+import { defineSlotRecipe, type SystemStyleObject } from '@chakra-ui/react'
 import { toastAnatomy } from '@chakra-ui/react/anatomy'
 
-// Merged over Chakra's toast. Its 0.8 description opacity leaves white on red.solid at 3.53:1 (needs 4.5:1), and its
-// success and warning fills leave white at 3.30 and 3.56, so those two use darker toast.* fills and their own text.
-// The full slot list stays: arrays are replaced on merge, and a shorter one drops the other slots' styles.
+// A toast is a raised neutral card; only its leading icon carries the status colour. Chakra paints success, warning
+// and error as solid fills, so each type is restated here. The full slot list stays: arrays are replaced on merge,
+// and a shorter one drops the other slots' styles.
+const plain = (indicator: string): SystemStyleObject => ({
+  bg: 'surface.raised',
+  color: 'fg',
+  '--toast-trigger-bg': 'colors.bg.muted',
+  '--toast-border-color': 'colors.border',
+  '--toast-indicator': indicator,
+})
+
 export const Toast = defineSlotRecipe({
   slots: toastAnatomy.keys(),
   base: {
     description: { opacity: '[1]' },
-    // Chakra's 60% leaves the X at 2.51:1 on the error toast; 80% is 3.5 or more on every type.
+    // Chakra's 60% leaves the X faint; 80% reads on the raised surface.
     closeTrigger: { color: '[{currentColor/80}]' },
+    indicator: { color: 'var(--toast-indicator, currentColor)' },
     root: {
-      '&[data-type=success]': { bg: 'toast.success.bg', color: 'toast.success.fg' },
-      '&[data-type=warning]': { bg: 'toast.warning.bg', color: 'toast.warning.fg' },
+      ...plain('colors.fg.muted'),
+      borderRadius: 'l2',
+      boxShadow: 'shadow.raised',
+      '&[data-type=success]': plain('colors.status.success.fg'),
+      '&[data-type=warning]': plain('colors.status.warning.fg'),
+      '&[data-type=error]': plain('colors.status.error.fg'),
+      '&[data-type=info]': plain('colors.status.info.fg'),
     },
   },
 })

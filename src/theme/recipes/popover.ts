@@ -4,6 +4,7 @@ import { defineSlotRecipe, type SystemStyleObject } from '@chakra-ui/react'
 const baseStyle = {
   content: {
     bg: 'surface.raised',
+    borderRadius: 'l2',
     boxShadow: 'shadow.raised.popover',
     padding: '1',
     borderColor: 'border',

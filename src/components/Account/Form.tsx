@@ -266,8 +266,7 @@ const AccountForm = ({ profile }: { profile?: User }) => {
                   {isLinked ? (
                     <Button
                       size='sm'
-                      variant='outline'
-                      colorPalette='danger'
+                      variant='danger'
                       onClick={() => {
                         setProviderToUnlink(provider)
                         setUnlinkDialogOpen(true)

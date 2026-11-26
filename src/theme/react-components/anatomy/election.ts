@@ -28,7 +28,7 @@ export const questionsAnatomy = [
 
 export const questionsEmptyAnatomy = ['container', 'icon', 'description'] as const
 
-export const questionsConfirmationAnatomy = ['box', 'description', 'question', 'title', 'answer'] as const
+export const questionsConfirmationAnatomy = ['box', 'description', 'question', 'title', 'answer', 'check'] as const
 
 export const questionTipAnatomy = ['wrapper', 'text'] as const
 
@@ -46,6 +46,7 @@ export const resultsAnatomy = [
   'choiceHeader',
   'choiceTitle',
   'choiceVotes',
+  'choice',
 ] as const
 
 export const voteWeightAnatomy = ['wrapper', 'weight'] as const

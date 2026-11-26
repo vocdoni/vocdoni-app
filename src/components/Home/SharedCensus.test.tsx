@@ -86,10 +86,6 @@ vi.mock('~components/Process/LogoutButton', () => ({
   default: () => <button>Logout</button>,
 }))
 
-vi.mock('~components/Layout/ColorModeSwitcher', () => ({
-  ColorModeSwitcher: () => <div>ColorModeSwitcher</div>,
-}))
-
 vi.mock('~components/Navbar/LanguagesList', () => ({
   LanguagesMenu: () => <div>LanguagesMenu</div>,
 }))

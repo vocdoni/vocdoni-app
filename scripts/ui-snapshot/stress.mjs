@@ -17,7 +17,14 @@ export const stressAlias = () => ({ '~theme/system': path.join(ROOT, STRESS_MODU
 
 // Elements that keep stock values on purpose. `selector` is matched with closest(), so it covers descendants.
 // Leaks still waiting for a fix are not exceptions: they live in stress-baseline.json.
-const STRESS_EXCEPTIONS = []
+const STRESS_EXCEPTIONS = [
+  {
+    // react-select's hidden `required` input (opacity 0, no pointer events): it only carries form validation and
+    // keeps the browser's own field colour, which no theme token reaches.
+    selector: 'input[required][aria-hidden="true"][tabindex="-1"]',
+    kinds: ['grey'],
+  },
+]
 
 const KINDS = ['font', 'font-size', 'radius', 'spacing', 'grey', 'palette', 'shadow']
 

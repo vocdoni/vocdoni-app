@@ -26,7 +26,7 @@ export const AccountEdit = () => {
             defaultValue: 'Permanently delete your account and all associated data',
           })}
         />
-        <Button colorPalette={'danger'} alignSelf={'flex-end'} onClick={() => setOpen(true)}>
+        <Button variant='danger' alignSelf={'flex-end'} onClick={() => setOpen(true)}>
           <Trans i18nKey='delete_my_account'>Delete Account</Trans>
         </Button>
       </DashboardBox>

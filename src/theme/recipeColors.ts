@@ -10,13 +10,13 @@ const link = {
   fg: {
     DEFAULT: {
       value: {
-        _light: '{colors.gray.800}',
+        _light: '{colors.accent.fg}',
         _dark: '{colors.gray.400}',
       },
     },
     hover: {
       value: {
-        _light: '{colors.gray.500}',
+        _light: '{colors.accent.fg.hover}',
         _dark: '{colors.gray.200}',
       },
     },

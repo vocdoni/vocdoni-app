@@ -56,27 +56,30 @@ describe('font config', () => {
     }
   })
 
-  it('renders headings, bold and <b>/<strong> at 500, default labels and running text at 400', () => {
-    expect(system.token('fontWeights.bold')).toBe('500')
-    expect(system.token('fontWeights.semibold')).toBe('500')
-    expect(system.token('fontWeights.medium-plus')).toBe('500')
-    expect(system.token('fontWeights.medium')).toBe('400')
-    expect(system.token('fontWeights.normal-plus')).toBe('400')
+  it('renders headings, bold and <b>/<strong> at 600, labels at 500 to 550, running text at 400', () => {
+    expect(system.token('fontWeights.bold')).toBe('600')
+    expect(system.token('fontWeights.semibold')).toBe('600')
+    expect(system.token('fontWeights.medium-plus')).toBe('550')
+    expect(system.token('fontWeights.medium')).toBe('500')
+    expect(system.token('fontWeights.normal-plus')).toBe('450')
     expect(system.token('fontWeights.normal')).toBe('400')
-    expect(system.token('fontWeights.light')).toBe('300')
+    expect(system.token('fontWeights.light')).toBe('400')
+    expect(system.token('fontWeights.bolder')).toBe('600')
+    expect(system.token('fontWeights.black')).toBe('600')
     // Lands in the base layer, which wins over the reset layer's `bolder`.
     expect(system.getGlobalCss()).toMatchObject({
-      '@layer base': { '&b, &strong': { fontWeight: 'var(--chakra-font-weights-bold)' } },
+      '@layer base': { '&b, &strong': { fontWeight: 'var(--chakra-font-weights-semibold)' } },
     })
   })
 
-  // No family uses the variable branch yet; this pins what Theme.tsx and the weight check will expect of one.
+  it('loads Commissioner for the interface and JetBrains Mono for figures', () => {
+    expect(FONT_STACKS.body).toMatch(/^"Commissioner Variable", /)
+    expect(FONT_STACKS.figure).toMatch(/^"JetBrains Mono Variable", .*monospace$/)
+    expect(FONT_STACKS.mono).toBe(FONT_STACKS.figure)
+  })
+
   it('models a static family as one file per weight and a variable one as one file for its range', () => {
-    expect(fontCssFiles(SANS)).toEqual([
-      '@fontsource/inter/latin-300.css',
-      '@fontsource/inter/latin-400.css',
-      '@fontsource/inter/latin-500.css',
-    ])
+    expect(fontCssFiles(SANS)).toEqual(['@fontsource-variable/commissioner/wght.css'])
     const variable: WebFont = {
       family: 'Variable Sans',
       package: '@fontsource-variable/variable-sans',
@@ -91,6 +94,16 @@ describe('font config', () => {
       true,
       false,
     ])
-    expect(shipsWeight(SANS, 450)).toBe(false)
+    const staticFont: WebFont = {
+      family: 'Static Sans',
+      package: '@fontsource/static-sans',
+      files: { kind: 'static', weights: [400, 500] },
+    }
+    expect(fontCssFiles(staticFont)).toEqual([
+      '@fontsource/static-sans/latin-400.css',
+      '@fontsource/static-sans/latin-500.css',
+    ])
+    expect(shipsWeight(staticFont, 450)).toBe(false)
+    expect(shipsWeight(SANS, 550)).toBe(true)
   })
 })

@@ -9,14 +9,14 @@ export const ballotColors = defineSemanticTokens.colors({
       // follows the brand.
       border: {
         value: {
-          _light: '{colors.gray.200}',
+          _light: '{colors.border.field}',
           _dark: '{colors.ink.700}',
         },
       },
       // Circle and fill of the single-choice radio.
       ring: {
         value: {
-          _light: '{colors.border}',
+          _light: '{colors.fg.faint}',
           _dark: '{colors.gray.500}',
         },
       },
@@ -30,7 +30,7 @@ export const ballotColors = defineSemanticTokens.colors({
     results: {
       track: {
         value: {
-          _light: '{colors.gray.100}',
+          _light: '{colors.bg.muted}',
           _dark: '{colors.gray.800}',
         },
       },

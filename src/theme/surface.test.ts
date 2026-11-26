@@ -26,8 +26,8 @@ const resolve = (sys: Sys, name: string, mode: Mode): string | undefined => {
 
 // Each role's first hop per mode: the layer it stands in for, or a literal.
 const ROLES: Record<string, Record<Mode, string>> = {
-  'colors.surface.canvas': { light: '{colors.bg}', dark: '{colors.bg}' },
-  'colors.surface.sidebar': { light: '{colors.dashboardMenu.light}', dark: '{colors.dashboardMenu.dark}' },
+  'colors.surface.canvas': { light: '{colors.bg.subtle}', dark: '{colors.bg}' },
+  'colors.surface.sidebar': { light: '{colors.white}', dark: '{colors.dashboardMenu.dark}' },
   'colors.surface.content': { light: '{colors.bg}', dark: '{colors.bg}' },
   'colors.surface.card': { light: '{colors.bg.panel}', dark: '{colors.bg.panel}' },
   'colors.surface.sunken': { light: '{colors.bg.subtle}', dark: '{colors.whiteAlpha.50}' },
@@ -70,11 +70,11 @@ describe.each([
   })
 
   it('resolves the layers that do not come from a Chakra slot to their raw values', () => {
-    expect(resolve(sys, 'colors.surface.sidebar', 'light')).toBe('#fbfbfb')
+    expect(resolve(sys, 'colors.surface.sidebar', 'light')).toBe('#FFFFFF')
     expect(resolve(sys, 'colors.surface.sidebar', 'dark')).toBe('#18181b')
     expect(resolve(sys, 'colors.surface.overlay.drawer', 'dark')).toBe('#18181b')
     expect(resolve(sys, 'colors.surface.sunken', 'dark')).toBe(resolve(sys, 'colors.whiteAlpha.50', 'dark'))
-    expect(resolve(sys, 'colors.dashboard.menu', 'light')).toBe('#fbfbfb')
+    expect(resolve(sys, 'colors.dashboard.menu', 'light')).toBe('#fafafa')
   })
 
   it('has no two tokens sharing a CSS variable', () => {
