@@ -1,5 +1,5 @@
 import { ChakraProvider } from '@chakra-ui/react'
-import { render, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { system } from '~theme/system'
 import { AppearanceSegment } from './ColorModeSwitcher'
@@ -20,18 +20,21 @@ vi.mock('react-i18next', () => ({
   }),
 }))
 
+// The segment's zag machine starts in a microtask after mount; flush it inside act.
 const renderSegment = () =>
-  render(
-    <ChakraProvider value={system}>
-      <AppearanceSegment />
-    </ChakraProvider>
-  )
+  act(async () => {
+    render(
+      <ChakraProvider value={system}>
+        <AppearanceSegment />
+      </ChakraProvider>
+    )
+  })
 
 describe('AppearanceSegment', () => {
   beforeEach(() => setTheme.mockReset())
 
-  it('renders the three positions as text and marks the current theme', () => {
-    renderSegment()
+  it('renders the three positions as text and marks the current theme', async () => {
+    await renderSegment()
 
     expect(screen.getByRole('radio', { name: 'System' })).toBeInTheDocument()
     expect(screen.getByRole('radio', { name: 'Light' })).toBeInTheDocument()
@@ -40,7 +43,7 @@ describe('AppearanceSegment', () => {
 
   it('sets the theme to light when Light is picked', async () => {
     const user = userEvent.setup()
-    renderSegment()
+    await renderSegment()
 
     await user.click(screen.getByText('Light'))
 
@@ -49,7 +52,7 @@ describe('AppearanceSegment', () => {
 
   it('sets the theme to system when System is picked', async () => {
     const user = userEvent.setup()
-    renderSegment()
+    await renderSegment()
 
     await user.click(screen.getByText('System'))
 
