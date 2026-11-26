@@ -244,11 +244,9 @@ export const CertAuthStart = ({
   // the page can come back from the back/forward cache after a navigation to the gateway
   useEffect(() => {
     const reset = (event: PageTransitionEvent) => {
-      // restored by going back from the gateway page: it did load, so the login is only forgotten
-      if (event.persisted) {
-        if (election) takeUnansweredCertAuth(election.id, { backForward: true })
-        setPending(false)
-      }
+      // restored from the back/forward cache, e.g. going back from the browser's error page for a
+      // gateway that didn't load: tell the voter, once
+      if (event.persisted) setPending(showPending && !!election && takeUnansweredCertAuth(election.id))
     }
     window.addEventListener('pageshow', reset)
     return () => window.removeEventListener('pageshow', reset)

@@ -151,13 +151,11 @@ export const readCertReturn = (
 /** How long after leaving for the gateway a return without its answer still means its page didn't load. */
 const CERT_PAGE_LOAD_WINDOW_MS = 2 * 60_000
 
-const isBackForward = () =>
-  (performance.getEntriesByType?.('navigation')[0] as PerformanceNavigationTiming | undefined)?.type === 'back_forward'
-
 /**
  * Whether this tab started a certificate login for the process moments ago that never came back:
  * with no fragment to read, the gateway page most likely didn't load (a network that blocks its
- * port). Going back in history is no such failure: the voter left a gateway page that did load.
+ * port). That includes going back from the browser's error page: the gateway redirects at once and
+ * shows no page of its own, so a voter who went back almost always left one that failed to load.
  * Forgets the login either way, so it is told at most once.
  */
 export const takeUnansweredCertAuth = (
@@ -165,8 +163,7 @@ export const takeUnansweredCertAuth = (
   {
     storage = window.sessionStorage,
     now = Date.now(),
-    backForward = isBackForward(),
-  }: { storage?: Pick<Storage, 'getItem' | 'removeItem'>; now?: number; backForward?: boolean } = {}
+  }: { storage?: Pick<Storage, 'getItem' | 'removeItem'>; now?: number } = {}
 ) => {
   const key = certAuthStorageKey(processId)
   const raw = storage.getItem(key)
@@ -179,5 +176,5 @@ export const takeUnansweredCertAuth = (
     // unreadable: as stale as a missing start time
   }
   const elapsed = now - startedAt
-  return !backForward && elapsed >= 0 && elapsed <= CERT_PAGE_LOAD_WINDOW_MS
+  return elapsed >= 0 && elapsed <= CERT_PAGE_LOAD_WINDOW_MS
 }

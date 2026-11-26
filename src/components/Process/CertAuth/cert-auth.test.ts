@@ -152,30 +152,20 @@ describe('cert-auth', () => {
       sessionStorage.setItem(certAuthStorageKey(PID), JSON.stringify({ state: 's', codeVerifier: 'v', startedAt }))
 
     it('means the gateway page did not load when it started moments ago, and is told once', () => {
-      expect(takeUnansweredCertAuth(PID, { now: NOW, backForward: false })).toBe(false)
+      expect(takeUnansweredCertAuth(PID, { now: NOW })).toBe(false)
       store(NOW - 60_000)
-      expect(takeUnansweredCertAuth(PID, { now: NOW, backForward: false })).toBe(true)
+      expect(takeUnansweredCertAuth(PID, { now: NOW })).toBe(true)
       expect(sessionStorage.getItem(certAuthStorageKey(PID))).toBeNull()
-      expect(takeUnansweredCertAuth(PID, { now: NOW, backForward: false })).toBe(false)
+      expect(takeUnansweredCertAuth(PID, { now: NOW })).toBe(false)
     })
 
     it.each([
-      ['it started long ago', NOW - 3 * 60_000, false],
-      ['it has no start time', undefined, false],
-      ['the voter went back from the gateway page', NOW - 10_000, true],
-    ])('is no failure when %s, and is forgotten', (_, startedAt, backForward) => {
+      ['it started long ago', NOW - 3 * 60_000],
+      ['it has no start time', undefined],
+    ])('is no failure when %s, and is forgotten', (_, startedAt) => {
       store(startedAt)
-      expect(takeUnansweredCertAuth(PID, { now: NOW, backForward })).toBe(false)
-      expect(sessionStorage.getItem(certAuthStorageKey(PID))).toBeNull()
-    })
-
-    it('reads a back navigation from the navigation timing', () => {
-      store(NOW - 10_000)
-      vi.spyOn(performance, 'getEntriesByType').mockReturnValue([
-        { type: 'back_forward' } as unknown as PerformanceEntry,
-      ])
       expect(takeUnansweredCertAuth(PID, { now: NOW })).toBe(false)
-      vi.restoreAllMocks()
+      expect(sessionStorage.getItem(certAuthStorageKey(PID))).toBeNull()
     })
   })
 

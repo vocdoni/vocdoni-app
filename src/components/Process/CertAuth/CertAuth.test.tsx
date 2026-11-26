@@ -477,7 +477,7 @@ describe('certificate voter flow', () => {
     expect(screen.queryByText(/certificate page didn't load/)).not.toBeInTheDocument()
   })
 
-  it('no "page didn\'t load" hint after going back from the gateway page', async () => {
+  it('the "page didn\'t load" hint after going back from the browser\'s error page', async () => {
     useCensus([])
     vi.spyOn(performance, 'getEntriesByType').mockReturnValue([{ type: 'back_forward' } as unknown as PerformanceEntry])
     sessionStorage.setItem(
@@ -486,10 +486,11 @@ describe('certificate voter flow', () => {
     )
     const { CertAuthStart } = await import('./CertAuth')
     render(<CertAuthStart />, { appEnv })
-    expect(screen.queryByText(/certificate page didn't load/)).not.toBeInTheDocument()
+    expect(screen.getByText(/certificate page didn't load/)).toBeInTheDocument()
+    vi.restoreAllMocks()
   })
 
-  it('no "page didn\'t load" hint when the page is restored by going back from the gateway', async () => {
+  it('the "page didn\'t load" hint when the page is restored from the back/forward cache', async () => {
     useCensus([])
     const navigate = vi.fn()
     const user = userEvent.setup()
@@ -502,7 +503,7 @@ describe('certificate voter flow', () => {
     act(() => {
       window.dispatchEvent(new PageTransitionEvent('pageshow', { persisted: true }))
     })
-    expect(screen.queryByText(/certificate page didn't load/)).not.toBeInTheDocument()
+    expect(screen.getByText(/certificate page didn't load/)).toBeInTheDocument()
     expect(sessionStorage.getItem(certAuthStorageKey(PID))).toBeNull()
   })
 
