@@ -16,8 +16,8 @@ const root = join(__dirname, '..')
 const distDir = resolve(root, process.env.DIST_DIR || 'dist')
 const isProduction = process.env.NODE_ENV === 'production'
 const port = Number(process.env.PORT || 3000)
-// Unset: all interfaces, as before. The UI snapshot binds 127.0.0.1 only.
-const host = process.env.HOST || undefined
+// Unset: all interfaces. The UI snapshot's --build mode sets 127.0.0.1.
+const host = process.env.UI_SNAPSHOT_HOST || undefined
 
 const app = express()
 app.disable('x-powered-by')

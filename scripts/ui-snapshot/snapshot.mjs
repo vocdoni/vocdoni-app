@@ -356,7 +356,7 @@ const startProdServer = async ({ mockUrl, primaryColor, buildDir, logFile }) => 
       ...appEnv(mockUrl, primaryColor),
       NODE_ENV: 'production',
       PORT: String(APP_PORT),
-      HOST: '127.0.0.1',
+      UI_SNAPSHOT_HOST: '127.0.0.1',
       DIST_DIR: buildDir,
       SSR_CACHE: 'off',
     },
