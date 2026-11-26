@@ -1,12 +1,14 @@
-import { spawn } from 'node:child_process'
+import { spawn, type ChildProcess } from 'node:child_process'
 import fs from 'node:fs'
 import { createServer, type AddressInfo } from 'node:net'
 import os from 'node:os'
 import path from 'node:path'
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest'
 
 const ENTRY = path.resolve(__dirname, 'index.mjs')
 let dist: string
+// Every server a test starts, so a failed or timed-out test cannot leave one listening.
+const children: ChildProcess[] = []
 
 // The production entry imports the built SSR bundle, so the test gives it an empty one.
 beforeAll(() => {
@@ -16,15 +18,22 @@ beforeAll(() => {
   fs.writeFileSync(path.join(dist, 'server', 'entry.mjs'), 'export {}\n')
 })
 
+afterEach(() => {
+  for (const child of children.splice(0)) if (child.exitCode === null && child.signalCode === null) child.kill()
+})
+
 afterAll(() => {
   fs.rmSync(dist, { recursive: true, force: true })
 })
 
-const spawnServer = (port: number) =>
-  spawn(process.execPath, [ENTRY], {
+const spawnServer = (port: number) => {
+  const child = spawn(process.execPath, [ENTRY], {
     env: { ...process.env, NODE_ENV: 'production', PORT: String(port), DIST_DIR: dist, UI_SNAPSHOT_HOST: '127.0.0.1' },
     stdio: ['ignore', 'pipe', 'pipe'],
   })
+  children.push(child)
+  return child
+}
 
 const freePort = async () => {
   const probe = createServer()
