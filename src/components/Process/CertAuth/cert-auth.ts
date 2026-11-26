@@ -1,7 +1,7 @@
 // Certificate voter authentication: the browser side of the certificate gateway flow.
 //
 // The voting page sends the voter to the gateway with a random `state` and the S256 challenge of
-// a random PKCE `codeVerifier`, both kept in this tab's sessionStorage. The gateway sends the voter
+// a random PKCE `codeVerifier`, both kept in this tab's sessionStorage with when it started. The gateway sends the voter
 // back to the voting page with `#certCode=…&state=…` (or `#certError=…&ref=…&state=…`) in the fragment.
 // The page accepts the code only when `state` matches the stored one, and redeems it at step 0 with
 // the verifier. Nothing else is stored: no DNI, name or certificate data ever reaches the browser.
@@ -46,7 +46,7 @@ export const RETRYABLE_CERT_ERRORS = [
 /** The gateway pages' languages. */
 const GATEWAY_LANGS = ['es', 'ca', 'en']
 
-type StoredFlow = { state: string; codeVerifier: string }
+type StoredFlow = { state: string; codeVerifier: string; startedAt: number }
 
 /** What the voting page found in its fragment on load. */
 export type CertReturn =
@@ -98,7 +98,7 @@ export const startCertAuth = async ({
   language: string
   storage?: Pick<Storage, 'setItem'>
 }): Promise<string> => {
-  const flow: StoredFlow = { state: randomBase64Url(16), codeVerifier: randomBase64Url(32) }
+  const flow: StoredFlow = { state: randomBase64Url(16), codeVerifier: randomBase64Url(32), startedAt: Date.now() }
   storage.setItem(certAuthStorageKey(processId), JSON.stringify(flow))
   const url = new URL('/v1/auth', gatewayUrl)
   url.hostname = `${randomHostLabel()}.${url.hostname}`
@@ -113,8 +113,8 @@ export const startCertAuth = async ({
 
 /**
  * Reads the gateway's answer from the fragment, if any. It always strips the fragment (without a
- * navigation) and deletes the stored flow only when `state` matches it. Returns null when the
- * fragment carries no certificate answer.
+ * navigation) and deletes the stored flow: a mismatched `state` makes it useless too. Returns null
+ * when the fragment carries no certificate answer.
  */
 export const readCertReturn = (
   processId: string,
@@ -140,17 +140,44 @@ export const readCertReturn = (
   } catch {
     stored = null
   }
+  storage.removeItem(certAuthStorageKey(processId))
   if (!stored?.state || stored.state !== params.get('state')) return { kind: 'mismatch' }
 
-  storage.removeItem(certAuthStorageKey(processId))
   if (certCode) return { kind: 'code', certCode, codeVerifier: stored.codeVerifier }
   const ref = params.get('ref') ?? ''
   return { kind: 'error', code: certError ?? 'internal', ...(/^[0-9a-f]{32}$/.test(ref) && { ref }) }
 }
 
+/** How long after leaving for the gateway a return without its answer still means its page didn't load. */
+const CERT_PAGE_LOAD_WINDOW_MS = 2 * 60_000
+
+const isBackForward = () =>
+  (performance.getEntriesByType?.('navigation')[0] as PerformanceNavigationTiming | undefined)?.type === 'back_forward'
+
 /**
- * Whether this tab started a certificate login for the process that never came back: with no
- * fragment to read, the gateway page most likely didn't load (a network that blocks its port).
+ * Whether this tab started a certificate login for the process moments ago that never came back:
+ * with no fragment to read, the gateway page most likely didn't load (a network that blocks its
+ * port). Going back in history is no such failure: the voter left a gateway page that did load.
+ * Forgets the login either way, so it is told at most once.
  */
-export const hasPendingCertAuth = (processId: string, storage: Pick<Storage, 'getItem'> = window.sessionStorage) =>
-  storage.getItem(certAuthStorageKey(processId)) !== null
+export const takeUnansweredCertAuth = (
+  processId: string,
+  {
+    storage = window.sessionStorage,
+    now = Date.now(),
+    backForward = isBackForward(),
+  }: { storage?: Pick<Storage, 'getItem' | 'removeItem'>; now?: number; backForward?: boolean } = {}
+) => {
+  const key = certAuthStorageKey(processId)
+  const raw = storage.getItem(key)
+  if (raw === null) return false
+  storage.removeItem(key)
+  let startedAt = NaN
+  try {
+    startedAt = Number(JSON.parse(raw)?.startedAt ?? NaN)
+  } catch {
+    // unreadable: as stale as a missing start time
+  }
+  const elapsed = now - startedAt
+  return !backForward && elapsed >= 0 && elapsed <= CERT_PAGE_LOAD_WINDOW_MS
+}

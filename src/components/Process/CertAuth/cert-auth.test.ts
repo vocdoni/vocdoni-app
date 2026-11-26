@@ -1,11 +1,11 @@
 import {
   certAuthStorageKey,
   codeChallengeOf,
-  hasPendingCertAuth,
   readCertReturn,
   RETRYABLE_CERT_ERRORS,
   startCertAuth,
   STICKY_CERT_ERRORS,
+  takeUnansweredCertAuth,
 } from './cert-auth'
 
 const PID = '0123456789abcdef01234567'
@@ -55,7 +55,7 @@ describe('cert-auth', () => {
     )
   })
 
-  it('stores only state and codeVerifier, and sends the challenge to the gateway', async () => {
+  it('stores only state, codeVerifier and when it started, and sends the challenge to the gateway', async () => {
     const target = new URL(
       await startCertAuth({
         gatewayUrl: 'https://cert.vocdoni.io:15140',
@@ -66,7 +66,8 @@ describe('cert-auth', () => {
     )
     expect(sessionStorage).toHaveLength(1)
     const stored = JSON.parse(sessionStorage.getItem(certAuthStorageKey(PID))!)
-    expect(Object.keys(stored).sort()).toEqual(['codeVerifier', 'state'])
+    expect(Object.keys(stored).sort()).toEqual(['codeVerifier', 'startedAt', 'state'])
+    expect(Date.now() - stored.startedAt).toBeLessThan(1000)
     expect(stored.state).toMatch(/^[A-Za-z0-9_-]{22}$/)
     expect(stored.codeVerifier).toMatch(/^[A-Za-z0-9_-]{43}$/)
 
@@ -145,22 +146,49 @@ describe('cert-auth', () => {
     expect(readCertReturn(PID, bad)).toStrictEqual({ kind: 'error', code: 'expired' })
   })
 
-  it('tells whether a certificate login was started in this tab and never answered', () => {
-    expect(hasPendingCertAuth(PID)).toBe(false)
-    sessionStorage.setItem(certAuthStorageKey(PID), JSON.stringify({ state: 's', codeVerifier: 'v' }))
-    expect(hasPendingCertAuth(PID)).toBe(true)
+  describe('a certificate login this tab started that never answered', () => {
+    const NOW = 1_800_000_000_000
+    const store = (startedAt?: number) =>
+      sessionStorage.setItem(certAuthStorageKey(PID), JSON.stringify({ state: 's', codeVerifier: 'v', startedAt }))
+
+    it('means the gateway page did not load when it started moments ago, and is told once', () => {
+      expect(takeUnansweredCertAuth(PID, { now: NOW, backForward: false })).toBe(false)
+      store(NOW - 60_000)
+      expect(takeUnansweredCertAuth(PID, { now: NOW, backForward: false })).toBe(true)
+      expect(sessionStorage.getItem(certAuthStorageKey(PID))).toBeNull()
+      expect(takeUnansweredCertAuth(PID, { now: NOW, backForward: false })).toBe(false)
+    })
+
+    it.each([
+      ['it started long ago', NOW - 3 * 60_000, false],
+      ['it has no start time', undefined, false],
+      ['the voter went back from the gateway page', NOW - 10_000, true],
+    ])('is no failure when %s, and is forgotten', (_, startedAt, backForward) => {
+      store(startedAt)
+      expect(takeUnansweredCertAuth(PID, { now: NOW, backForward })).toBe(false)
+      expect(sessionStorage.getItem(certAuthStorageKey(PID))).toBeNull()
+    })
+
+    it('reads a back navigation from the navigation timing', () => {
+      store(NOW - 10_000)
+      vi.spyOn(performance, 'getEntriesByType').mockReturnValue([
+        { type: 'back_forward' } as unknown as PerformanceEntry,
+      ])
+      expect(takeUnansweredCertAuth(PID, { now: NOW })).toBe(false)
+      vi.restoreAllMocks()
+    })
   })
 
   it.each([
     ['another state', JSON.stringify({ state: 'x'.repeat(22), codeVerifier: 'v'.repeat(43) })],
     ['nothing stored', null],
-  ])('a state mismatch (%s) strips the fragment, keeps the entry and yields no code', (_, stored) => {
+  ])('a state mismatch (%s) strips the fragment, forgets the flow and yields no code', (_, stored) => {
     if (stored) sessionStorage.setItem(certAuthStorageKey(PID), stored)
     const { history, location } = fakeWindow(`#certCode=${'c'.repeat(43)}&state=${'s'.repeat(22)}`)
 
     expect(readCertReturn(PID, { history, location })).toEqual({ kind: 'mismatch' })
     expect(history.replaceState).toHaveBeenCalled()
-    expect(sessionStorage.getItem(certAuthStorageKey(PID))).toBe(stored)
+    expect(sessionStorage.getItem(certAuthStorageKey(PID))).toBeNull()
   })
 
   it('leaves any other fragment alone', () => {

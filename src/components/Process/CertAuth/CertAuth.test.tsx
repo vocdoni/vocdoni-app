@@ -103,7 +103,7 @@ describe('certificate voter flow', () => {
   })
   afterEach(() => vi.restoreAllMocks())
 
-  it('requires the terms, then sends the voter to the gateway, storing only state and verifier', async () => {
+  it('requires the terms, then sends the voter to the gateway, storing only state, verifier and start time', async () => {
     useCensus([])
     const navigate = vi.fn()
     const user = userEvent.setup()
@@ -127,6 +127,7 @@ describe('certificate voter flow', () => {
     expect(Object.keys(sessionStorage)).toEqual([certAuthStorageKey(PID)])
     expect(Object.keys(JSON.parse(sessionStorage.getItem(certAuthStorageKey(PID))!)).sort()).toEqual([
       'codeVerifier',
+      'startedAt',
       'state',
     ])
   })
@@ -398,15 +399,62 @@ describe('certificate voter flow', () => {
     expect(screen.getByText(/idCAT Mòbil and Cl@ve are not certificates/)).toBeInTheDocument()
   })
 
-  it('back on the page from a gateway that never answered: suggests another network', async () => {
+  it('back on the page from a gateway that never answered: suggests another network, once', async () => {
     useCensus([])
-    sessionStorage.setItem(certAuthStorageKey(PID), JSON.stringify({ state: STATE, codeVerifier: VERIFIER }))
+    sessionStorage.setItem(
+      certAuthStorageKey(PID),
+      JSON.stringify({ state: STATE, codeVerifier: VERIFIER, startedAt: Date.now() - 30_000 })
+    )
     const { CertAuthStart } = await import('./CertAuth')
-    render(<CertAuthStart />, { appEnv })
+    const { unmount } = render(<CertAuthStart />, { appEnv })
     expect(
       screen.getByText(/certificate page didn't load\? Try another network, such as mobile data/)
     ).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /copy link/i })).toBeInTheDocument()
+
+    unmount()
+    render(<CertAuthStart />, { appEnv })
+    expect(screen.queryByText(/certificate page didn't load/)).not.toBeInTheDocument()
+  })
+
+  it('no "page didn\'t load" hint long after the login started', async () => {
+    useCensus([])
+    sessionStorage.setItem(
+      certAuthStorageKey(PID),
+      JSON.stringify({ state: STATE, codeVerifier: VERIFIER, startedAt: Date.now() - 3 * 60_000 })
+    )
+    const { CertAuthStart } = await import('./CertAuth')
+    render(<CertAuthStart />, { appEnv })
+    expect(screen.queryByText(/certificate page didn't load/)).not.toBeInTheDocument()
+  })
+
+  it('no "page didn\'t load" hint after going back from the gateway page', async () => {
+    useCensus([])
+    vi.spyOn(performance, 'getEntriesByType').mockReturnValue([{ type: 'back_forward' } as unknown as PerformanceEntry])
+    sessionStorage.setItem(
+      certAuthStorageKey(PID),
+      JSON.stringify({ state: STATE, codeVerifier: VERIFIER, startedAt: Date.now() - 10_000 })
+    )
+    const { CertAuthStart } = await import('./CertAuth')
+    render(<CertAuthStart />, { appEnv })
+    expect(screen.queryByText(/certificate page didn't load/)).not.toBeInTheDocument()
+  })
+
+  it('no "page didn\'t load" hint when the page is restored by going back from the gateway', async () => {
+    useCensus([])
+    const navigate = vi.fn()
+    const user = userEvent.setup()
+    const { CertAuthStart } = await import('./CertAuth')
+    render(<CertAuthStart navigate={navigate} />, { appEnv })
+    await user.click(screen.getByRole('checkbox'))
+    await user.click(screen.getByRole('button', { name: 'Sign in with a digital certificate' }))
+    await waitFor(() => expect(navigate).toHaveBeenCalledTimes(1))
+
+    act(() => {
+      window.dispatchEvent(new PageTransitionEvent('pageshow', { persisted: true }))
+    })
+    expect(screen.queryByText(/certificate page didn't load/)).not.toBeInTheDocument()
+    expect(sessionStorage.getItem(certAuthStorageKey(PID))).toBeNull()
   })
 
   it('in an in-app browser: explains why, offers the link and no certificate button', async () => {

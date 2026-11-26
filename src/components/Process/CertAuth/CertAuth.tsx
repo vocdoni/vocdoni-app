@@ -41,12 +41,12 @@ import { normalizePublicLanguageCandidate } from '~i18n/public-language'
 import { useAppEnv, useLanguagesEnv } from '~src/app-env'
 import { detectCertificateBrowser, readBrowserEnv } from './browser-support'
 import {
-  hasPendingCertAuth,
   PROCESS_CERT_ERRORS,
   readCertReturn,
   RETRYABLE_CERT_ERRORS,
   startCertAuth,
   STICKY_CERT_ERRORS,
+  takeUnansweredCertAuth,
   type CertReturn,
 } from './cert-auth'
 
@@ -186,15 +186,18 @@ export const CertAuthStart = ({
   const start = useStartCertAuth(navigate)
   const [accepted, setAccepted] = useState(false)
   const [starting, setStarting] = useState(false)
-  // a login this tab started that never came back with an answer
-  const pendingNow = () => showPending && !!election && hasPendingCertAuth(election.id)
-  const [pending, setPending] = useState(pendingNow)
+  // a login this tab started moments ago that never came back with an answer
+  const [pending, setPending] = useState(() => showPending && !!election && takeUnansweredCertAuth(election.id))
 
-  // the page can come back from the back/forward cache after a failed navigation to the gateway
+  // the page can come back from the back/forward cache after a navigation to the gateway
   useEffect(() => {
-    const reset = () => {
+    const reset = (event: PageTransitionEvent) => {
       setStarting(false)
-      setPending(pendingNow())
+      // restored by going back from the gateway page: it did load, so the login is only forgotten
+      if (event.persisted) {
+        if (election) takeUnansweredCertAuth(election.id, { backForward: true })
+        setPending(false)
+      }
     }
     window.addEventListener('pageshow', reset)
     return () => window.removeEventListener('pageshow', reset)
