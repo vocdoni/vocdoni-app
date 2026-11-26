@@ -15,7 +15,14 @@ const ProseHeading = ({ level, ...props }: HeadingProps & { level: keyof typeof 
 
 const defaultComponents: NonNullable<Options['components']> = {
   a: ({ children, ...props }) => (
-    <Link {...chakraProps(props)} textDecoration='underline' target='_blank' rel='noreferrer'>
+    // Links in user-written text keep their underline in every state, unlike the theme's links.
+    <Link
+      {...chakraProps(props)}
+      textDecoration='underline'
+      _hover={{ textDecoration: 'underline' }}
+      target='_blank'
+      rel='noreferrer'
+    >
       {children}
     </Link>
   ),
