@@ -29,7 +29,7 @@ export const VerticalRegistry: Partial<Record<VerticalSlug, VerticalContent>> = 
   },
   associations: {
     accent: GenericAccent,
-    logos: ['omnium', 'cec', 'plataforma', 'arxivers', 'aguicat'],
+    logos: ['omnium', 'cec', 'plataforma', 'arxivers', 'aguicat', 'afa_collserola'],
   },
   'public-administration': {
     accent: GenericAccent,
@@ -48,6 +48,15 @@ export const VerticalRegistry: Partial<Record<VerticalSlug, VerticalContent>> = 
   'trade-unions': {
     accent: GenericAccent,
     logos: ['intersindical', 'ustec'],
+  },
+  cooperatives: {
+    accent: GenericAccent,
+    logos: ['foodcoop'],
+  },
+  'universities-schools': {
+    accent: GenericAccent,
+    // A school families' association, so it also leads in the associations row.
+    logos: ['afa_collserola'],
   },
   'sports-clubs': {
     accent: GenericAccent,

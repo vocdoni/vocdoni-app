@@ -52,6 +52,10 @@
         "label": "Elkarteak",
         "trust_bar": "Batzar nagusiak, zuzendaritza-hauteskundeak eta bazkideen kontsultak modu seguruan. Elkarteek konfiantza dute jada bertan:"
       },
+      "cooperatives": {
+        "label": "Kooperatibak",
+        "trust_bar": "Batzar nagusiak, kontseilu errektorearen hauteskundeak eta bazkideen kontsultak modu seguruan. Kooperatibek konfiantza dute jada bertan:"
+      },
       "generic": {
         "label": "Arrakasta-kasuak",
         "trust_bar": "Batzarrak, hauteskundeak eta kontsultak modu seguruan. Sektore guztietako erakundeek konfiantza dute jada bertan:"
@@ -79,6 +83,10 @@
       "trade_unions": {
         "label": "Sindikatuak",
         "trust_bar": "Greba-bozketak, hitzarmen kolektiboenak eta zuzendaritza-hauteskundeak modu seguruan. Sindikatuek konfiantza dute jada bertan:"
+      },
+      "universities_schools": {
+        "label": "Hezkuntza",
+        "trust_bar": "Zuzendaritza-hauteskundeak, batzarrak eta kontsultak modu seguruan. Hezkuntza-komunitateek konfiantza dute jada bertan:"
       }
     }
   },
@@ -1739,6 +1747,10 @@
   },
   "terms_of_service": "Zerbitzu-baldintzak",
   "testimonials": {
+    "afa_collserola": {
+      "position": "Zuzendaritza-batzordeko kidea",
+      "text": "Escola Collserolako familia-elkartean (AFA) zuzendaritza-batzordearen hauteskundea familia guztiengana iristea nahi genuen, ez batzarrera etor zitezkeenengana bakarrik. Familia bakoitzak bere egoera du: lan-ordutegiak, haur txikiak, joan-etorriak... Vocdoniri esker, denek urrutitik bozkatu ahal izan zuten, modu erraz eta seguruan."
+    },
     "aguicat": {
       "company": "Associació de Guies Habilitats de Catalunya",
       "position": "IT arduraduna",
@@ -1781,6 +1793,10 @@
     "erc": {
       "position": "Kideen, borroka antirrepresiboaren eta ongizate emozionalaren idazkari nazionala",
       "text": "Urteak daramatzagu Vocdoni-n konfiantza izaten, sistema seguru, auditagarri eta erabiltzeko erraza eskaintzen baitigu, gure erakundearen beharretara egokituta eta berme guztiekin boto digitalak antolatzeko aukera ematen diguna."
+    },
+    "foodcoop": {
+      "position": "Consell Rectorreko kidea",
+      "text": "FoodcoopBCN-ko bazkide askok ezin dute beti batzarrera etorri, lanagatik, zaintza-lanengatik edo urrun bizi direlako. Boto hibridoari esker, 30 bazkidek streaming bidez jarraitu zioten batzarrari, eta etxetik eman zuten botoa, segurtasun osoz. Batzarra aurrez aurrekoa soilik izan balitz, ahots horiek kanpoan geratuko ziren."
     },
     "granollers": {
       "position": "Komunikazio arduraduna",

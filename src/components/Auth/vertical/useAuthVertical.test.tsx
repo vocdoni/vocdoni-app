@@ -73,17 +73,29 @@ describe('useAuthVertical', () => {
     expect(result.current.key).toBe('professional-associations')
   })
 
-  // cooperatives resolves but has no customer of its own, so it borrows both the quote pool and the
+  // federations resolves but has no customer of its own, so it borrows both the quote pool and the
   // logo row — and takes the generic sentence with them rather than claiming the sector trusts us.
   it('keeps a vertical with no customers of its own on the generic row and sentence', () => {
-    const { result } = renderAt('/account/signin?type=cooperatives')
+    const { result } = renderAt('/account/signin?type=federations')
 
-    expect(result.current.key).toBe('cooperatives')
+    expect(result.current.key).toBe('federations')
     expect(result.current.usesGenericLogos).toBe(true)
     expect(result.current.copy.trustBar).toMatch(/every sector/i)
     // The eyebrow and accent fall back too — nothing on the panel names a sector we cannot back
     expect(result.current.copy.label).toBe(genericCopy.label)
     expect(result.current.accent).toBe(GenericAccent)
+  })
+
+  it('gives cooperatives and schools their own quote and logo row', () => {
+    const coops = renderAt('/account/signin?type=cooperatives').result.current
+    expect(coops.testimonial?.id).toBe('foodcoop')
+    expect(coops.usesGenericLogos).toBe(false)
+    expect(coops.logos.map((logo) => logo.id)).toEqual(['foodcoop'])
+
+    const schools = renderAt('/account/signin?type=schools').result.current
+    expect(schools.key).toBe('universities-schools')
+    expect(schools.testimonial?.id).toBe('afa_collserola')
+    expect(schools.logos.map((logo) => logo.id)).toEqual(['afa_collserola'])
   })
 
   // The eyebrow sits directly above the quote, so it reads as attribution. Whenever the panel had

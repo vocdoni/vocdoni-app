@@ -52,6 +52,10 @@
         "label": "Vereine",
         "trust_bar": "Sichere Mitgliederversammlungen, Vorstandswahlen und Mitgliederbefragungen. Vereine vertrauen bereits Vocdoni:"
       },
+      "cooperatives": {
+        "label": "Genossenschaften",
+        "trust_bar": "Sichere Generalversammlungen, Vorstandswahlen und Mitgliederbefragungen. Genossenschaften vertrauen bereits Vocdoni:"
+      },
       "generic": {
         "label": "Erfolgsgeschichten",
         "trust_bar": "Sichere Versammlungen, Wahlen und Befragungen. Organisationen aus allen Branchen vertrauen bereits Vocdoni:"
@@ -79,6 +83,10 @@
       "trade_unions": {
         "label": "Gewerkschaften",
         "trust_bar": "Sichere Urabstimmungen, Tarifabstimmungen und Vorstandswahlen. Gewerkschaften vertrauen bereits Vocdoni:"
+      },
+      "universities_schools": {
+        "label": "Bildung",
+        "trust_bar": "Sichere Vorstandswahlen, Versammlungen und Befragungen. Schulgemeinschaften vertrauen bereits Vocdoni:"
       }
     }
   },
@@ -1739,6 +1747,10 @@
   },
   "terms_of_service": "Nutzungsbedingungen",
   "testimonials": {
+    "afa_collserola": {
+      "position": "Vorstandsmitglied",
+      "text": "Beim Familienverein (AFA) der Escola Collserola wollten wir, dass die Vorstandswahl alle Familien erreicht, nicht nur diejenigen, die zur Versammlung kommen konnten. Jede Familie hat ihre eigenen Umstände: Arbeitszeiten, kleine Kinder, lange Wege... Mit Vocdoni konnten wir allen ermöglichen, einfach und sicher aus der Ferne abzustimmen."
+    },
     "aguicat": {
       "company": "Associació de Guies Habilitats de Catalunya",
       "position": "IT-Verantwortliche",
@@ -1781,6 +1793,10 @@
     "erc": {
       "position": "Nationalsekretärin für Mitgliedschaft, Antirepressionskampf und emotionales Wohlbefinden",
       "text": "Wir vertrauen seit Jahren auf Vocdoni, weil es uns ein sicheres, prüfbares und einfach zu nutzendes System bietet, das es uns ermöglicht, digitale Abstimmungen mit allen Garantien und angepasst an die Bedürfnisse unserer Organisation durchzuführen."
+    },
+    "foodcoop": {
+      "position": "Mitglied des Consell Rector",
+      "text": "Viele Mitglieder der FoodcoopBCN können nicht immer zur Mitgliederversammlung kommen: wegen der Arbeit, wegen Betreuungspflichten oder weil sie weit weg wohnen. Dank der hybriden Abstimmung haben 30 Mitglieder die Versammlung per Livestream verfolgt und sicher von zu Hause aus abgestimmt. Das sind Stimmen, die eine reine Präsenzversammlung ausgeschlossen hätte."
     },
     "granollers": {
       "position": "Kommunikationsverantwortliche(r)",

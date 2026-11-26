@@ -29,6 +29,8 @@ export const TrustLogos: Record<string, TrustLogo> = {
   granollers: { id: 'granollers', src: logoSrc('granollers'), name: 'Granollers Primàries' },
   intersindical: { id: 'intersindical', src: logoSrc('intersindical'), name: 'La Intersindical' },
   ustec: { id: 'ustec', src: logoSrc('ustec'), name: 'USTEC·STEs (IAC)' },
+  foodcoop: { id: 'foodcoop', src: logoSrc('foodcoop'), name: 'Foodcoop BCN' },
+  afa_collserola: { id: 'afa_collserola', src: logoSrc('afa_collserola'), name: 'AFA Collserola' },
 }
 
 /**
@@ -69,6 +71,8 @@ export const GenericLogos = [
   'alhora',
   'granollers',
   'aguicat',
+  'foodcoop',
+  'afa_collserola',
 ] as const
 
 /**

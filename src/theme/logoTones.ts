@@ -7,7 +7,7 @@
  * desaturated tone that carries white type at roughly 13:1. Mark and field then always agree.
  *
  * Values are committed rather than sampled at runtime on purpose — a colour decision should be
- * reviewable in a diff, not recomputed on every visitor's machine. Two of the sixteen needed the
+ * reviewable in a diff, not recomputed on every visitor's machine. Two of them needed the
  * hue-band correction below before they stopped reading as mud, and that judgement can't be made
  * by an algorithm shipping straight to production.
  *
@@ -18,6 +18,7 @@
  * `verticals.*.900` accent tone, so a newly added logo renders correctly until this is regenerated.
  */
 export const LogoTones: Record<string, string> = {
+  afa_collserola: '#1f2b27',
   aguicat: '#301615',
   arxivers: '#1a1d2b',
   ati: '#301515',
@@ -28,6 +29,7 @@ export const LogoTones: Record<string, string> = {
   coib: '#152c30',
   eic: '#152030',
   erc: '#301915',
+  foodcoop: '#2b2a1f',
   granollers: '#2e1817',
   icoes: '#152e30',
   intersindical: '#301515',

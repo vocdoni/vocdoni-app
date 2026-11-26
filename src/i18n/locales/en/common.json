@@ -52,6 +52,10 @@
         "label": "Associations",
         "trust_bar": "Secure general assemblies, board elections and member consultations. Associations already trust Vocdoni:"
       },
+      "cooperatives": {
+        "label": "Cooperatives",
+        "trust_bar": "Secure general assemblies, board elections and member consultations. Cooperatives already trust Vocdoni:"
+      },
       "generic": {
         "label": "Success stories",
         "trust_bar": "Secure assemblies, elections and consultations. Organizations in every sector already trust Vocdoni:"
@@ -79,6 +83,10 @@
       "trade_unions": {
         "label": "Trade unions",
         "trust_bar": "Secure strike ballots, collective agreement votes and leadership elections. Unions already trust Vocdoni:"
+      },
+      "universities_schools": {
+        "label": "Education",
+        "trust_bar": "Secure board elections, assemblies and consultations. Educational communities already trust Vocdoni:"
       }
     }
   },
@@ -1739,6 +1747,10 @@
   },
   "terms_of_service": "Terms of Service",
   "testimonials": {
+    "afa_collserola": {
+      "position": "Board member",
+      "text": "At the Escola Collserola families' association (AFA), we wanted the board election to reach every family, not just those who could come to the assembly. Every family has its own circumstances: work hours, young children, travel... With Vocdoni we made it possible for everyone to vote remotely, simply and securely."
+    },
     "aguicat": {
       "company": "Associació de Guies Habilitats de Catalunya",
       "position": "IT Responsible",
@@ -1781,6 +1793,10 @@
     "erc": {
       "position": "National Secretary of Membership, Anti-repressive Struggle and Emotional Well-being",
       "text": "We have been trusting Vocdoni for years because it offers us a secure, auditable and easy-to-use system that allows us to organise digital votes with all guarantees and adapted to the needs of our organisation."
+    },
+    "foodcoop": {
+      "position": "Member of the Consell Rector",
+      "text": "Many FoodcoopBCN members can't always make it to the assembly, because of work, care duties or because they live far away. With hybrid voting, 30 members followed the assembly by livestream and voted securely from home. Those are voices an in-person-only assembly would have left out."
     },
     "granollers": {
       "position": "Communications officer",
