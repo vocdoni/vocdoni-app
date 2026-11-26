@@ -186,10 +186,12 @@ export function getEffectiveOrigin(req) {
  *    Promise and receive X-SSR-Cache: COALESCED header.
  *  - 4xx / 5xx: rendered and sent but never stored in cache.
  *
- * @param {{ renderPage: Function, getViteServer: () => any, isProduction: boolean }} options
+ * With cache=false every production request renders, as in dev.
+ *
+ * @param {{ renderPage: Function, getViteServer: () => any, isProduction: boolean, cache?: boolean }} options
  * @returns {import('express').RequestHandler}
  */
-export function createSsrCacheMiddleware({ renderPage, getViteServer, isProduction }) {
+export function createSsrCacheMiddleware({ renderPage, getViteServer, isProduction, cache = true }) {
   return async (req, res, next) => {
     if (req.method !== 'GET' && req.method !== 'HEAD') return next()
 
@@ -210,10 +212,10 @@ export function createSsrCacheMiddleware({ renderPage, getViteServer, isProducti
       // ----------------------------------------------------------------
       // Production: determine whether this route is cacheable
       // ----------------------------------------------------------------
-      const cacheKey = getCacheKey(req.path, getEffectiveOrigin(req))
+      const cacheKey = cache ? getCacheKey(req.path, getEffectiveOrigin(req)) : null
 
       if (!cacheKey) {
-        // SPA catch-all or other non-SSR route — render without caching
+        // SPA catch-all, other non-SSR route, or cache switched off — render without caching
         const entry = await renderToEntry(req, renderPage, extraContext)
         if (!entry) return next()
         sendEntry(req, res, entry)

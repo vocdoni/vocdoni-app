@@ -1,5 +1,5 @@
 import express from 'express'
-import { dirname, join } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { createDevMiddleware, renderPage } from 'vike/server'
 import { getSupportedPublicLanguagesFromEnv, publicLanguageRedirect } from './public-language-routing.mjs'
@@ -12,8 +12,12 @@ import { isViteInternalPath } from './vite-path-guard.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = join(__dirname, '..')
+// Where `vike build` wrote the app. The UI snapshot's --build mode points it at its own build.
+const distDir = resolve(root, process.env.DIST_DIR || 'dist')
 const isProduction = process.env.NODE_ENV === 'production'
 const port = Number(process.env.PORT || 3000)
+// Unset: all interfaces. The UI snapshot's --build mode sets 127.0.0.1.
+const host = process.env.UI_SNAPSHOT_HOST || undefined
 
 const app = express()
 app.disable('x-powered-by')
@@ -36,10 +40,10 @@ app.use(securityHeaders({ isProduction }))
 app.use(robotsTxtHandler())
 
 if (isProduction) {
-  await import(pathToFileURL(join(root, 'dist/server/entry.mjs')).href)
+  await import(pathToFileURL(join(distDir, 'server/entry.mjs')).href)
 
   app.use(
-    express.static(join(root, 'dist/client'), {
+    express.static(join(distDir, 'client'), {
       index: false,
       setHeaders: staticCacheHeaders,
     })
@@ -85,6 +89,8 @@ app.use(
     renderPage,
     getViteServer: () => viteServer,
     isProduction,
+    // SSR_CACHE=off renders every request (the UI snapshot's --build mode).
+    cache: process.env.SSR_CACHE !== 'off',
   })
 )
 
@@ -94,6 +100,6 @@ app.use((error, _req, res, _next) => {
   res.status(500).send('Internal Server Error')
 })
 
-app.listen(port, () => {
+app.listen(port, host, () => {
   console.log(`Server running at http://localhost:${port}`)
 })
