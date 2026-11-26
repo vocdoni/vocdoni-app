@@ -234,10 +234,14 @@ const viteConfigEnv = (stress) => {
 
 // Set as soon as a child is spawned, so an interrupt during its start-up still stops it.
 let spawnedApp = null
+// Set by the signal handler: whatever was still starting stops quietly, and the handler exits 130.
+let interrupted = false
 
 // Spawns `command` in its own process group, so stopping it also stops what it started. Output goes to the log
 // file and to memory, for the readiness checks. `exit` resolves once the child and its output pipes are closed.
 const spawnApp = ({ command, args, env, logFile }) => {
+  // An interrupt during an await before the spawn has already run the cleanup, so nothing may start after it.
+  if (interrupted) fail('interrupted')
   const log = fs.createWriteStream(logFile)
   let output = ''
   const child = spawn(command, args, {
@@ -342,6 +346,7 @@ const buildApp = async ({ mockUrl, primaryColor, stress, buildDir, logFile }) =>
   })
   const exit = await build.exit
   await build.stop()
+  if (interrupted) return
   if (exit.code !== 0) fail(`the build failed (${JSON.stringify(exit)}). Log: ${logFile}`)
 }
 
@@ -646,24 +651,27 @@ const main = async () => {
   let app
   let browser
   let buildDir = null
-  let cleaning = false
-  const cleanup = async () => {
-    if (cleaning) return
-    cleaning = true
-    await browser?.close().catch(() => {})
-    await (app ?? spawnedApp)?.stop().catch(() => {})
-    await mock?.close().catch(() => {})
-    mockLog.end()
-    if (buildDir) {
-      fs.rmSync(buildDir, { recursive: true, force: true })
-      // Drops the parent too, unless another label's build is still in it (rmdir refuses a non-empty folder).
-      try {
-        fs.rmdirSync(BUILD_ROOT)
-      } catch {}
-    }
+  // One run shared by the signal handler and the finally block, so each waits for the whole stop.
+  let cleanupRun = null
+  const cleanup = () => {
+    cleanupRun ??= (async () => {
+      await browser?.close().catch(() => {})
+      await (app ?? spawnedApp)?.stop().catch(() => {})
+      await mock?.close().catch(() => {})
+      mockLog.end()
+      if (buildDir) {
+        fs.rmSync(buildDir, { recursive: true, force: true })
+        // Drops the parent too, unless another label's build is still in it (rmdir refuses a non-empty folder).
+        try {
+          fs.rmdirSync(BUILD_ROOT)
+        } catch {}
+      }
+    })()
+    return cleanupRun
   }
   for (const signal of ['SIGINT', 'SIGTERM', 'SIGHUP']) {
     process.once(signal, async () => {
+      interrupted = true
       console.error(`\nui:snapshot: ${signal}, stopping the mock, the app server and the browser…`)
       await cleanup()
       process.exit(130)
@@ -681,6 +689,7 @@ const main = async () => {
     if (opts.external) {
       console.log(`Using the app at ${opts.base}. It must run with SAAS_URL=${mock.url} (see README.md).`)
     } else if (opts.build) {
+      await requireFreePort()
       buildDir = path.join(BUILD_ROOT, opts.label)
       console.log(`Building the app${variant}…`)
       await buildApp({
@@ -690,6 +699,7 @@ const main = async () => {
         buildDir,
         logFile: path.join(outDir, 'build.log'),
       })
+      if (interrupted) return
       console.log(`Starting the built app on ${DEFAULT_BASE}…`)
       app = await startProdServer({
         mockUrl: mock.url,
@@ -943,6 +953,8 @@ const main = async () => {
 }
 
 main().catch((e) => {
+  // An interrupted run ends in its signal handler, which exits 130 once the cleanup is done.
+  if (interrupted) return
   console.error(e instanceof SnapshotError ? `ui:snapshot: ${e.message}` : e)
   process.exit(1)
 })

@@ -1,17 +1,17 @@
 name: vocdoni-app-integration
 
 # Disposable stack for the Playwright end-to-end suite in e2e/: a fresh mongo, a
-# vocone (single-node vochain) instance, the saas-backend API and a MailHog inbox,
-# wired together with published images so CI needs no build step. The app under
-# test is NOT part of this stack — it runs on the host (`pnpm serve:ssr`) so the
-# suite exercises the same server bundle we ship. See integration/README.md and
-# scripts/integration-stack.sh for how to drive it.
+# vocone (single-node vochain) instance with its Postgres indexer, the saas-backend
+# API and a MailHog inbox, wired together with published images so CI needs no
+# build step. The app under test is NOT part of this stack — it runs on the host
+# (`pnpm serve:ssr`) so the suite exercises the same server bundle we ship. See
+# integration/README.md and scripts/integration-stack.sh for how to drive it.
 #
 # SOURCE OF TRUTH: this file is vendored from integrator-sdk's
 # integration/docker-compose.ci.yml. Both consume the same moving `:main` images,
-# so when saas-backend or vochain-sequencer changes its startup contract, re-sync
+# so when saas-backend or vocdoni-sequencer changes its startup contract, re-sync
 # from there rather than rediscovering the fix.
-# Ahead of integrator-sdk on the vochain-sequencer switch: that change is not on
+# Ahead of integrator-sdk on the vocdoni-sequencer switch: that change is not on
 # its main yet, so do not re-sync this file back to vocdoni-node.
 
 services:
@@ -26,22 +26,63 @@ services:
       interval: 3s
       retries: 20
 
+  # voconed keeps its indexer in Postgres (VOCONED_INDEXER_DSN) and refuses to
+  # start without it.
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_PASSWORD: vocone
+      POSTGRES_DB: indexer
+    volumes:
+      - vocone_pg:/var/lib/postgresql/data
+    healthcheck:
+      # Over TCP: without -h, pg_isready checks the Unix socket, which the
+      # socket-only temporary server of a first init also answers.
+      test: ['CMD', 'pg_isready', '-h', '127.0.0.1', '-U', 'postgres', '-d', 'indexer']
+      interval: 2s
+      retries: 30
+
+  # One-shot: brings the indexer schema to the version the voconed image accepts.
+  # Idempotent, so it also passes on a local `up` over a persisted volume.
+  vocone-migrate:
+    platform: linux/amd64
+    image: ${VOCDONI_SEQUENCER_IMAGE:-ghcr.io/vocdoni/vocdoni-sequencer:main}
+    # The timeout fails fast on a vocdoni-sequencer pin older than the `migrate`
+    # subcommand (62b1ae30): there voconed ignores the argument and runs a node forever.
+    entrypoint: ['sh', '-c', 'exec timeout 120 /app/voconed migrate']
+    environment:
+      VOCONED_DSN: postgres://postgres:vocone@postgres:5432/indexer?sslmode=disable
+    # The image declares VOLUME /app/run; keep migrate from leaving an anonymous volume.
+    tmpfs:
+      - /app/run
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   vocone:
     platform: linux/amd64
-    # Override to run against a vochain-sequencer built from source, e.g. VOCHAIN_SEQUENCER_IMAGE=<image>
+    # Override to run against a vocdoni-sequencer built from source, e.g. VOCDONI_SEQUENCER_IMAGE=<image>
     # printed by scripts/integration-build-image.sh (see integration/README.md).
-    image: ${VOCHAIN_SEQUENCER_IMAGE:-ghcr.io/vocdoni/vochain-sequencer:main}
+    image: ${VOCDONI_SEQUENCER_IMAGE:-ghcr.io/vocdoni/vocdoni-sequencer:main}
     environment:
       VOCONED_DIR: /app/run
       VOCONED_PORT: 9090
+      # Bind beyond loopback so the api container can reach http://vocone:9090.
+      VOCONED_LISTEN: 0.0.0.0
       VOCONED_URLPATH: /v2
       VOCONED_BLOCKPERIOD: 1
       VOCONED_BLOCKSIZE: 2000
       VOCONED_LOGLEVEL: info
-      VOCONED_ENABLEFAUCETWITHAMOUNT: 100000
+      # The saas-backend account (address of VOCDONI_PRIVATEKEY below) is funded at
+      # genesis; it funds every org it creates with faucet packages from that balance.
+      VOCONED_FUNDEDACCOUNTS: '0x7319196AdC5f396c7311A520a195E164496309eD:100000000'
       VOCONED_CHAINID: dev
       VOCONED_TXCOSTS: 2
       VOCONED_SETTXCOSTS: 'true'
+      VOCONED_INDEXER_DSN: postgres://postgres:vocone@postgres:5432/indexer?sslmode=disable
+    depends_on:
+      vocone-migrate:
+        condition: service_completed_successfully
     volumes:
       # Persists chain data across local `up` cycles. `down -v` drops it (the
       # explicit full clean); CI always tears down with -v.
@@ -123,3 +164,4 @@ services:
 
 volumes:
   vocone_run: {}
+  vocone_pg: {}
