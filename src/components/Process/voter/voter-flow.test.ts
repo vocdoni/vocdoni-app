@@ -849,10 +849,20 @@ describe('deriveVoterScreen: question by question (boards V4VoterWideLive, M4Vot
       expect(screen(qbq(held, { status: 'PROCESS_UNKNOWN' }))).toEqual({ kind: 'paused' })
     })
 
-    it('an open question the voter may not vote does not block the one they can (the SDK skips it)', () => {
-      const two = notFor(roomOf([['closed', 'recorded', 1], 'open', 'open']), 'q3')
-      expect(screen(qbq(two))).toEqual({ kind: 'roomQuestion', index: 1, paused: false })
-      expect(roomCastBlocked(two.questions, 1)).toBe(false)
+    it('an open question the SDK skips (its form locks it) does not block the one the voter can cast', () => {
+      const two = roomOf([['closed', 'recorded', 1], 'open', 'open'])
+      const skipped: RoomFacts = {
+        ...two,
+        questions: two.questions.map((question) =>
+          question.id === 'q3' ? { ...question, skippedBySdk: true } : question
+        ),
+      }
+      expect(screen(qbq(skipped))).toEqual({ kind: 'roomQuestion', index: 1, paused: false })
+      expect(roomCastBlocked(skipped.questions, 1)).toBe(false)
+    })
+
+    it('an open question only the check leaves out of still blocks, as the SDK would sign it', () => {
+      expect(roomCastBlocked(notFor(roomOf([['closed', 'recorded', 1], 'open', 'open']), 'q3').questions, 1)).toBe(true)
     })
 
     it('no question the voter may vote, and none cast: not eligible, as a non-member', () => {

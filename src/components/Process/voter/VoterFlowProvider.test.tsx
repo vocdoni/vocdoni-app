@@ -34,6 +34,7 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
     setValue: () => undefined,
     reset: () => undefined,
     trigger: async () => true,
+    clearErrors: () => undefined,
     get formState() {
       return { errors: sdk.errors }
     },

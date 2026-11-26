@@ -80,9 +80,9 @@ const eligibilityRefusalOf = (message: string, localize: (key: string) => string
   none: [localize('errors.vote_ineligible_question'), localize('errors.vote_ineligible_questions')].includes(message),
 })
 
-/** The first question the voter has not cast and may vote: where a stale form's refusal is shown. */
+/** The first open question the voter has not cast and may vote: where a stale form's refusal is shown. */
 const firstToVoteOf = (questions: readonly RoomQuestion[]) =>
-  questions.find((question) => !isRoomCast(question) && isRoomEligible(question))?.id
+  questions.find((question) => question.state === 'open' && !isRoomCast(question) && isRoomEligible(question))?.id
 
 /**
  * The instant the server rendered the page (`Date.now()` in its loader, carried in the page data). The browser's first
@@ -170,7 +170,7 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
   const end = election ? resolveEndDate(election)?.getTime() : undefined
   const roomNow = hydrating || clockTrusted || end === undefined || now.getTime() < end ? now : new Date(end - 1)
   const running =
-    status !== null && !ENDED_STATUSES.includes(status) && end !== undefined && end - roomNow.getTime() > ENDS_SOON_MS
+    status !== null && !ENDED_STATUSES.includes(status) && (end === undefined || end - roomNow.getTime() > ENDS_SOON_MS)
   const { membership, votedElsewhere, votedIds, ineligibleIds } = useVoterCheck({
     id,
     authToken,
@@ -264,6 +264,7 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
               endedAt,
               showsResult: voterSeesQuestionResult(question),
               ...(ineligibleOf(question.id) ? { eligible: false } : {}),
+              ...(voteStatus[question.id] === 'ineligible' ? { skippedBySdk: true } : {}),
             }
           }),
         }
@@ -366,6 +367,25 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
   const castingRef = useRef(false)
   const [casting, setCasting] = useState(false)
 
+  // A refused cast. The SDK's eligibility refusals are not failed casts: a stale form sits on the first open question
+  // still to vote (else on the one being cast), and a refusal with no question left shows nothing, the check decides.
+  const failCast = useCallback(
+    (failure: ReturnType<typeof castFailureOf>, castingId?: string) => {
+      const refusal = eligibilityRefusalOf(failure.message, localize)
+      if (refusal.none) return
+      if (refusal.changed) {
+        dispatch({
+          type: 'castFailed',
+          ...failure,
+          questionId: firstToVoteOf(latestRoom.current?.questions ?? []) ?? castingId,
+        })
+      } else {
+        dispatch({ type: 'castFailed', ...failure, at: Date.now() + serverOffset })
+      }
+    },
+    [localize, serverOffset]
+  )
+
   const cast = useCallback(async () => {
     if (castingRef.current || voting || firstUnanswered(answered) !== -1) return
     castingRef.current = true
@@ -373,26 +393,13 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
     const session = sessionRef.current
     dispatch({ type: 'castStarted' })
     try {
+      fmethods.clearErrors('root')
       const result = await vote(formValuesFor(latest.current))
       if (session !== sessionRef.current) return
       if (result === false) {
-        const failure = castFailureOf(
-          fmethods.formState.errors as FormErrors,
-          questions.length,
-          localize('errors.vote_unconfirmed')
+        failCast(
+          castFailureOf(fmethods.formState.errors as FormErrors, questions.length, localize('errors.vote_unconfirmed'))
         )
-        const refusal = eligibilityRefusalOf(failure.message, localize)
-        // Nothing was signed and no question is left to this voter: the check decides the screen, with no sentence.
-        // A stale form is not a failed cast either: it is not late, and its sentence sits on the first question left.
-        if (!refusal.none) {
-          dispatch({
-            type: 'castFailed',
-            ...failure,
-            ...(refusal.changed
-              ? { questionId: firstToVoteOf(latestRoom.current?.questions ?? []) }
-              : { at: Date.now() + serverOffset }),
-          })
-        }
         // A question may have closed or the vote paused meanwhile ("question is not open for voting"): read the
         // process again and let the facts decide. Never a sign out.
         if (id) void queryClient.invalidateQueries({ queryKey: electionQueryKeys.election(id) })
@@ -411,7 +418,7 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
       castingRef.current = false
       setCasting(false)
     }
-  }, [answered, fmethods, id, localize, queryClient, questions, serverOffset, vote, voting])
+  }, [answered, failCast, fmethods, id, localize, queryClient, questions, serverOffset, vote, voting])
 
   const castQuestion = useCallback(
     async (index: number) => {
@@ -443,6 +450,7 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
         const all = formValuesFor(latest.current) as Record<string, unknown> & { memo?: Record<string, string> }
         const values: Record<string, unknown> = { [key]: all[key] }
         if (all.memo?.[key] !== undefined) values.memo = { [key]: all.memo[key] }
+        fmethods.clearErrors('root')
         const result = await vote(values)
         // A sign-out or a lost session while the cast ran: its outcome belongs to the voter who left.
         if (session !== sessionRef.current) return
@@ -452,16 +460,7 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
             questions.length,
             localize('errors.vote_unconfirmed')
           )
-          const refusal = eligibilityRefusalOf(failure.message, localize)
-          if (!refusal.none) {
-            dispatch({
-              type: 'castFailed',
-              ...failure,
-              ...(refusal.changed
-                ? { questionId: firstToVoteOf(latestRoom.current?.questions ?? []) }
-                : { at: Date.now() + serverOffset }),
-            })
-          }
+          failCast(failure, question.id)
           // The question may have closed meanwhile ("not open for voting"): read the process again, the facts decide.
           if (id) void queryClient.invalidateQueries({ queryKey: electionQueryKeys.election(id) })
           // Nothing left here, yet the check lists the question as voted: another device or tab voted it first, and
@@ -492,7 +491,7 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
         setCasting(false)
       }
     },
-    [check, fmethods, id, localize, lockedNotice, queryClient, questions, serverOffset, t, vote, voting]
+    [check, failCast, fmethods, id, localize, lockedNotice, queryClient, questions, serverOffset, t, vote, voting]
   )
 
   const signOut = useCallback(() => {

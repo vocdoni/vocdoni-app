@@ -93,6 +93,7 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
     setValue: () => undefined,
     reset: () => undefined,
     trigger: async () => true,
+    clearErrors: () => undefined,
     get formState() {
       return { errors: sdk.errors }
     },
@@ -268,6 +269,19 @@ describe('VoterFlowProvider, question by question', () => {
       castUnconfirmed: false,
       castFailedAt: null,
     })
+  })
+
+  it('a stale form sits on the open question being cast, not on a closed one left unvoted (SDK 4.3)', async () => {
+    // Question 1 closed and never cast, question 2 open: the first question still to vote is 2, not 1.
+    sdk.checkVoted = []
+    await renderFlow()
+    act(() => sdk.watch?.({ '1': '1' }, { name: '1' }))
+    sdk.vote.mockResolvedValueOnce(false)
+    sdk.errors = { root: { vote: { message: 'errors.vote_eligibility_changed' } } }
+    await act(async () => {
+      await probe.current?.castQuestion(1)
+    })
+    expect(probe.current?.state).toMatchObject({ castError: 'errors.vote_eligibility_changed', castQuestionId: 'q2' })
   })
 
   it('no question left to this voter: no failed sentence, and the check is read again (SDK 4.3)', async () => {

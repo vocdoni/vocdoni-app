@@ -29,6 +29,8 @@ export type RoomQuestion = {
   showsResult?: boolean
   /** False when the membership check says this voter may not vote it (`canVote`, an eligibility subset). */
   eligible?: boolean
+  /** The SDK's form locks it (`voteStatus` `ineligible`) and `vote()` skips it, so it never blocks another question. */
+  skippedBySdk?: boolean
 }
 
 /** A question-by-question vote: its derived state (`deriveVoteState`) and each question's. */
@@ -427,7 +429,7 @@ export const shownOpenIndex = (questions: readonly RoomQuestion[]): number => {
 export const roomCastBlocked = (questions: readonly RoomQuestion[], index: number): boolean =>
   questions.some(
     (question, other) =>
-      other !== index && question.state === 'open' && question.cast === 'none' && isRoomEligible(question)
+      other !== index && question.state === 'open' && question.cast === 'none' && !question.skippedBySdk
   )
 
 /**
@@ -531,8 +533,6 @@ export const deriveVoterScreen = (facts: VoterFacts, asked: VoterLocalState): Vo
   if (facts.membership === 'sessionLost') return { kind: 'identify', notice: 'sessionExpired' }
   if (facts.membership === 'notInProcess') return { kind: 'notEligible' }
   if (!facts.voterStateReady) return { kind: 'checking' }
-  // Question by question: its own frames. They come before the all-at-once rules below, because with SDK #118
-  // `isAbleToVote` is false whenever no question the voter can still vote is open.
   // A room the voter may vote none of, and has cast none of: the same screen as a non-member (the SDK skips them all).
   if (
     facts.room?.questions.length &&
@@ -541,6 +541,8 @@ export const deriveVoterScreen = (facts: VoterFacts, asked: VoterLocalState): Vo
   ) {
     return { kind: 'notEligible' }
   }
+  // Question by question: its own frames. They come before the all-at-once rules below, because with SDK #118
+  // `isAbleToVote` is false whenever no question the voter can still vote is open.
   if (facts.room) return deriveRoomScreen(facts, facts.room, local, results)
   if (facts.hasVoted || (!facts.isAbleToVote && facts.everyQuestionSettled)) {
     return local.viewResults ? results : { kind: 'alreadyVoted' }
