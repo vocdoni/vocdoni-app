@@ -216,7 +216,8 @@ describe('dark layers', () => {
     }
   })
 
-  it('reads the stock black brand against the lightest dark layer as white, not as its grey step', () => {
-    expect(generateAccentTokens(generatePaletteScale('#000000'), BACKGROUNDS).fg._dark).toBe('{colors.white}')
+  // #656565 clears 3:1 on the page (#0a0a0a) but not on the menu (#222222): only the every-layer check turns it white.
+  it('shows a neutral brand white on the dark page when it is too dark on a lighter dark layer', () => {
+    expect(generateAccentTokens(generatePaletteScale('#656565'), BACKGROUNDS).fg._dark).toBe('{colors.white}')
   })
 })
