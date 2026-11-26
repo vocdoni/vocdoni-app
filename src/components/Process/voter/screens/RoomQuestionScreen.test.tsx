@@ -1,4 +1,4 @@
-import { act, fireEvent, screen, waitFor } from '@testing-library/react'
+import { fireEvent, screen, waitFor } from '@testing-library/react'
 import type { ReactNode } from 'react'
 import { renderWithFlow, testElection, testFacts, testFlow, testRoom } from '../test-flow'
 import { initialVoterState } from '../voter-flow'
