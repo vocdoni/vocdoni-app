@@ -1,4 +1,5 @@
-import { Card, Heading, Text } from '@chakra-ui/react'
+import { Box, Card, Heading, Text } from '@chakra-ui/react'
+import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { quantity } from '~utils/numbers'
 
@@ -9,6 +10,8 @@ export type QuestionsHeaderProps = {
   counts: string
   /** "Next step: close question 3", or nothing. */
   next?: string | null
+  /** A button for the whole card ("Open all"), at the line's end; nothing when there is none. */
+  action?: ReactNode
 }
 
 // One line from `lg`, cut with an ellipsis when it runs out of room.
@@ -22,7 +25,7 @@ const truncateFromLg = {
  * The questions card's title line: the title, how many, the counts and the next step. From `lg` one 44px line with
  * the next step at its end; below `lg` the counts at the end of the line and the next step on a line of its own.
  */
-export const QuestionsHeader = ({ headingId, total, counts, next }: QuestionsHeaderProps) => {
+export const QuestionsHeader = ({ headingId, total, counts, next, action }: QuestionsHeaderProps) => {
   const { t } = useTranslation()
 
   return (
@@ -53,6 +56,12 @@ export const QuestionsHeader = ({ headingId, total, counts, next }: QuestionsHea
         >
           {counts}
         </Text>
+      )}
+      {/* On the counts' line, before the next step, which gives way first from `lg` (it truncates long before them). */}
+      {action && (
+        <Box ms={{ base: '3', lg: next ? '3' : 'auto' }} flexShrink={0}>
+          {action}
+        </Box>
       )}
       {/* From `lg`, when the line is short, the next step gives way first (it truncates long before the counts do). */}
       {next && (

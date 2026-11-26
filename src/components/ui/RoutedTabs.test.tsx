@@ -10,26 +10,27 @@ const tabs = [
 
 describe('RoutedTabs', () => {
   it('renders the routed content in the panel the selected tab controls', async () => {
-    render(
-      <TestMemoryRouter initialEntries={['/admin/second']}>
-        <Routes>
-          <Route path='/admin' element={<RoutedTabs tabs={tabs} />}>
-            <Route path='first' element={<p>First content</p>} />
-            <Route path='second' element={<p>Second content</p>} />
-          </Route>
-        </Routes>
-      </TestMemoryRouter>
+    // TabsRoot updates its state just after mount; render inside act so that update lands here.
+    await act(async () =>
+      render(
+        <TestMemoryRouter initialEntries={['/admin/second']}>
+          <Routes>
+            <Route path='/admin' element={<RoutedTabs tabs={tabs} />}>
+              <Route path='first' element={<p>First content</p>} />
+              <Route path='second' element={<p>Second content</p>} />
+            </Route>
+          </Routes>
+        </TestMemoryRouter>
+      )
     )
 
     const tab = screen.getByRole('tab', { name: 'Second', selected: true })
     const panel = document.getElementById(tab.getAttribute('aria-controls') ?? '')
     expect(panel).not.toBeNull()
     expect(panel).toContainElement(screen.getByText('Second content'))
-    // TabsRoot updates its state just after mount; flush that update inside act
-    await act(async () => {})
   })
 
-  it('keeps the tab mounted, with its state, when the notice comes and goes', () => {
+  it('keeps the tab mounted, with its state, when the notice comes and goes', async () => {
     const Counter = () => {
       const [clicks, setClicks] = useState(0)
       return <button onClick={() => setClicks((value) => value + 1)}>{`Clicked ${clicks}`}</button>
@@ -43,14 +44,16 @@ describe('RoutedTabs', () => {
         </>
       )
     }
-    render(
-      <TestMemoryRouter initialEntries={['/admin/first']}>
-        <Routes>
-          <Route path='/admin' element={<Page />}>
-            <Route path='first' element={<Counter />} />
-          </Route>
-        </Routes>
-      </TestMemoryRouter>
+    await act(async () =>
+      render(
+        <TestMemoryRouter initialEntries={['/admin/first']}>
+          <Routes>
+            <Route path='/admin' element={<Page />}>
+              <Route path='first' element={<Counter />} />
+            </Route>
+          </Routes>
+        </TestMemoryRouter>
+      )
     )
 
     fireEvent.click(screen.getByRole('button', { name: 'Clicked 0' }))

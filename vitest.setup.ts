@@ -2,9 +2,10 @@ import '@testing-library/jest-dom'
 import { cleanup } from '@testing-library/react'
 import i18n from 'i18next'
 import { webcrypto } from 'node:crypto'
+import { format } from 'node:util'
 import type { ReactNode } from 'react'
 import { initReactI18next } from 'react-i18next'
-import { afterEach, vi } from 'vitest'
+import { afterEach, beforeEach, vi } from 'vitest'
 
 // hashMemberPassword (src/utils/member-password.ts) reads globalThis.crypto.subtle, which the jsdom
 // environment may lack: fall back to Node's own Web Crypto implementation.
@@ -88,6 +89,28 @@ afterEach(async () => {
   const { resetReactProvidersMock, resetAuthMock } = await import('./src/test-utils-react-providers-mock')
   resetReactProvidersMock()
   resetAuthMock()
+  // Checked after cleanup(), so the updates that unmounting causes count too.
+  if (actWarnings.length > 0) {
+    const [first] = actWarnings
+    actWarnings = []
+    throw new Error(`React state update outside act(...): ${first.split('\n')[0]}`)
+  }
+})
+
+// A "not wrapped in act(...)" warning means a state update landed outside the test's act scope. Record it and fail the
+// test that produced it. Tests that assert on console.error mock it, so their messages never reach this record.
+const logError = console.error
+let actWarnings: string[] = []
+
+beforeEach(() => {
+  actWarnings = []
+  vi.spyOn(console, 'error')
+    .mockClear()
+    .mockImplementation((...args: unknown[]) => {
+      const message = format(...args)
+      if (message.includes('not wrapped in act')) actWarnings.push(message)
+      logError(...args)
+    })
 })
 
 // Mock environment variables

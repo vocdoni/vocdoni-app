@@ -40,15 +40,16 @@ export const SummaryIdle = ({ model }: { model: SummaryModel }) => {
                 defaultValue: 'Open the first question to start the vote.',
               })
             : t('votes.summary.idle.by_question_started_viewer_body', {
-                defaultValue: 'The organizer opens the questions one at a time.',
+                defaultValue: 'The organizer opens the questions when they choose.',
               })
         } else {
           body = canManage
             ? t('votes.summary.idle.by_question_body', {
-                defaultValue: 'When it starts, the questions start closed and you open them one at a time.',
+                defaultValue: 'When it starts, the questions start paused and you open them when you choose.',
               })
             : t('votes.summary.idle.by_question_viewer_body', {
-                defaultValue: 'When it starts, the questions start closed and the organizer opens them one at a time.',
+                defaultValue:
+                  'When it starts, the questions start paused and the organizer opens them when they choose.',
               })
         }
         break

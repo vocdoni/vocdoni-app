@@ -50,7 +50,9 @@ export type VoterFlow = {
   skip: (index: number) => void
   /** Question by question: "Vota ara", "Vota la pregunta N": back to the open question's ballot (frame 2). */
   resume: (index: number) => void
-  /** Question by question: "Emet el vot" casts this question only (SDK #118). */
+  /** The open set answered in one form (`roomFormSet`): its questions, or null for the classic form. */
+  form: readonly number[] | null
+  /** Question by question: "Emet el vot" casts the open set the question belongs to, all its answers in one call (SDK #118). */
   castQuestion: (index: number) => Promise<void>
   /** Leaves "Comprova el teu vot" for the closed screen again. */
   leaveReceipt: () => void

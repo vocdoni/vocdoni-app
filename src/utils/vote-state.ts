@@ -94,7 +94,7 @@ export const deriveVoteState = (
     if (anyOngoing) return 'live'
     // Started, nothing open and a question that was open now paused: nobody can vote, so the vote is paused.
     if (!isBeforeStart(process.startDate, now) && pausedHoldIds(process, remembered).length) return 'paused'
-    // Otherwise it opens its questions one by one: ready until one opens or closes, live between questions.
+    // Otherwise its questions start paused and open later: ready until one opens or closes, live between questions.
     return questions.some(isOverQuestion) ? 'live' : 'ready'
   }
   if (isBeforeStart(process.startDate, now)) return 'ready'
@@ -154,11 +154,11 @@ export const activeQuestionIds = (process: VotingProcessResponse, now: Date = ne
     : []
 
 /** Why a question cannot open (or resume) on its own right now. */
-export type OpenQuestionBlock = 'notByQuestion' | 'over' | 'notWaiting' | 'beforeStart' | 'votePaused' | 'otherActive'
+export type OpenQuestionBlock = 'notByQuestion' | 'over' | 'notWaiting' | 'beforeStart' | 'votePaused'
 
 /**
- * The one rule for opening a question (R29): only one question is open or paused at a time, and never before the
- * start nor while the whole vote is paused ("Resume the vote" reopens the questions that pause holds). Null: it can.
+ * The one rule for opening a question: never before the start nor while the whole vote is paused ("Resume the vote"
+ * reopens the questions that pause holds). Any number of questions may be open at once. Null: it can.
  */
 export const openQuestionBlock = (
   process: VotingProcessResponse,
@@ -173,7 +173,7 @@ export const openQuestionBlock = (
   if (state !== 'toOpen' && state !== 'paused') return 'notWaiting'
   if (isBeforeStart(process.startDate, now)) return 'beforeStart'
   if (vote === 'paused') return 'votePaused'
-  return activeQuestionIds(process, now).some((id) => id !== question.id) ? 'otherActive' : null
+  return null
 }
 
 export const canOpenQuestion = (
@@ -182,6 +182,23 @@ export const canOpenQuestion = (
   now: Date = new Date(),
   remembered: ReadonlySet<string> = NO_IDS
 ): boolean => openQuestionBlock(process, question, now, remembered) === null
+
+/**
+ * The questions "Open all" opens in one job: the ones to open or paused, in question order, that can open now (a paused
+ * vote holds its paused questions, so it lists none).
+ */
+export const waitingQuestionIds = (
+  process: VotingProcessResponse,
+  now: Date = new Date(),
+  remembered: ReadonlySet<string> = NO_IDS
+): string[] =>
+  process.questions
+    .filter(
+      (question) =>
+        ['toOpen', 'paused'].includes(deriveQuestionState(question, process, now)) &&
+        canOpenQuestion(process, question, now, remembered)
+    )
+    .map(({ id }) => id)
 
 /** Whether closing this question closes the vote: every other question is already over (R30). */
 export const isLastQuestionLeft = (process: VotingProcessResponse, questionId: string): boolean =>

@@ -14,9 +14,16 @@ const sdk = vi.hoisted(() => ({
   // What the membership check answers: the questions on chain for this voter, and the ones they may not vote.
   checkVoted: ['q1'] as string[],
   notEligible: [] as string[],
+  // Questions the check alone says this voter may not vote: the SDK's status is not 'ineligible' for them.
+  checkOnlyIneligible: [] as string[],
+  // Metadata of question 2 (its creator's result setting), for a test that closes it.
+  q2Metadata: undefined as Record<string, unknown> | undefined,
   // Holds the membership check until released, to let a sign-out overtake a re-check.
   holdCheck: undefined as Promise<void> | undefined,
   checkCalls: 0,
+  clearErrors: vi.fn(),
+  // Votes counted on question 3: a paused question is held by the pause only with votes (`pausedHoldIds`).
+  q3Votes: 0,
   // The process read: each question's stored status, and the scheduled end.
   statuses: ['RESULTS', 'ONGOING', 'PAUSED'] as string[],
   // Question by question only when PAUSED: any other value reads the process as an all-at-once vote (no room).
@@ -61,7 +68,7 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
   // One object per read, so a test that changes the read gives the provider a new process, as a poll would.
   let cached: { key: string; value: unknown } | undefined
   const electionOf = () => {
-    const key = `${sdk.statuses.join(',')}|${sdk.endDate}|${sdk.initialStatus}`
+    const key = `${sdk.q3Votes}|${sdk.statuses.join(',')}|${sdk.endDate}|${sdk.initialStatus}`
     if (cached?.key === key) return cached.value as ReturnType<typeof build>
     const value = build()
     cached = { key, value }
@@ -81,8 +88,8 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
       question(1, sdk.statuses[0], ended(sdk.statuses[0], '2026-06-15T09:41:00.000Z'), 6, {
         voterResults: 'perQuestion',
       }),
-      question(2, sdk.statuses[1], ended(sdk.statuses[1], '2026-06-15T10:41:00.000Z'), 3),
-      question(3, sdk.statuses[2], ended(sdk.statuses[2], '2026-06-15T11:41:00.000Z')),
+      question(2, sdk.statuses[1], ended(sdk.statuses[1], '2026-06-15T10:41:00.000Z'), 3, sdk.q2Metadata),
+      question(3, sdk.statuses[2], ended(sdk.statuses[2], '2026-06-15T11:41:00.000Z'), sdk.q3Votes),
     ],
   })
   const fmethods = {
@@ -92,11 +99,21 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
     },
     setValue: () => undefined,
     reset: () => undefined,
+    clearErrors: sdk.clearErrors,
     trigger: async () => true,
-    clearErrors: () => undefined,
     get formState() {
       return { errors: sdk.errors }
     },
+  }
+  // The SDK marks a question this voter may not vote 'ineligible' on connect (`sdk.notEligible`).
+  let statusCache: { key: string; value: Record<string, string> } | undefined
+  const voteStatusOf = () => {
+    const key = JSON.stringify([sdk.notEligible, sdk.voteStatus])
+    if (statusCache?.key !== key) {
+      const ineligible = Object.fromEntries(sdk.notEligible.map((questionId) => [questionId, 'ineligible']))
+      statusCache = { key, value: { ...ineligible, ...sdk.voteStatus } }
+    }
+    return statusCache.value
   }
   const ids = ['q1', 'q2', 'q3']
   const check = async () => {
@@ -106,7 +123,7 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
       belongsToProcess: true,
       questions: ids.map((questionId) => ({
         questionId,
-        canVote: !sdk.notEligible.includes(questionId),
+        canVote: !sdk.notEligible.includes(questionId) && !sdk.checkOnlyIneligible.includes(questionId),
         hasVoted: sdk.checkVoted.includes(questionId),
         hasSigned: sdk.checkVoted.includes(questionId),
       })),
@@ -123,7 +140,7 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
     clearVoter: () => undefined,
     voting: false,
     get voteStatus() {
-      return sdk.voteStatus
+      return voteStatusOf()
     },
     get pendingVotes() {
       return sdk.pendingVotes
@@ -172,8 +189,13 @@ beforeEach(() => {
   sdk.errors = {}
   sdk.checkVoted = ['q1']
   sdk.notEligible = []
+  sdk.checkOnlyIneligible = []
+  sdk.q2Metadata = undefined
   sdk.holdCheck = undefined
   sdk.checkCalls = 0
+  sdk.clearErrors.mockClear()
+  sdk.q3Votes = 0
+  vi.restoreAllMocks()
   sdk.statuses = ['RESULTS', 'ONGOING', 'PAUSED']
   sdk.initialStatus = 'PAUSED'
   sdk.endDate = '2099-12-01T19:00:00.000Z'
@@ -211,6 +233,14 @@ describe('VoterFlowProvider, question by question', () => {
     expect(probe.current?.screen).toEqual({ kind: 'roomQuestion', index: 1, paused: false })
   })
 
+  it('a vote that started paused hides its results while every question is open (R11)', async () => {
+    sdk.statuses = ['ONGOING', 'ONGOING', 'ONGOING']
+    await renderFlow()
+    expect(probe.current?.facts.room).toBeNull()
+    act(() => probe.current?.showResults(true))
+    expect(probe.current?.screen).toEqual({ kind: 'results', state: 'hidden' })
+  })
+
   it('parks, skips and resumes the open question', async () => {
     await renderFlow()
     act(() => probe.current?.park(1))
@@ -220,6 +250,51 @@ describe('VoterFlowProvider, question by question', () => {
     act(() => probe.current?.skip(1))
     expect(probe.current?.screen).toEqual({ kind: 'roomSkipped', index: 1 })
     expect(sdk.vote).not.toHaveBeenCalled()
+  })
+
+  it('skips and parks the whole open set: nothing is cast for any of its questions', async () => {
+    sdk.statuses = ['RESULTS', 'ONGOING', 'ONGOING']
+    await renderFlow()
+    act(() => probe.current?.park(1))
+    expect(probe.current?.screen).toEqual({ kind: 'roomOpen', index: 1 })
+    act(() => probe.current?.resume(1))
+    act(() => probe.current?.skip(1))
+    expect(probe.current?.screen).toEqual({ kind: 'roomSkipped', index: 1 })
+    expect(probe.current?.state.skipped).toEqual(['q2', 'q3'])
+    expect(sdk.vote).not.toHaveBeenCalled()
+  })
+
+  it('an all-open vote where no question is for this voter is not the room: not eligible', async () => {
+    sdk.statuses = ['ONGOING', 'ONGOING', 'ONGOING']
+    sdk.notEligible = ['q1', 'q2', 'q3']
+    await renderFlow()
+    expect(probe.current?.facts.room).toBeNull()
+    expect(probe.current?.screen.kind).not.toMatch(/^room/)
+  })
+
+  it('keeps a parked set parked when the vote is paused: the held question does not show its ballot', async () => {
+    sdk.statuses = ['RESULTS', 'ONGOING', 'ONGOING']
+    const { reread } = await renderFlow()
+    act(() => probe.current?.park(1))
+    expect(probe.current?.state.parked).toBe('q2,q3')
+    sdk.statuses = ['RESULTS', 'PAUSED', 'PAUSED']
+    reread()
+    await waitFor(() => expect(probe.current?.facts.room?.voteState).toBe('paused'))
+    expect(probe.current?.screen).toEqual({ kind: 'paused' })
+  })
+
+  it('parks and skips the held set of a whole-vote pause, not its first question alone', async () => {
+    sdk.statuses = ['RESULTS', 'ONGOING', 'ONGOING']
+    const { reread } = await renderFlow()
+    sdk.statuses = ['RESULTS', 'PAUSED', 'PAUSED']
+    sdk.q3Votes = 2
+    reread()
+    await waitFor(() => expect(probe.current?.facts.room?.voteState).toBe('paused'))
+    expect(probe.current?.screen).toMatchObject({ kind: 'question', paused: true, set: true })
+    act(() => probe.current?.park(1))
+    expect(probe.current?.state.parked).toBe('q2,q3')
+    act(() => probe.current?.skip(1))
+    expect(probe.current?.state.skipped).toEqual(['q2', 'q3'])
   })
 
   it('forgets the frame parked on a question once a later one opens, so it shows its ballot when it opens again', async () => {
@@ -296,7 +371,8 @@ describe('VoterFlowProvider, question by question', () => {
     })
     expect(probe.current?.state.castError).toBeNull()
     expect(sdk.checkCalls).toBeGreaterThan(before)
-    await waitFor(() => expect(probe.current?.screen).toEqual({ kind: 'roomNotEligible', index: 1 }))
+    // The lone question is gone from the room: the last closed question is what the voter sees.
+    await waitFor(() => expect(probe.current?.screen).toEqual({ kind: 'roomClosedVoted', index: 0 }))
   })
 
   it('a voter the check leaves out of every question is not settled, and not eligible to vote (SDK 4.3)', async () => {
@@ -418,7 +494,7 @@ describe('VoterFlowProvider, question by question', () => {
     act(() => {
       void probe.current?.castQuestion(1)
     })
-    await waitFor(() => expect(probe.current?.state.castError).toBe('errors.vote_failed'))
+    await waitFor(() => expect(sdk.checkCalls).toBeGreaterThan(1))
     act(() => probe.current?.signOut())
     await act(async () => {
       release()
@@ -471,20 +547,29 @@ describe('VoterFlowProvider, question by question', () => {
     expect(probe.current?.facts.room?.voteState).toBe('closed')
   })
 
-  it('casts nothing while a second question is open and not cast: the SDK would sign both (gate-3 F10)', async () => {
+  it('casts the open set together once every question of it is answered (SDK signs them all)', async () => {
     sdk.statuses = ['RESULTS', 'ONGOING', 'ONGOING']
     await renderFlow()
-    expect(probe.current?.screen).toEqual({ kind: 'roomQuestion', index: 1, paused: false, blocked: true })
+    expect(probe.current?.screen).toEqual({ kind: 'question', index: 1, paused: false, set: true })
     act(() => sdk.watch?.({ '1': '0' }, { name: '1' }))
     await act(async () => {
       await probe.current?.castQuestion(1)
     })
+    // Question 3 is still to answer: nothing is sent yet.
     expect(sdk.vote).not.toHaveBeenCalled()
+    act(() => sdk.watch?.({ '2': '1' }, { name: '2' }))
+    await act(async () => {
+      await probe.current?.castQuestion(2)
+    })
+    expect(sdk.vote).toHaveBeenCalledTimes(1)
+    expect(sdk.vote.mock.calls[0][0]).toEqual({ '1': '0', '2': '1' })
   })
 
   // No room reads the question (an all-at-once process): the refusal blames the room, never this voter's eligibility.
   it('says the question is not loaded, not that the voter is not eligible, when no room reads it', async () => {
     sdk.initialStatus = 'ONGOING'
+    // Every question open: no room, so no open set reads it.
+    sdk.statuses = ['ONGOING', 'ONGOING', 'ONGOING']
     await renderFlow()
     act(() => sdk.watch?.({ '1': '0' }, { name: '1' }))
     await act(async () => {
@@ -497,7 +582,7 @@ describe('VoterFlowProvider, question by question', () => {
   it('casts nothing for an open question the check leaves this voter out of (gate-3 F10)', async () => {
     sdk.notEligible = ['q2']
     await renderFlow()
-    await waitFor(() => expect(probe.current?.screen).toEqual({ kind: 'roomNotEligible', index: 1 }))
+    await waitFor(() => expect(probe.current?.screen).toEqual({ kind: 'roomClosedVoted', index: 0 }))
     act(() => sdk.watch?.({ '1': '0' }, { name: '1' }))
     await act(async () => {
       await probe.current?.castQuestion(1)
@@ -523,11 +608,11 @@ describe('VoterFlowProvider, question by question', () => {
       await probe.current?.castQuestion(1)
     })
     expect(sdk.vote).not.toHaveBeenCalled()
-    expect(probe.current?.state).toMatchObject({ castQuestionId: 'q2', castError: 'voter.room.not_eligible_title' })
+    expect(probe.current?.state).toMatchObject({ castQuestionId: 'q2', castError: 'errors.vote_failed_unknown' })
   })
 
-  // The blocked warning is on the screen already (with the cast off), so the refusal adds no second message.
-  it('sends nothing while another open question is not cast, and adds no second message to the warning', async () => {
+  // A refused cast of a partly answered set names the first question still unanswered, and sends nothing.
+  it('casts nothing until every question of the open set is answered, and says which one is missing', async () => {
     sdk.statuses = ['RESULTS', 'ONGOING', 'ONGOING']
     await renderFlow()
     act(() => sdk.watch?.({ '1': '0' }, { name: '1' }))
@@ -535,6 +620,262 @@ describe('VoterFlowProvider, question by question', () => {
       await probe.current?.castQuestion(1)
     })
     expect(sdk.vote).not.toHaveBeenCalled()
-    expect(probe.current?.state).toMatchObject({ castError: null, castQuestionId: null })
+    expect(probe.current?.state).toMatchObject({ castError: 'validation.required', castQuestionId: 'q3' })
+  })
+
+  // An open set of two is one form: question, question, review, then one cast of both answers (SDK #118 signs both).
+  it('answers an open set of two as one form and casts it once from review', async () => {
+    sdk.statuses = ['RESULTS', 'ONGOING', 'ONGOING']
+    await renderFlow()
+    expect(probe.current?.screen).toEqual({ kind: 'question', index: 1, paused: false, set: true })
+    act(() => sdk.watch?.({ '1': '0' }, { name: '1' }))
+    await waitFor(() => expect(probe.current?.screen).toEqual({ kind: 'question', index: 2, paused: false, set: true }))
+    act(() => sdk.watch?.({ '2': '1' }, { name: '2' }))
+    await waitFor(() => expect(probe.current?.screen).toEqual({ kind: 'review', paused: false, set: true, index: 2 }))
+    expect(probe.current?.form).toEqual([1, 2])
+    expect(sdk.vote).not.toHaveBeenCalled()
+    await act(async () => {
+      await probe.current?.cast()
+    })
+    expect(sdk.vote).toHaveBeenCalledTimes(1)
+    expect(sdk.vote.mock.calls[0][0]).toEqual({ '1': '0', '2': '1' })
+  })
+
+  // The room leaves out a question this voter may not vote, so the cast carries the set's answers only.
+  it('sends vote() only the eligible open question, never one this voter may not vote (SDK 4.3)', async () => {
+    sdk.statuses = ['RESULTS', 'ONGOING', 'ONGOING']
+    sdk.notEligible = ['q3']
+    await renderFlow()
+    expect(probe.current?.screen).toEqual({ kind: 'roomQuestion', index: 1, paused: false })
+    act(() => sdk.watch?.({ '1': '0' }, { name: '1' }))
+    await act(async () => {
+      await probe.current?.castQuestion(1)
+    })
+    expect(sdk.vote).toHaveBeenCalledTimes(1)
+    expect(Object.keys(sdk.vote.mock.calls[0][0])).toEqual(['1'])
+    expect(sdk.clearErrors).toHaveBeenCalledWith('root')
+  })
+
+  // The check alone calls the question ineligible (the SDK's status is not 'ineligible'): the answer is still sent,
+  // and no placeholder stands in for it. The SDK's refusal is a stale form, shown on that question.
+  it('sends an open question only the check calls ineligible, as answered, and a stale refusal lands on it', async () => {
+    sdk.checkOnlyIneligible = ['q2']
+    await renderFlow()
+    expect(probe.current?.facts.room?.questions[1].state).toBe('open')
+    expect(probe.current?.facts.room?.questions[1].eligible).toBeUndefined()
+    act(() => sdk.watch?.({ '1': '0' }, { name: '1' }))
+    sdk.vote.mockResolvedValueOnce(false)
+    sdk.errors = { root: { vote: { message: 'errors.vote_eligibility_changed' } } }
+    await act(async () => {
+      await probe.current?.castQuestion(1)
+    })
+    expect(sdk.vote).toHaveBeenCalledTimes(1)
+    expect(sdk.vote.mock.calls[0][0]).toEqual({ '1': '0' })
+    expect(probe.current?.state).toMatchObject({ castError: 'errors.vote_eligibility_changed', castQuestionId: 'q2' })
+  })
+
+  // The session saw the question ineligible, then the vote ended and the check stopped saying so: a question on chain
+  // still shows its closed frame, and a question not on chain stays hidden (the session's sighting).
+  it('keeps a question the check called ineligible in the room once voted, and shows its closed frame', async () => {
+    sdk.checkOnlyIneligible = ['q2']
+    sdk.q2Metadata = { voterResults: 'perQuestion' }
+    sdk.vote.mockImplementationOnce(async () => {
+      sdk.checkVoted.push('q2')
+      return 'vote-2'
+    })
+    const { reread } = await renderFlow()
+    act(() => sdk.watch?.({ '1': '0' }, { name: '1' }))
+    await act(async () => {
+      await probe.current?.castQuestion(1)
+    })
+    expect(probe.current?.facts.room?.questions[1]).toMatchObject({ cast: 'recorded' })
+    expect(probe.current?.facts.room?.questions[1].eligible).toBeUndefined()
+    sdk.statuses = ['RESULTS', 'RESULTS', 'PAUSED']
+    reread()
+    await waitFor(() => expect(probe.current?.screen).toEqual({ kind: 'roomClosedVoted', index: 1 }))
+    expect(probe.current?.facts.room?.questions[1].eligible).toBeUndefined()
+  })
+
+  // A set of an eligible question and one only the check calls ineligible: the SDK signs both, so both answers are sent.
+  it('casts a set with a question only the check calls ineligible as open: both answers go to vote()', async () => {
+    sdk.statuses = ['RESULTS', 'ONGOING', 'ONGOING']
+    sdk.checkOnlyIneligible = ['q3']
+    await renderFlow()
+    expect(probe.current?.facts.room?.questions[2].eligible).toBeUndefined()
+    act(() => sdk.watch?.({ '1': '0' }, { name: '1' }))
+    act(() => sdk.watch?.({ '2': '1' }, { name: '2' }))
+    await act(async () => {
+      await probe.current?.castQuestion(1)
+    })
+    expect(sdk.vote).toHaveBeenCalledTimes(1)
+    expect(sdk.vote.mock.calls[0][0]).toEqual({ '1': '0', '2': '1' })
+  })
+
+  // A refused cast is a failure: it is never completed by the check, and the check is read again.
+  it('a failed cast of an open set is a failure, not a completed one, and the check is read again', async () => {
+    sdk.statuses = ['RESULTS', 'ONGOING', 'ONGOING']
+    await renderFlow()
+    act(() => sdk.watch?.({ '1': '0' }, { name: '1' }))
+    act(() => sdk.watch?.({ '2': '1' }, { name: '2' }))
+    const before = sdk.checkCalls
+    sdk.vote.mockResolvedValueOnce(false)
+    sdk.errors = { root: { vote: { message: 'errors.vote_failed' } } }
+    await act(async () => {
+      await probe.current?.castQuestion(2)
+    })
+    expect(probe.current?.state).toMatchObject({
+      castError: 'errors.vote_failed',
+      castDone: false,
+      castQuestionId: 'q2',
+    })
+    expect(sdk.checkCalls).toBeGreaterThan(before)
+  })
+
+  // The stale form's refusal sits on the first open question still to vote, not on the one that was pressed.
+  it('eligibility changed lands on the first open question still to vote, not the pressed one (SDK 4.3)', async () => {
+    sdk.statuses = ['RESULTS', 'ONGOING', 'ONGOING']
+    await renderFlow()
+    act(() => sdk.watch?.({ '1': '0' }, { name: '1' }))
+    act(() => sdk.watch?.({ '2': '1' }, { name: '2' }))
+    sdk.vote.mockResolvedValueOnce(false)
+    sdk.errors = { root: { vote: { message: 'errors.vote_eligibility_changed' } } }
+    await act(async () => {
+      await probe.current?.castQuestion(2)
+    })
+    expect(probe.current?.state).toMatchObject({ castError: 'errors.vote_eligibility_changed', castQuestionId: 'q2' })
+  })
+
+  // All paused, then all opened: nothing is left to open one by one, so the classic single form (welcome first).
+  it('all questions paused, then all opened at once: the classic single form, not the room', async () => {
+    sdk.initialStatus = 'PAUSED'
+    sdk.statuses = ['PAUSED', 'PAUSED', 'PAUSED']
+    const { reread } = await renderFlow()
+    expect(probe.current?.facts.room).not.toBeNull()
+    sdk.statuses = ['ONGOING', 'ONGOING', 'ONGOING']
+    reread()
+    await waitFor(() => expect(probe.current?.facts.room).toBeNull())
+    expect(probe.current?.screen).toEqual({ kind: 'welcome' })
+  })
+
+  describe('an open set cast, every question of it (SDK signs the set in one batch)', () => {
+    const answerBoth = () => {
+      act(() => sdk.watch?.({ '1': '0' }, { name: '1' }))
+      act(() => sdk.watch?.({ '2': '1' }, { name: '2' }))
+    }
+    const setOpen = () => {
+      sdk.statuses = ['RESULTS', 'ONGOING', 'ONGOING']
+      sdk.pendingVotes = { q2: true, q3: true }
+      sdk.voteStatus = { q2: 'failed', q3: 'failed' }
+    }
+
+    it('a set refused after it closed: every member reads late, not only the first', async () => {
+      const endedAt = Date.parse('2026-06-15T11:41:00.000Z')
+      setOpen()
+      vi.useFakeTimers({ toFake: ['Date'] })
+      vi.setSystemTime(endedAt - 2_000)
+      try {
+        const { reread } = await renderFlow(endedAt - 2_000)
+        answerBoth()
+        sdk.vote.mockResolvedValueOnce(false)
+        await act(async () => {
+          await probe.current?.cast()
+        })
+        sdk.statuses = ['RESULTS', 'RESULTS', 'RESULTS']
+        vi.setSystemTime(endedAt + 2_000)
+        reread()
+        await waitFor(() => expect(probe.current?.facts.room?.questions[1].cast).toBe('late'))
+        expect(probe.current?.facts.room?.questions[2].cast).toBe('late')
+      } finally {
+        vi.useRealTimers()
+      }
+    })
+
+    it('a set with an unknown outcome, then closed: every member reads unknown, not not voted', async () => {
+      setOpen()
+      const { reread } = await renderFlow()
+      answerBoth()
+      sdk.vote.mockImplementationOnce(async () => {
+        sdk.errors = { root: { vote: { message: 'errors.vote_unconfirmed' } } }
+        return false
+      })
+      await act(async () => {
+        await probe.current?.cast()
+      })
+      sdk.statuses = ['RESULTS', 'RESULTS', 'RESULTS']
+      reread()
+      await waitFor(() => expect(probe.current?.facts.room?.questions[1].state).toBe('closed'))
+      expect(probe.current?.facts.room?.questions[1].cast).toBe('unknown')
+      expect(probe.current?.facts.room?.questions[2].cast).toBe('unknown')
+      // The whole vote is over (question 1 was cast), so the frame is the over-vote one, not a question's.
+      expect(probe.current?.screen).toEqual({ kind: 'alreadyVoted' })
+    })
+
+    it('a partial landing is no other device and shows its error on the question still to vote', async () => {
+      setOpen()
+      await renderFlow()
+      answerBoth()
+      sdk.vote.mockImplementationOnce(async () => {
+        sdk.checkVoted.push('q2')
+        sdk.errors = { root: { vote: { message: 'errors.vote_partial' } } }
+        return false
+      })
+      await act(async () => {
+        await probe.current?.cast()
+      })
+      expect(probe.current?.state).toMatchObject({
+        votedElsewhere: null,
+        castError: 'errors.vote_partial',
+        castQuestionId: 'q3',
+      })
+    })
+
+    it('a set that grows while the voter is on it: the step is kept, the new question is asked', async () => {
+      sdk.statuses = ['RESULTS', 'ONGOING', 'PAUSED']
+      const { reread } = await renderFlow()
+      act(() => sdk.watch?.({ '1': '0' }, { name: '1' }))
+      expect(probe.current?.screen).toEqual({ kind: 'roomQuestion', index: 1, paused: false })
+      sdk.statuses = ['RESULTS', 'ONGOING', 'ONGOING']
+      reread()
+      await waitFor(() => expect(probe.current?.form).toEqual([1, 2]))
+      expect(probe.current?.screen).toEqual({ kind: 'question', index: 2, paused: false, set: true })
+      act(() => sdk.watch?.({ '2': '1' }, { name: '2' }))
+      await waitFor(() => expect(probe.current?.screen).toEqual({ kind: 'review', paused: false, set: true, index: 2 }))
+    })
+
+    it('a set that shrinks to one: its answer to a question that closed is not sent', async () => {
+      sdk.statuses = ['RESULTS', 'ONGOING', 'ONGOING']
+      const { reread } = await renderFlow()
+      act(() => sdk.watch?.({ '1': '0' }, { name: '1' }))
+      sdk.statuses = ['RESULTS', 'RESULTS', 'ONGOING']
+      reread()
+      await waitFor(() => expect(probe.current?.form).toBeNull())
+      act(() => sdk.watch?.({ '2': '1' }, { name: '2' }))
+      await act(async () => {
+        await probe.current?.castQuestion(2)
+      })
+      expect(sdk.vote).toHaveBeenCalledTimes(1)
+      expect(Object.keys(sdk.vote.mock.calls[0][0])).toEqual(['2'])
+    })
+
+    it('a question that closed since the press is cast with the open set answers, not alone', async () => {
+      sdk.statuses = ['RESULTS', 'ONGOING', 'ONGOING']
+      const { reread } = await renderFlow()
+      answerBoth()
+      sdk.statuses = ['RESULTS', 'RESULTS', 'ONGOING']
+      reread()
+      await waitFor(() => expect(probe.current?.facts.room?.questions[1].state).toBe('closed'))
+      await act(async () => {
+        await probe.current?.castQuestion(1)
+      })
+      expect(Object.keys(sdk.vote.mock.calls[0][0])).toEqual(['1', '2'])
+    })
+
+    it('"Enrere" from the set\'s second question, with the first locked, parks the set rather than going to welcome', async () => {
+      setOpen()
+      sdk.pendingVotes = { q2: true }
+      await renderFlow()
+      act(() => probe.current?.back(2))
+      expect(probe.current?.screen).toEqual({ kind: 'roomOpen', index: 2 })
+    })
   })
 })

@@ -742,7 +742,6 @@ describe('voter legal notice placement', () => {
     ['roomSkipped', true],
     ['roomMissed', true],
     ['roomClosedVoted', true],
-    ['roomNotEligible', true],
     ['roomNone', true],
     ['roomQuestion', false],
     ['roomVoted', false],

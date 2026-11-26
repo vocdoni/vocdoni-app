@@ -61,21 +61,25 @@ export const RoomNotStartedScreen = () => {
 /** Frame 1 (and 1b): a question is open and the voter left its ballot. "Vota ara" is the one button. */
 export const RoomOpenScreen = ({ index }: { index: number }) => {
   const { t } = useTranslation()
-  const { moved, resume } = useVoterFlow()
+  const { moved, resume, form } = useVoterFlow()
   const { titleOf } = useRoomTexts()
+  // An open set waits together: every question of it, each in its card.
+  const shown = form ?? [index]
   return (
     <VoterScreenFrame kind='roomOpen'>
-      <ScreenKicker>{t('voter.room.kicker')}</ScreenKicker>
-      <ScreenHeading focus={moved}>{t('voter.room.open_title')}</ScreenHeading>
-      <Card.Root variant='ballot-feature' mt='6'>
-        <Status.Root size='ballot' tone='success'>
-          <Status.Indicator />
-          {t('voter.room.open_label', { number: index + 1 })}
-        </Status.Root>
-        <Card.Title textStyle='ballot-open-title' mt='1.5'>
-          {titleOf(index)}
-        </Card.Title>
-      </Card.Root>
+      <ScreenKicker>{t(form ? 'voter.room.kicker_set' : 'voter.room.kicker')}</ScreenKicker>
+      <ScreenHeading focus={moved}>{t(form ? 'voter.room.open_title_set' : 'voter.room.open_title')}</ScreenHeading>
+      {shown.map((shownIndex) => (
+        <Card.Root key={shownIndex} variant='ballot-feature' mt='6'>
+          <Status.Root size='ballot' tone='success'>
+            <Status.Indicator />
+            {t('voter.room.open_label', { number: shownIndex + 1 })}
+          </Status.Root>
+          <Card.Title textStyle='ballot-open-title' mt='1.5'>
+            {titleOf(shownIndex)}
+          </Card.Title>
+        </Card.Root>
+      ))}
       <VoterActionBar
         primary={
           <Button size='ballot' onClick={() => resume(index)}>
@@ -149,18 +153,18 @@ export const RoomVotedScreen = ({ index, record }: { index: number; record: Room
 /** Frame 3b: skipped. Nothing was sent (R12), and the voter can still vote it while it stays open. */
 export const RoomSkippedScreen = ({ index }: { index: number }) => {
   const { t } = useTranslation()
-  const { moved, resume } = useVoterFlow()
+  const { moved, resume, form } = useVoterFlow()
   const number = index + 1
   return (
     <VoterScreenFrame kind='roomSkipped'>
-      <ScreenKicker wide>{t('voter.room.open_label', { number })}</ScreenKicker>
+      <ScreenKicker wide>{form ? t('voter.room.open_label_set') : t('voter.room.open_label', { number })}</ScreenKicker>
       <ScreenHeading focus={moved} mt={{ base: '0', lg: '2' }}>
-        {t('voter.room.skipped_title', { number })}
+        {form ? t('voter.room.skipped_title_set') : t('voter.room.skipped_title', { number })}
       </ScreenHeading>
-      <ScreenHelp>{t('voter.room.skipped_help')}</ScreenHelp>
+      <ScreenHelp>{t(form ? 'voter.room.skipped_help_set' : 'voter.room.skipped_help')}</ScreenHelp>
       {/* In the column at every width, not in the action bar (board 3b). */}
       <Button variant='outline' size='ballot' mt='6' alignSelf='flex-start' onClick={() => resume(index)}>
-        {t('voter.room.vote_question', { number })}
+        {form ? t('voter.room.vote_question_set') : t('voter.room.vote_question', { number })}
       </Button>
       <Preparing />
     </VoterScreenFrame>
@@ -227,23 +231,6 @@ export const RoomMissedScreen = ({
       </ScreenHeading>
       {record ? <RoomCastNotice kind={record} /> : !showCard && <ScreenHelp>{t('voter.room.missed_help')}</ScreenHelp>}
       {showCard && <RoomResultCard question={question} />}
-      <Preparing />
-    </VoterScreenFrame>
-  )
-}
-
-/** The open question is not for this voter (the check's `canVote`): it says so, with no ballot and no button. */
-export const RoomNotEligibleScreen = ({ index }: { index: number }) => {
-  const { t } = useTranslation()
-  const { moved } = useVoterFlow()
-  const number = index + 1
-  return (
-    <VoterScreenFrame kind='roomNotEligible'>
-      <ScreenKicker wide>{t('voter.room.open_label', { number })}</ScreenKicker>
-      <ScreenHeading focus={moved} mt={{ base: '0', lg: '2' }}>
-        {t('voter.room.not_eligible_title', { number })}
-      </ScreenHeading>
-      <ScreenHelp>{t('voter.room.not_eligible_body')}</ScreenHelp>
       <Preparing />
     </VoterScreenFrame>
   )

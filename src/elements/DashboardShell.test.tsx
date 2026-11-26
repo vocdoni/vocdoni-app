@@ -60,12 +60,18 @@ const menu: DashboardMenuConfig = {
   sections: [],
 }
 
-const renderShell = () =>
-  render(
-    <TestMemoryRouter initialEntries={[Routes.dashboard.base]}>
-      <DashboardShell menu={menu} />
-    </TestMemoryRouter>
-  )
+// The segment inside the account menu starts its zag machine in a microtask after mount; flush it inside act.
+const renderShell = async () => {
+  let view!: ReturnType<typeof render>
+  await act(async () => {
+    view = render(
+      <TestMemoryRouter initialEntries={[Routes.dashboard.base]}>
+        <DashboardShell menu={menu} />
+      </TestMemoryRouter>
+    )
+  })
+  return view
+}
 
 const menuButton = () => screen.getByRole('button', { name: 'Open menu' })
 
@@ -75,8 +81,8 @@ describe('DashboardShell', () => {
     localStorage.clear()
   })
 
-  it('shows the top bar with the menu button, the organization and the account below lg', () => {
-    renderShell()
+  it('shows the top bar with the menu button, the organization and the account below lg', async () => {
+    await renderShell()
     const topBar = screen.getByRole('banner')
     expect(topBar).toBeVisible()
     expect(within(topBar).getByRole('button', { name: 'Open menu' })).toHaveAttribute('aria-expanded', 'false')
@@ -85,15 +91,15 @@ describe('DashboardShell', () => {
     expect(within(topBar).getByRole('button', { name: /^User menu/ })).toBeInTheDocument()
   })
 
-  it('keeps the sidebar out of view below lg', () => {
-    renderShell()
+  it('keeps the sidebar out of view below lg', async () => {
+    await renderShell()
     // jsdom applies the base styles, where the sidebar is display:none: its links are not reachable.
     expect(screen.queryByRole('link', { name: 'Dashboard' })).not.toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Dashboard', hidden: true })).not.toBeVisible()
   })
 
   it('opens the navigation drawer from the menu button and closes it with Escape', async () => {
-    renderShell()
+    await renderShell()
     const button = menuButton()
     fireEvent.click(button)
 
@@ -111,7 +117,7 @@ describe('DashboardShell', () => {
   })
 
   it('closes the drawer from its close button', async () => {
-    renderShell()
+    await renderShell()
     fireEvent.click(menuButton())
     const drawer = await screen.findByRole('dialog', { name: 'Menu' })
 
@@ -120,7 +126,7 @@ describe('DashboardShell', () => {
   })
 
   it('closes the drawer after navigating to another section', async () => {
-    renderShell()
+    await renderShell()
     fireEvent.click(menuButton())
     const drawer = await screen.findByRole('dialog', { name: 'Menu' })
 
@@ -129,7 +135,7 @@ describe('DashboardShell', () => {
   })
 
   it('closes the drawer once the screen reaches lg', async () => {
-    const { rerender } = renderShell()
+    const { rerender } = await renderShell()
     fireEvent.click(menuButton())
     await screen.findByRole('dialog', { name: 'Menu' })
 
@@ -146,17 +152,17 @@ describe('DashboardShell', () => {
 
   it('collapses only the sidebar: below lg the drawer keeps the full menu', async () => {
     localStorage.setItem(LocalStorageKeys.DashboardMenuReduced, 'true')
-    renderShell()
+    await renderShell()
     fireEvent.click(menuButton())
     const drawer = await screen.findByRole('dialog', { name: 'Menu' })
     // A reduced menu names its account button "User menu"; the full one shows the person's name.
     expect(within(drawer).getByRole('button', { name: /Marta/ })).toBeInTheDocument()
   })
 
-  it('collapses the sidebar from lg when the stored preference says so', () => {
+  it('collapses the sidebar from lg when the stored preference says so', async () => {
     localStorage.setItem(LocalStorageKeys.DashboardMenuReduced, 'true')
     mockUseIsDesktop.mockReturnValue(true)
-    renderShell()
+    await renderShell()
     expect(screen.getByLabelText('Expand menu')).toBeInTheDocument()
   })
 })

@@ -5,7 +5,6 @@ import {
   RoomClosedVotedScreen,
   RoomMissedScreen,
   RoomNoneScreen,
-  RoomNotEligibleScreen,
   RoomNotStartedScreen,
   RoomOpenScreen,
   RoomSkippedScreen,
@@ -55,6 +54,23 @@ describe('frame 1: a question is open', () => {
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('voter.room.open_title')
     expect(screen.getByText('voter.room.open_label')).toBeInTheDocument()
     expect(screen.getByText('Question 2')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'voter.room.vote_now' }))
+    expect(flow.resume).toHaveBeenCalledWith(1)
+  })
+})
+
+describe('frame 1: an open set', () => {
+  it('speaks of the questions together and lists each one', () => {
+    const flow = flowIn({ kind: 'roomOpen', index: 1 }, testRoom([['closed', 'recorded'], 'open', 'open']), {
+      form: [1, 2],
+    })
+    renderWithFlow(<RoomOpenScreen index={1} />, flow)
+    expect(screen.getByText('voter.room.kicker_set')).toBeInTheDocument()
+    expect(screen.queryByText('voter.room.kicker')).toBeNull()
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('voter.room.open_title_set')
+    expect(screen.getAllByText('voter.room.open_label')).toHaveLength(2)
+    expect(screen.getByText('Question 2')).toBeInTheDocument()
+    expect(screen.getByText('Question 3')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'voter.room.vote_now' }))
     expect(flow.resume).toHaveBeenCalledWith(1)
   })
@@ -159,6 +175,20 @@ describe('frame 3b: skipped', () => {
   })
 })
 
+describe('frame 3b: a skipped set', () => {
+  it('speaks of the questions together and offers to vote them', () => {
+    const flow = flowIn({ kind: 'roomSkipped', index: 1 }, testRoom([['closed', 'recorded'], 'open', 'open']), {
+      form: [1, 2],
+    })
+    renderWithFlow(<RoomSkippedScreen index={1} />, flow)
+    expect(screen.getByText('voter.room.open_label_set')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('voter.room.skipped_title_set')
+    expect(screen.getByText('voter.room.skipped_help_set')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'voter.room.vote_question_set' }))
+    expect(flow.resume).toHaveBeenCalledWith(1)
+  })
+})
+
 describe('frame 3c: closed without voting', () => {
   it('says it closed and was not voted', () => {
     renderWithFlow(
@@ -214,18 +244,6 @@ describe('frame 3c: a cast the chain does not hold (gate-3 F2, F3)', () => {
     expect(screen.queryByText('voter.room.missed_help')).toBeNull()
     // No "Comprova el teu vot" button: outcome is definitive, nothing to re-check.
     expect(screen.queryByRole('button', { name: 'voter.results.check_vote' })).toBeNull()
-  })
-})
-
-describe('the open question is not for this voter (gate-3 F10)', () => {
-  it('says so, with no ballot and no button', () => {
-    renderWithFlow(
-      <RoomNotEligibleScreen index={1} />,
-      flowIn({ kind: 'roomNotEligible', index: 1 }, testRoom([['closed', 'recorded'], 'open', 'toOpen']))
-    )
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('voter.room.not_eligible_title')
-    expect(screen.getByText('voter.room.not_eligible_body')).toBeInTheDocument()
-    expect(screen.queryByRole('button')).toBeNull()
   })
 })
 

@@ -10,11 +10,17 @@ import { useIsMobile } from '~components/ui/useIsMobile'
 import { useVoteText } from '~i18n/use-vote-text'
 import { useQuestionStatusAction } from '~queries/question-status'
 import { useRemembered } from '~queries/vote-pause'
-import { hasEndedBySchedule, isLastQuestionLeft, openQuestionBlock, questionElectorate } from '~utils/vote-state'
+import {
+  hasEndedBySchedule,
+  isLastQuestionLeft,
+  openQuestionBlock,
+  questionElectorate,
+  waitingQuestionIds,
+} from '~utils/vote-state'
 import { ActiveQuestionRow } from './ActiveQuestionRow'
 import { ClosedQuestionRow } from './ClosedQuestionRow'
 import { CloseQuestionDialog } from './CloseQuestionDialog'
-import { ActiveButtons, OpenButton, type QuestionControls } from './QuestionButtons'
+import { ActiveButtons, OpenAllButton, OpenButton, type QuestionControls } from './QuestionButtons'
 import { QuestionDock } from './QuestionDock'
 import { QuestionsHeader } from './QuestionsHeader'
 import { countRows, deriveRowState, isActiveRow, isStepFor, nextManageStep, type RowState } from './row-state'
@@ -22,9 +28,9 @@ import { useManageText } from './use-manage-text'
 import { WaitingQuestionRow } from './WaitingQuestionRow'
 
 /**
- * Gestió's questions card for a question-by-question vote (V4VoteOne, M4VoteOne): every question with its state and
- * result, the open one with its turnout and buttons, and on a phone a bottom bar with the active question's buttons.
- * Opening and closing run through the shared status runner; one question is open at a time (R29).
+ * Gestió's questions card for a question-by-question vote (V4VoteOne, M4VoteOne): each question's state and result,
+ * its buttons, and on a phone a bottom bar. Changes run through the shared status runner, one question or all the
+ * waiting ones in one batch.
  */
 export type ByQuestionCardProps = {
   /** The questions as Gestió shows them (the served tally merged in), in the process read's order. */
@@ -41,7 +47,7 @@ export const ByQuestionCard = ({ questions, notice }: ByQuestionCardProps) => {
   const stateLabel = useProcessStateLabel()
   // Behaviour, not look: only a phone gets the bottom bar (a second set of the active question's buttons).
   const phone = useIsMobile({ ssr: false })
-  const { change, pending, isBusy } = useQuestionStatusAction(election?.id)
+  const { change, openAll, openingAll, pending, isBusy } = useQuestionStatusAction(election?.id)
   const { votePause, canManage, state: voteState, now } = useActions()
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
   // Only the question's id: the dialog reads the live question, so votes arriving while it is open count.
@@ -109,13 +115,17 @@ export const ByQuestionCard = ({ questions, notice }: ByQuestionCardProps) => {
   }
 
   const toggle = (id: string) => () => setExpanded((current) => ({ ...current, [id]: !current[id] }))
-  // One question open at a time (R29): Open is the `off` button on the others, and says why.
-  const offs = election.questions.map((question) => {
-    const block = openQuestionBlock(election, question, now, remembered)
-    return block === 'otherActive' || block === 'beforeStart'
-  })
-  // Before the start and while the vote is paused Open shows, off: the header says when it starts, or resumes it.
+  // Before the start Open is off: the header says when it starts.
+  const offs = election.questions.map(
+    (question) => openQuestionBlock(election, question, now, remembered) === 'beforeStart'
+  )
   const openable = (state: RowState) => state === 'toOpen' && canManage && !canceled && !ended
+  // "Open all" opens the waiting questions in one job. One waiting question has its own Open, so it takes two or more.
+  const waitingIds = canManage ? waitingQuestionIds(election, now, remembered) : []
+  const openAllButton = (size?: 'md') =>
+    waitingIds.length > 1 && (
+      <OpenAllButton busy={isBusy} loading={openingAll} onOpenAll={() => void openAll(waitingIds)} size={size} />
+    )
 
   const activeButtons = (question: VotingProcessQuestion, index: number, state: RowState) => (
     <ActiveButtons
@@ -138,9 +148,9 @@ export const ByQuestionCard = ({ questions, notice }: ByQuestionCardProps) => {
     />
   )
 
-  // The phone's bottom bar: the active question, else the next one to open. None before the start (the API has no
-  // "start now"), while the vote is paused (the header's "Resume" is the one control), once it is over, or for someone
-  // who cannot change it.
+  // The phone's bottom bar: the active question's buttons (several open: their count), else the next one to open. None
+  // before the start (the API has no "start now"), while the vote is paused (the header's "Resume" is the one control),
+  // once it is over, or for someone who cannot change it.
   let dock: { title: string; note?: string; buttons: ReactNode } | null = null
   if (phone && canManage && underWay && !isHeld) {
     const activeIndex = states.findIndex((state) => state === 'open' || state === 'paused')
@@ -150,7 +160,18 @@ export const ByQuestionCard = ({ questions, notice }: ByQuestionCardProps) => {
         number: index + 1,
         title: text(election.questions[index].title),
       })
-    if (activeIndex >= 0) {
+    const activeCount = states.filter((state) => state === 'open' || state === 'paused').length
+    if (activeCount > 1) {
+      // Several open: the rows hold their buttons, the bar only counts them and offers Open all.
+      dock = {
+        title: t('votes.summary.dock.questions_open', {
+          defaultValue_one: '{{count, number}} question open',
+          defaultValue_other: '{{count, number}} questions open',
+          count: activeCount,
+        }),
+        buttons: null,
+      }
+    } else if (activeIndex >= 0) {
       const state = states[activeIndex]
       const question = questions[activeIndex]
       dock = {
@@ -182,7 +203,13 @@ export const ByQuestionCard = ({ questions, notice }: ByQuestionCardProps) => {
   return (
     <>
       <Card.Root variant='frame' as='section' aria-labelledby={headingId}>
-        <QuestionsHeader headingId={headingId} total={election.questions.length} counts={cardCounts} next={next} />
+        <QuestionsHeader
+          headingId={headingId}
+          total={election.questions.length}
+          counts={cardCounts}
+          next={next}
+          action={!phone && openAllButton()}
+        />
         {notice}
         <Box as='ol'>
           {questions.map((question, index) => {
@@ -228,13 +255,13 @@ export const ByQuestionCard = ({ questions, notice }: ByQuestionCardProps) => {
       {/* What an `off` Open describes itself with; the boards draw it nowhere. */}
       <VisuallyHidden id={reasonId}>
         {t('votes.manage.open_off_note', {
-          defaultValue:
-            '“Open” is disabled while another question is open, before the start time and while the vote is paused.',
+          defaultValue: '“Open” is disabled before the start time and while the vote is paused.',
         })}
       </VisuallyHidden>
       {dock && (
         <QuestionDock title={dock.title} note={dock.note}>
           {dock.buttons}
+          {openAllButton('md')}
         </QuestionDock>
       )}
       <CloseQuestionDialog

@@ -1,5 +1,5 @@
 import type { QuestionStatus, VotingProcessResponse } from '@vocdoni/api-types'
-import { render, screen, TestMemoryRouter } from '~src/test-utils'
+import { act, render, screen, TestMemoryRouter } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { ProcessView } from './ProcessView'
 
@@ -38,6 +38,7 @@ const createProcess = (status: QuestionStatus, initialStatus?: 'PAUSED', cancele
 
 const RESULTS = { questions: [{ voteCount: 184 }] }
 
+// The tabs' zag machine starts in a microtask after mount; render inside act so it settles in the test.
 const renderAt = (
   election: VotingProcessResponse,
   path = '/admin/process/0xabc',
@@ -47,10 +48,12 @@ const renderAt = (
   setReactProvidersMock({
     useElection: () => ({ id: election.id, election, status: election.questions[0].status, results }),
   })
-  return render(
-    <TestMemoryRouter initialEntries={[path]}>
-      <ProcessView />
-    </TestMemoryRouter>
+  return act(async () =>
+    render(
+      <TestMemoryRouter initialEntries={[path]}>
+        <ProcessView />
+      </TestMemoryRouter>
+    )
   )
 }
 
@@ -59,67 +62,67 @@ describe('ProcessView', () => {
     remembered = []
   })
 
-  it('offers Manage and Ballot for an all-at-once vote: the results are read on Manage', () => {
-    renderAt(createProcess('ONGOING'))
+  it('offers Manage and Ballot for an all-at-once vote: the results are read on Manage', async () => {
+    await renderAt(createProcess('ONGOING'))
 
     expect(screen.getAllByRole('tab').map((tab) => tab.textContent)).toEqual(['Manage', 'Ballot'])
   })
 
-  it('offers the same two tabs for a question-by-question vote, which is run from Manage', () => {
-    renderAt(createProcess('PAUSED', 'PAUSED'))
+  it('offers the same two tabs for a question-by-question vote, which is run from Manage', async () => {
+    await renderAt(createProcess('PAUSED', 'PAUSED'))
 
     expect(screen.getAllByRole('tab').map((tab) => tab.textContent)).toEqual(['Manage', 'Ballot'])
   })
 
-  it('has no Results tab for a closed vote either', () => {
-    renderAt(createProcess('RESULTS'))
+  it('has no Results tab for a closed vote either', async () => {
+    await renderAt(createProcess('RESULTS'))
 
     expect(screen.queryByRole('tab', { name: 'Results' })).toBeNull()
   })
 
-  it('selects the tab of the current route', () => {
-    renderAt(createProcess('RESULTS'))
+  it('selects the tab of the current route', async () => {
+    await renderAt(createProcess('RESULTS'))
     expect(screen.getByRole('tab', { name: 'Manage' })).toHaveAttribute('aria-selected', 'true')
   })
 
-  it('selects Ballot on its route', () => {
-    renderAt(createProcess('ONGOING'), '/admin/process/0xabc/ballot')
+  it('selects Ballot on its route', async () => {
+    await renderAt(createProcess('ONGOING'), '/admin/process/0xabc/ballot')
 
     expect(screen.getByRole('tab', { name: 'Ballot' })).toHaveAttribute('aria-selected', 'true')
   })
 
-  it('puts the pause banner under the tabs of a paused vote, on Manage', () => {
+  it('puts the pause banner under the tabs of a paused vote, on Manage', async () => {
     const paused = createProcess('PAUSED')
-    renderAt(paused)
+    await renderAt(paused)
     expect(screen.getByRole('status')).toHaveTextContent(
       'The vote is paused. Nobody can vote until it is resumed. The 184 votes cast are kept and the deadline does not change.'
     )
   })
 
-  it('gives no vote count in the banner before the results are read, nor when nobody has voted', () => {
+  it('gives no vote count in the banner before the results are read, nor when nobody has voted', async () => {
     const paused = createProcess('PAUSED')
-    const { unmount } = renderAt(paused, undefined, null)
+    const { unmount } = await renderAt(paused, undefined, null)
     expect(screen.getByRole('status')).toHaveTextContent(
       'The vote is paused. Nobody can vote until it is resumed. The deadline does not change.'
     )
     expect(screen.getByRole('status')).not.toHaveTextContent(/votes? cast/)
     unmount()
 
-    renderAt(paused, undefined, { questions: [{ voteCount: 0 }] })
+    await renderAt(paused, undefined, { questions: [{ voteCount: 0 }] })
     expect(screen.getByRole('status')).not.toHaveTextContent(/votes? cast/)
   })
 
-  it('shows the pause banner on the Ballot tab too, not only on Manage', () => {
-    renderAt(createProcess('PAUSED'), '/admin/process/0xabc/ballot')
+  it('shows the pause banner on the Ballot tab too, not only on Manage', async () => {
+    await renderAt(createProcess('PAUSED'), '/admin/process/0xabc/ballot')
 
     expect(screen.getByRole('status')).toHaveTextContent(
       'The vote is paused. Nobody can vote until it is resumed. The 184 votes cast are kept and the deadline does not change.'
     )
   })
 
-  it('shows the banner on Manage for a question-by-question vote paused as a whole', () => {
+  it('shows the banner on Manage for a question-by-question vote paused as a whole', async () => {
     remembered = ['q1']
-    renderAt(createProcess('PAUSED', 'PAUSED'))
+    await renderAt(createProcess('PAUSED', 'PAUSED'))
 
     expect(screen.getByRole('status')).toHaveTextContent(
       'The vote is paused. Nobody can vote, and no question can be opened or closed until it is resumed. The votes cast are kept.'

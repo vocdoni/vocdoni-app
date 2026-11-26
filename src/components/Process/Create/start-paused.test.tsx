@@ -9,7 +9,7 @@ vi.mock('~components/AnalyticsProvider', () => ({ useAnalytics: () => ({ trackPl
 
 const censusSpec = { type: CensusTypes.CSP } as never
 
-const build = (votingMode: Process['votingMode'], flag: boolean, over: Partial<Process> = {}) => {
+const build = (startPaused: boolean, flag: boolean, over: Partial<Process> = {}) => {
   setReactProvidersMock({
     useOrganization: vi.fn().mockReturnValue({ organization: { address: 'org-address' } }),
   })
@@ -19,28 +19,28 @@ const build = (votingMode: Process['votingMode'], flag: boolean, over: Partial<P
     ),
   })
 
-  return result.current({ ...defaultProcessValues, title: 'Vote', votingMode, ...over }, censusSpec)
+  return result.current({ ...defaultProcessValues, title: 'Vote', startPaused, ...over }, censusSpec)
 }
 
-describe('useFormToVotingProcessRequest voting mode', () => {
-  it.each([true, false])('sends initialStatus PAUSED for byQuestion (flag %s)', (flag) => {
-    expect(build('byQuestion', flag)).toMatchObject({ initialStatus: 'PAUSED' })
+describe('useFormToVotingProcessRequest start paused', () => {
+  it.each([true, false])('sends initialStatus PAUSED when the questions start paused (flag %s)', (flag) => {
+    expect(build(true, flag)).toMatchObject({ initialStatus: 'PAUSED' })
   })
 
-  it.each([true, false])('leaves initialStatus out for all at once (flag %s)', (flag) => {
-    expect(build('all', flag)).not.toHaveProperty('initialStatus')
+  it.each([true, false])('leaves initialStatus out when the questions start open (flag %s)', (flag) => {
+    expect(build(false, flag)).not.toHaveProperty('initialStatus')
   })
 })
 
 describe('useFormToVotingProcessRequest results for voters', () => {
-  it.each(['all', 'byQuestion'] as const)('writes the choice on every question (%s)', (mode) => {
+  it.each([false, true])('writes the choice on every question (startPaused %s)', (startPaused) => {
     const questions = [defaultQuestion, defaultQuestion]
-    const on = build(mode, true, { showVoterResults: true, questions })
+    const on = build(startPaused, true, { showVoterResults: true, questions })
     expect(on.questions.map((question) => question.metadata)).toEqual([
       { voterResults: 'shown' },
       { voterResults: 'shown' },
     ])
-    const off = build(mode, true, { showVoterResults: false, questions })
+    const off = build(startPaused, true, { showVoterResults: false, questions })
     expect(off.questions.map((question) => question.metadata)).toEqual([
       { voterResults: 'hidden' },
       { voterResults: 'hidden' },
@@ -49,7 +49,7 @@ describe('useFormToVotingProcessRequest results for voters', () => {
 
   it('keeps the choices metadata beside it', () => {
     const question = { ...defaultQuestion, extendedInfo: true, options: [{ option: 'A', description: 'Why' }] }
-    const request = build('byQuestion', true, { showVoterResults: true, questions: [question] })
+    const request = build(true, true, { showVoterResults: true, questions: [question] })
     expect(request.questions[0].metadata).toMatchObject({ voterResults: 'shown', choices: [{ value: 0 }] })
   })
 })

@@ -28,17 +28,11 @@ vi.mock('~components/Layout/Uploader', () => ({
   ImageUploader: () => <div data-testid='image-uploader' />,
 }))
 
-const QuestionsHarness = ({
-  questionCount,
-  votingMode = 'all',
-}: {
-  questionCount: number
-  votingMode?: Process['votingMode']
-}) => {
+const QuestionsHarness = ({ questionCount, startPaused = false }: { questionCount: number; startPaused?: boolean }) => {
   const methods = useForm<Process>({
     defaultValues: {
       ...defaultProcessValues,
-      votingMode,
+      startPaused,
       questions: Array.from({ length: questionCount }, () => ({ ...defaultQuestion })),
     },
   })
@@ -68,35 +62,36 @@ describe('Questions', () => {
     expect(screen.getByText(/at most 15 questions/)).toBeInTheDocument()
   })
 
-  describe('voting mode', () => {
-    it('lets the organizer choose question by question when the flag is on', async () => {
+  describe('start paused', () => {
+    const label = /Open the questions yourself/
+
+    it('lets the organizer open the questions themselves when the flag is on', async () => {
       const user = userEvent.setup()
       render(<QuestionsHarness questionCount={1} />, { appEnv: { QUESTION_BY_QUESTION: true } })
 
-      expect(screen.getByRole('radiogroup', { name: 'How people vote' })).toBeInTheDocument()
-      expect(screen.queryByText(/Questions start closed/)).not.toBeInTheDocument()
+      expect(screen.getByRole('checkbox', { name: label })).not.toBeChecked()
+      expect(screen.getByRole('checkbox', { name: label })).toBeEnabled()
+      expect(screen.getByRole('checkbox', { name: label })).toHaveAccessibleDescription(/start paused/)
 
-      await user.click(screen.getByRole('radio', { name: 'Question by question', hidden: true }))
+      await user.click(screen.getByRole('checkbox', { name: label }))
 
-      expect(screen.getByRole('radio', { name: 'Question by question', hidden: true })).toBeChecked()
-      expect(screen.getByText(/Questions start closed/)).toBeInTheDocument()
+      expect(screen.getByRole('checkbox', { name: label })).toBeChecked()
     })
 
     it('hides the switch when the flag is off', () => {
       render(<QuestionsHarness questionCount={1} />, { appEnv: { QUESTION_BY_QUESTION: false } })
 
-      expect(screen.queryByRole('radiogroup')).not.toBeInTheDocument()
-      expect(screen.queryByText(/Questions start closed/)).not.toBeInTheDocument()
+      expect(screen.queryByRole('checkbox', { name: label })).not.toBeInTheDocument()
     })
 
-    it('shows the kept mode read-only when the flag is off and the draft is question by question', () => {
-      render(<QuestionsHarness questionCount={1} votingMode='byQuestion' />, {
+    it('keeps a draft that started paused on, read-only, when the flag is off', () => {
+      render(<QuestionsHarness questionCount={1} startPaused />, {
         appEnv: { QUESTION_BY_QUESTION: false },
       })
 
-      expect(screen.queryByRole('radiogroup')).not.toBeInTheDocument()
-      expect(screen.getByText('Question by question')).toBeInTheDocument()
-      expect(screen.getByText(/Questions start closed/)).toBeInTheDocument()
+      expect(screen.getByRole('checkbox', { name: label })).toBeChecked()
+      expect(screen.getByRole('checkbox', { name: label })).toBeDisabled()
+      expect(screen.getByRole('checkbox', { name: label })).toHaveAccessibleDescription(/can't change it here/)
     })
   })
 })

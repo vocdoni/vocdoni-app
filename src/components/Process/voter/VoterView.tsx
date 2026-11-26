@@ -21,7 +21,6 @@ import {
   RoomClosedVotedScreen,
   RoomMissedScreen,
   RoomNoneScreen,
-  RoomNotEligibleScreen,
   RoomNotStartedScreen,
   RoomOpenScreen,
   RoomSkippedScreen,
@@ -61,7 +60,6 @@ const COLUMN: Partial<Record<VoterScreenKind, VoterShellColumn>> = {
   roomSkipped: 'rail',
   roomMissed: 'rail',
   roomClosedVoted: 'rail',
-  roomNotEligible: 'rail',
   roomNone: 'rail',
 }
 
@@ -112,14 +110,7 @@ const Screen = ({ screen }: { screen: VoterScreen }) => {
     case 'roomOpen':
       return <RoomOpenScreen key={screen.index} index={screen.index} />
     case 'roomQuestion':
-      return (
-        <RoomQuestionScreen
-          key={screen.index}
-          index={screen.index}
-          paused={screen.paused}
-          blocked={screen.blocked === true}
-        />
-      )
+      return <RoomQuestionScreen key={screen.index} index={screen.index} paused={screen.paused} />
     case 'roomVoted':
       return <RoomVotedScreen key={screen.index} index={screen.index} record={screen.record} />
     case 'roomSkipped':
@@ -135,8 +126,6 @@ const Screen = ({ screen }: { screen: VoterScreen }) => {
       )
     case 'roomClosedVoted':
       return <RoomClosedVotedScreen key={screen.index} index={screen.index} />
-    case 'roomNotEligible':
-      return <RoomNotEligibleScreen key={screen.index} index={screen.index} />
     case 'roomNone':
       return <RoomNoneScreen />
   }
@@ -160,7 +149,6 @@ const LEGAL_NOTICE_SCREENS: ReadonlySet<VoterScreenKind> = new Set<VoterScreenKi
   'roomSkipped',
   'roomMissed',
   'roomClosedVoted',
-  'roomNotEligible',
   'roomNone',
   'results',
 ])
@@ -177,10 +165,12 @@ export const showsLegalNotice = (kind: VoterScreenKind): boolean => LEGAL_NOTICE
 export const VoterView = ({ publicLanguageLinks }: { publicLanguageLinks?: Record<string, string> }) => {
   const { t } = useTranslation()
   const { screen, election, brand, facts } = useVoterFlow()
-  const ballot = screen.kind === 'question' || screen.kind === 'review'
+  // An open set answered in one form is the classic ballot inside the room: the room keeps its head, progress and agenda.
+  const formInRoom = (screen.kind === 'question' || screen.kind === 'review') && screen.set === true
+  const ballot = (screen.kind === 'question' || screen.kind === 'review') && !formInRoom
   // Question by question: the room's frames keep the vote's head, the strip's progress and the agenda (boards
   // V4VoterWideLive / M4VoterLive 0 to 4); the head's line is the room's live one.
-  const room = facts.room && isRoomScreen(screen) ? facts.room : null
+  const room = facts.room && (isRoomScreen(screen) || formInRoom) ? facts.room : null
   const total = election.questions.length
   const reached = screen.kind === 'question' ? screen.index + 1 : total
   const label =

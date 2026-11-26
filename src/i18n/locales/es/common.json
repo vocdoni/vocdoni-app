@@ -1391,17 +1391,16 @@
     },
     "settings": "Configuración",
     "start_datetime": "Fecha y hora de inicio",
+    "start_paused": {
+      "hint": "Las preguntas empiezan en pausa. Las abres desde la página de la votación, una a una, por grupos o todas a la vez.",
+      "label": "Abre tú mismo las preguntas",
+      "locked": "Este borrador ya empieza en pausa. Aquí no puedes cambiarlo."
+    },
     "voter_results": {
       "help_all": "Quien vota puede ver los resultados en la página de votación. Los resultados ocultos hasta el final aparecen cuando acaba la votación.",
       "help_by_question": "Quien vota ve el resultado de cada pregunta cuando se cierra, y todos los resultados cuando acaba la votación.",
       "help_by_question_hidden": "Con los resultados ocultos, los votantes los verán todos cuando acabe la votación.",
       "label": "Mostrar los resultados a los votantes"
-    },
-    "voting_mode": {
-      "all": "Todo a la vez",
-      "by_question": "Pregunta a pregunta",
-      "by_question_hint": "Las preguntas empiezan cerradas. Las abres una a una desde la página de la votación, y el resultado de cada pregunta se muestra cuando la cierras.",
-      "label": "Cómo vota la gente"
     },
     "weight": {
       "equal": "Una persona, un voto",
@@ -1920,7 +1919,6 @@
       "room_none_one": "Ninguna pregunta abierta. {{count}} de {{total}} cerrada",
       "room_none_many": "Ninguna pregunta abierta. {{count}} de {{total}} cerradas",
       "room_none_other": "Ninguna pregunta abierta. {{count}} de {{total}} cerradas",
-      "room_not_eligible": "Pregunta {{current}} de {{total}}, no puedes votarla",
       "room_not_started": "Todavía no se ha abierto ninguna pregunta",
       "room_open": "Pregunta {{current}} de {{total}}, abierta ahora",
       "room_skipped": "Pregunta {{current}} de {{total}}, abierta. No la has votado.",
@@ -2031,7 +2029,6 @@
       "weight_value": "Tu voto vale {{weight}}"
     },
     "room": {
-      "blocked": "Ahora hay más de una pregunta abierta. Podrás votar cuando solo haya una.",
       "closed_label": "Pregunta {{number}}, cerrada",
       "closed_title": "La pregunta {{number}} se ha cerrado",
       "closed_voted_help": "Has votado.",
@@ -2042,6 +2039,7 @@
       "fold_more_other": "{{count}} preguntas más",
       "fold_more_note": "De la {{from}} a la {{to}}.",
       "kicker": "Las preguntas se abren una a una.",
+      "kicker_set": "Las preguntas se abren juntas.",
       "late_help": "Tu voto llegó después de que se cerrara la pregunta y no se ha contabilizado.",
       "late_title": "Tu voto llegó demasiado tarde",
       "live": "En directo. Se actualiza sola.",
@@ -2052,21 +2050,24 @@
       "next": "La siguiente",
       "none_body": "Cuando se abra una, aparecerá aquí sola. No hace falta que recargues la página.",
       "none_title": "Ahora mismo no hay ninguna pregunta abierta",
-      "not_eligible_body": "No estás en la lista de personas que pueden votar esta pregunta.",
-      "not_eligible_title": "No puedes votar la pregunta {{number}}",
       "not_started_body": "Cuando la organización abra la primera pregunta, aparecerá aquí sola. No hace falta que recargues la página.",
       "not_started_line": "Aún no ha empezado",
       "not_started_title": "La votación aún no ha empezado",
       "note_weighted": "Tu voto vale {{weight}}. Una vez emitido, no se puede cambiar.",
       "open_label": "Pregunta {{number}}, abierta ahora",
+      "open_label_set": "Preguntas abiertas ahora",
       "open_title": "Hay una pregunta abierta",
+      "open_title_set": "Hay preguntas abiertas",
       "preparing": "Se está preparando la siguiente pregunta. Aparecerá aquí sola cuando se abra.",
       "questions": "Las preguntas",
       "result_title": "Resultado",
       "show_them": "Muéstralas",
       "skip": "No votar esta pregunta",
+      "skip_set": "No votar estas preguntas",
       "skipped_help": "No se ha enviado nada. Mientras siga abierta, aún puedes votarla.",
+      "skipped_help_set": "No se ha enviado nada. Mientras sigan abiertas, aún puedes votarlas.",
       "skipped_title": "No has votado la pregunta {{number}}",
+      "skipped_title_set": "No has votado estas preguntas",
       "state": {
         "canceled": "Cancelada",
         "closed": "Cerrada",
@@ -2075,7 +2076,6 @@
         "closed_missed": "Cerrada. No la has votado.",
         "closed_unknown": "Cerrada. No se pudo confirmar tu voto.",
         "closed_voted": "Cerrada. Has votado.",
-        "not_eligible": "No puedes votarla.",
         "open": "Abierta ahora",
         "open_lost": "Abierta. Error: tu voto no se ha registrado.",
         "open_skipped": "Abierta. No la has votado.",
@@ -2087,6 +2087,7 @@
       "unconfirmed_title": "No hemos podido confirmar tu voto",
       "vote_now": "Vota ahora",
       "vote_question": "Vota la pregunta {{number}}",
+      "vote_question_set": "Vota estas preguntas",
       "voted_elsewhere": "Ya habías votado esta pregunta desde otro dispositivo.",
       "voted_title": "Voto emitido en la pregunta {{number}}",
       "will_vote": "Votarás: <answer>{{answer}}</answer>"
@@ -2547,6 +2548,7 @@
       },
       "error": {
         "busy": "Hay otro cambio en curso. Vuelve a intentarlo dentro de unos segundos.",
+        "open_all": "No se pudieron abrir las preguntas",
         "stale": "La pregunta ya había cambiado de estado.",
         "timeout": "Esto tarda más de lo previsto. El estado se actualizará solo.",
         "title": "No se ha podido cambiar la pregunta"
@@ -2562,7 +2564,8 @@
         "resume_vote": "Siguiente paso: reanuda la votación"
       },
       "open": "Abrir",
-      "open_off_note": "«Abrir» aparece desactivado mientras hay otra pregunta abierta, antes de la hora de inicio y mientras la votación está en pausa.",
+      "open_all": "Abrir todas",
+      "open_off_note": "«Abrir» aparece desactivado antes de la hora de inicio y mientras la votación está en pausa.",
       "paused_note": "Nadie puede votarla.",
       "percent": "{{percent}}%",
       "provisional": "Resultado provisional.",
@@ -2662,6 +2665,9 @@
       "count_unknown": "No se ha podido cargar la participación.",
       "dock": {
         "label": "Controles de la votación",
+        "questions_open_one": "{{count, number}} pregunta abierta",
+        "questions_open_many": "{{count, number}} preguntas abiertas",
+        "questions_open_other": "{{count, number}} preguntas abiertas",
         "state_votes": "{{state}}, {{votes}}",
         "title": "{{number}}. {{title}}"
       },
@@ -2705,11 +2711,11 @@
         "of_other": "Han votado {{count, number}} de {{total}} personas, el {{percent}}%."
       },
       "idle": {
-        "by_question_body": "Cuando empiece, las preguntas empezarán cerradas y las irás abriendo de una en una.",
+        "by_question_body": "Cuando empiece, las preguntas empezarán en pausa y las abrirás cuando quieras.",
         "by_question_started_body": "Abre la primera pregunta para empezar la votación.",
         "by_question_started_title": "Todavía no hay ninguna pregunta abierta",
-        "by_question_started_viewer_body": "El organizador abre las preguntas de una en una.",
-        "by_question_viewer_body": "Cuando empiece, las preguntas estarán cerradas y el organizador las abrirá de una en una.",
+        "by_question_started_viewer_body": "El organizador abre las preguntas cuando quiere.",
+        "by_question_viewer_body": "Cuando empiece, las preguntas estarán en pausa y el organizador las abrirá cuando quiera.",
         "canceled_body": "Los votos emitidos se han descartado. No hay resultados.",
         "canceled_hint": "Puedes duplicarla para volver a convocarla.",
         "canceled_title": "Votación cancelada",

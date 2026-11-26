@@ -1360,17 +1360,16 @@
     },
     "settings": "Settings",
     "start_datetime": "Start date and time",
+    "start_paused": {
+      "hint": "The questions start paused. You open them one by one, in groups or all at once, from the vote's page.",
+      "label": "Open the questions yourself",
+      "locked": "This draft already starts paused. You can't change it here."
+    },
     "voter_results": {
       "help_all": "Voters can see the results on the voting page. Results hidden until the end appear when the vote ends.",
       "help_by_question": "Voters see each question's result when it closes, and every result when the vote ends.",
       "help_by_question_hidden": "With the results hidden, voters see them all when the vote ends.",
       "label": "Show the results to voters"
-    },
-    "voting_mode": {
-      "all": "All at once",
-      "by_question": "Question by question",
-      "by_question_hint": "Questions start closed. You open them one by one from the vote's page, and each question's result shows when you close it.",
-      "label": "How people vote"
     },
     "weight": {
       "equal": "One person, one vote",
@@ -1880,7 +1879,6 @@
       "room_lost": "Question {{current}} of {{total}}, error: your vote was not recorded",
       "room_none_one": "No question open. {{count}} of {{total}} closed",
       "room_none_other": "No question open. {{count}} of {{total}} closed",
-      "room_not_eligible": "Question {{current}} of {{total}}, you can't vote on it",
       "room_not_started": "No question has opened yet",
       "room_open": "Question {{current}} of {{total}}, open now",
       "room_skipped": "Question {{current}} of {{total}}, open. You haven't voted on it.",
@@ -1977,7 +1975,6 @@
       "weight_value": "Your vote counts {{weight}}"
     },
     "room": {
-      "blocked": "More than one question is open right now. You can vote when only one is open.",
       "closed_label": "Question {{number}}, closed",
       "closed_title": "Question {{number}} has closed",
       "closed_voted_help": "You voted.",
@@ -1987,6 +1984,7 @@
       "fold_more_other": "{{count}} more questions",
       "fold_more_note": "From {{from}} to {{to}}.",
       "kicker": "Questions open one at a time.",
+      "kicker_set": "Questions open together.",
       "late_help": "Your vote arrived after the question had closed and was not counted.",
       "late_title": "Your vote arrived too late",
       "live": "Live. Updates by itself.",
@@ -1997,21 +1995,24 @@
       "next": "Next",
       "none_body": "When one opens, it will appear here by itself. You don't need to reload the page.",
       "none_title": "No question is open right now",
-      "not_eligible_body": "You're not on the list of people who can vote on this question.",
-      "not_eligible_title": "You can't vote on question {{number}}",
       "not_started_body": "When the organization opens the first question, it will show here by itself. There is no need to reload the page.",
       "not_started_line": "Not started yet",
       "not_started_title": "The vote has not started yet",
       "note_weighted": "Your vote counts {{weight}}. Once cast, it can't be changed.",
       "open_label": "Question {{number}}, open now",
+      "open_label_set": "Questions open now",
       "open_title": "A question is open",
+      "open_title_set": "Questions are open",
       "preparing": "The next question is being prepared. It will show here by itself when it opens.",
       "questions": "The questions",
       "result_title": "Result",
       "show_them": "Show them",
       "skip": "Do not vote on this question",
+      "skip_set": "Do not vote on these questions",
       "skipped_help": "Nothing was sent. While it stays open, you can still vote on it.",
+      "skipped_help_set": "Nothing was sent. While they stay open, you can still vote on them.",
       "skipped_title": "You haven't voted on question {{number}}",
+      "skipped_title_set": "You haven't voted on these questions",
       "state": {
         "canceled": "Canceled",
         "closed": "Closed",
@@ -2020,7 +2021,6 @@
         "closed_missed": "Closed. You didn't vote on it.",
         "closed_unknown": "Closed. Your vote could not be confirmed.",
         "closed_voted": "Closed. You voted.",
-        "not_eligible": "You can't vote on it.",
         "open": "Open now",
         "open_lost": "Open. Error: your vote was not recorded.",
         "open_skipped": "Open. You haven't voted on it.",
@@ -2032,6 +2032,7 @@
       "unconfirmed_title": "We could not confirm your vote",
       "vote_now": "Vote now",
       "vote_question": "Vote on question {{number}}",
+      "vote_question_set": "Vote on these questions",
       "voted_elsewhere": "You had already voted on this question from another device.",
       "voted_title": "Vote cast on question {{number}}",
       "will_vote": "You will vote: <answer>{{answer}}</answer>"
@@ -2455,6 +2456,7 @@
       },
       "error": {
         "busy": "Another change is under way. Try again in a few seconds.",
+        "open_all": "The questions could not open",
         "stale": "The question had already changed state.",
         "timeout": "This is taking longer than expected. The state will update on its own.",
         "title": "The question could not change"
@@ -2469,7 +2471,8 @@
         "resume_vote": "Next step: resume the vote"
       },
       "open": "Open",
-      "open_off_note": "“Open” is disabled while another question is open, before the start time and while the vote is paused.",
+      "open_all": "Open all",
+      "open_off_note": "“Open” is disabled before the start time and while the vote is paused.",
       "paused_note": "No one can vote on it.",
       "percent": "{{percent}}%",
       "provisional": "Provisional result.",
@@ -2564,6 +2567,8 @@
       "count_unknown": "The turnout could not be loaded.",
       "dock": {
         "label": "Vote controls",
+        "questions_open_one": "{{count, number}} question open",
+        "questions_open_other": "{{count, number}} questions open",
         "state_votes": "{{state}}, {{votes}}",
         "title": "{{number}}. {{title}}"
       },
@@ -2601,11 +2606,11 @@
         "of_other": "{{count, number}} of {{total}} people have voted, {{percent}}%."
       },
       "idle": {
-        "by_question_body": "When it starts, the questions start closed and you open them one at a time.",
+        "by_question_body": "When it starts, the questions start paused and you open them when you choose.",
         "by_question_started_body": "Open the first question to start the vote.",
         "by_question_started_title": "No question is open yet",
-        "by_question_started_viewer_body": "The organizer opens the questions one at a time.",
-        "by_question_viewer_body": "When it starts, the questions start closed and the organizer opens them one at a time.",
+        "by_question_started_viewer_body": "The organizer opens the questions when they choose.",
+        "by_question_viewer_body": "When it starts, the questions start paused and the organizer opens them when they choose.",
         "canceled_body": "The votes cast were discarded. There are no results.",
         "canceled_hint": "You can duplicate it to call it again.",
         "canceled_title": "Vote canceled",

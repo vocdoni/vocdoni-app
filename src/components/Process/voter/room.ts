@@ -11,7 +11,6 @@ export type RoomNote =
   | 'openVoted'
   | 'openSkipped'
   | 'openLost'
-  | 'notEligible'
   | 'paused'
   | 'closed'
   | 'closedVoted'
@@ -30,7 +29,6 @@ export const ROOM_SCREENS: ReadonlySet<VoterScreenKind> = new Set<VoterScreenKin
   'roomSkipped',
   'roomMissed',
   'roomClosedVoted',
-  'roomNotEligible',
   'roomNone',
 ])
 
@@ -44,14 +42,13 @@ const isClosed = (question: RoomQuestion) => CLOSED.has(question.state)
  * Esperant que es tanqui."), closed and cast ("Tancada", a tick), closed and not cast ("Tancada. No l'has votada.", the
  * quiet ring). A held (paused) question stays current; a canceled one is quiet. Only a vote the chain holds (or the CSP
  * authorised, anonymous) gets the tick: a lost one says it was not recorded, one of unknown outcome that it could not
- * be confirmed (gate-3 F2, F3). A question this voter may not vote is quiet and says so while open.
+ * be confirmed (gate-3 F2, F3).
  */
 export const roomRowOf = (question: RoomQuestion, skipped: boolean): { state: RoomRowState; note: RoomNote } => {
   switch (question.state) {
     case 'open':
       if (question.cast === 'lost') return { state: 'now', note: 'openLost' }
       if (isRoomCast(question)) return { state: 'done', note: 'openVoted' }
-      if (!isRoomEligible(question)) return { state: 'pending', note: 'notEligible' }
       return { state: 'now', note: skipped ? 'openSkipped' : 'open' }
     case 'paused':
       return { state: 'now', note: 'paused' }
@@ -59,11 +56,7 @@ export const roomRowOf = (question: RoomQuestion, skipped: boolean): { state: Ro
       if (question.cast === 'lost') return { state: 'skipped', note: 'closedLost' }
       if (question.cast === 'unknown') return { state: 'skipped', note: 'closedUnknown' }
       if (question.cast === 'late') return { state: 'skipped', note: 'closedLate' }
-      if (!isRoomCast(question)) {
-        return isRoomEligible(question)
-          ? { state: 'skipped', note: 'closedMissed' }
-          : { state: 'pending', note: 'closed' }
-      }
+      if (!isRoomCast(question)) return { state: 'skipped', note: 'closedMissed' }
       // "Tancada. Has votat." when the voter is shown the result and their vote is on chain.
       return { state: 'done', note: question.showsResult && question.cast === 'recorded' ? 'closedVoted' : 'closed' }
     case 'notOpened':
@@ -101,33 +94,45 @@ const anchorOf = (questions: readonly RoomQuestion[]): number => {
 /**
  * The rail's entries. A long agenda folds the closed run before the anchor into one row, keeps the anchor and the
  * three next, and folds the rest into a last row; each fold opens on its own ("Mostra-les"). A group folds only when it
- * would hide two rows or more.
+ * would hide two rows or more. The folds count the rows shown: a question this voter may not vote has none.
  */
 export const roomRail = (room: RoomFacts, skipped: readonly string[], expanded: RoomRailExpanded): RoomRailEntry[] => {
   const { questions } = room
-  const rows: RoomRailEntry[] = questions.map((question, index) => ({
-    kind: 'row',
+  // Each row keeps its agenda number, so the numbers of the shown rows may skip.
+  const shown = questions.flatMap((question, index) => (isRoomEligible(question) ? [index] : []))
+  const rows = shown.map((index) => ({
+    kind: 'row' as const,
     index,
-    ...roomRowOf(question, skipped.includes(question.id)),
+    ...roomRowOf(questions[index], skipped.includes(questions[index].id)),
   }))
-  if (questions.length < ROOM_RAIL_FOLD_FROM) return rows
-  const anchor = anchorOf(questions)
+  if (rows.length < ROOM_RAIL_FOLD_FROM) return rows
+  const visible = shown.map((index) => questions[index])
+  const anchor = anchorOf(visible)
   let closedRun = 0
-  while (closedRun < anchor && isClosed(questions[closedRun])) closedRun++
+  while (closedRun < anchor && isClosed(visible[closedRun])) closedRun++
   const foldClosed = !expanded.closed && closedRun >= 2
   const moreFrom = anchor + ROOM_RAIL_AHEAD + 1
-  const moreCount = questions.length - moreFrom
+  const moreCount = rows.length - moreFrom
   const foldMore = !expanded.more && moreCount >= 2
-  const entries: RoomRailEntry[] = foldClosed ? [{ kind: 'closed', from: 1, to: closedRun }] : []
-  rows.forEach((row, index) => {
-    if ((foldClosed && index < closedRun) || (foldMore && index >= moreFrom)) return
+  const entries: RoomRailEntry[] = foldClosed
+    ? [{ kind: 'closed', from: rows[0].index + 1, to: rows[closedRun - 1].index + 1 }]
+    : []
+  rows.forEach((row, position) => {
+    if ((foldClosed && position < closedRun) || (foldMore && position >= moreFrom)) return
     entries.push(row)
   })
-  if (foldMore) entries.push({ kind: 'more', from: moreFrom + 1, to: questions.length, count: moreCount })
+  if (foldMore) {
+    entries.push({
+      kind: 'more',
+      from: rows[moreFrom].index + 1,
+      to: rows[rows.length - 1].index + 1,
+      count: moreCount,
+    })
+  }
   return entries
 }
 
-export type RoomProgressKind = 'notStarted' | 'open' | 'paused' | 'voted' | 'lost' | 'skipped' | 'notEligible' | 'none'
+export type RoomProgressKind = 'notStarted' | 'open' | 'paused' | 'voted' | 'lost' | 'skipped' | 'none'
 /** What the strip says and how far its line goes: `value` of `total` (StepProgress). */
 export type RoomProgress = { kind: RoomProgressKind; current: number; closed: number; total: number; value: number }
 
@@ -138,15 +143,14 @@ export type RoomProgress = { kind: RoomProgressKind; current: number; closed: nu
  * its place alone. Null off the room frames.
  */
 export const roomProgress = (room: RoomFacts, screen: VoterScreen): RoomProgress | null => {
-  const total = room.questions.length
-  const closed = room.questions.filter(isClosed).length
-  const at = (kind: RoomProgressKind, index: number): RoomProgress => ({
-    kind,
-    current: index + 1,
-    closed,
-    total,
-    value: index + 1,
-  })
+  // The strip counts the questions this voter may vote, so its places run over those alone (the rail keeps the numbers).
+  const votable = room.questions.filter(isRoomEligible)
+  const total = votable.length
+  const closed = votable.filter(isClosed).length
+  const at = (kind: RoomProgressKind, index: number): RoomProgress => {
+    const current = votable.indexOf(room.questions[index]) + 1
+    return { kind, current, closed, total, value: current }
+  }
   switch (screen.kind) {
     case 'roomNotStarted':
       return { kind: 'notStarted', current: 0, closed, total, value: 0 }
@@ -156,10 +160,13 @@ export const roomProgress = (room: RoomFacts, screen: VoterScreen): RoomProgress
       return at(screen.paused ? 'paused' : 'open', screen.index)
     case 'roomVoted':
       return at(screen.record === 'lost' ? 'lost' : 'voted', screen.index)
-    case 'roomNotEligible':
-      return at('notEligible', screen.index)
     case 'roomSkipped':
       return at('skipped', screen.index)
+    // An open set answered in one form: its place is the set's last question (the line runs to it).
+    case 'question':
+      return screen.set ? at('open', screen.index) : null
+    case 'review':
+      return screen.set && screen.index !== undefined ? at('open', screen.index) : null
     case 'roomMissed':
     case 'roomClosedVoted':
     case 'roomNone':

@@ -1,5 +1,5 @@
 import { Button } from '@chakra-ui/react'
-import { fireEvent, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, screen, waitFor } from '@testing-library/react'
 import { renderWithFlow, testFacts, testFlow } from '../test-flow'
 import { VoterTopActions } from './VoterTopActions'
 
@@ -15,14 +15,16 @@ beforeEach(() => {
   routing.currentLanguage = 'ca'
 })
 
+// The language menu is a zag machine: its open and select updates land a microtask after the click.
 const pick = async (name: string) => {
-  fireEvent.click(screen.getByRole('button', { name: 'CA voter.language.label' }))
-  fireEvent.click(await screen.findByRole('menuitem', { name }))
+  await act(async () => fireEvent.click(screen.getByRole('button', { name: 'CA voter.language.label' })))
+  const item = await screen.findByRole('menuitem', { name })
+  await act(async () => fireEvent.click(item))
 }
 
 describe('voter top bar actions', () => {
   it('shows the language as a tag and changes it at once before identification', async () => {
-    renderWithFlow(<VoterTopActions />, testFlow({ facts: testFacts({ connected: false }) }))
+    await act(async () => renderWithFlow(<VoterTopActions />, testFlow({ facts: testFacts({ connected: false }) })))
     // Its accessible name starts with what it shows (axe label-content-name-mismatch).
     expect(screen.getByRole('button', { name: 'CA voter.language.label' })).toHaveTextContent(/^CA/)
     expect(screen.queryByRole('button', { name: 'voter.sign_out' })).toBeNull()
@@ -37,7 +39,7 @@ describe('voter top bar actions', () => {
   })
 
   it('asks first once the voter has identified, because the session would be lost (audit F14)', async () => {
-    renderWithFlow(<VoterTopActions />, testFlow())
+    await act(async () => renderWithFlow(<VoterTopActions />, testFlow()))
     await pick('English')
     expect(routing.navigateToLanguage).not.toHaveBeenCalled()
     fireEvent.click(await screen.findByRole('button', { name: 'voter.language.confirm' }))
@@ -45,7 +47,9 @@ describe('voter top bar actions', () => {
   })
 
   it('asks first on the code screen too, where the reload would lose the code sent (gate F13)', async () => {
-    renderWithFlow(<VoterTopActions />, testFlow({ facts: testFacts({ connected: false, challengePending: true }) }))
+    await act(async () =>
+      renderWithFlow(<VoterTopActions />, testFlow({ facts: testFacts({ connected: false, challengePending: true }) }))
+    )
     await pick('English')
     expect(routing.navigateToLanguage).not.toHaveBeenCalled()
     expect(await screen.findByRole('button', { name: 'voter.language.confirm' })).toBeInTheDocument()

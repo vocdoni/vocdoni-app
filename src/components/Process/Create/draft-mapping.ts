@@ -67,7 +67,7 @@ export const votingProcessToForm = (process: VotingProcessResponse, disableAnony
     endDate: endDate ? format(endDate, 'yyyy-MM-dd') : '',
     endTime: endDate ? format(endDate, 'HH:mm') : '',
     streamUri: process.streamUri ?? '',
-    votingMode: isQuestionByQuestion(process) ? 'byQuestion' : 'all',
+    startPaused: isQuestionByQuestion(process),
     // Off unless the creator chose to show them; a vote that predates the choice starts off, as a new one does.
     showVoterResults: voterResultsChoice(questions) === 'shown',
     resultVisibility: isSecretUntilTheEnd(process) ? 'hidden' : 'live',

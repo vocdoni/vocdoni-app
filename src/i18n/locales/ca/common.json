@@ -1391,17 +1391,16 @@
     },
     "settings": "Configuració",
     "start_datetime": "Data i hora d'inici",
+    "start_paused": {
+      "hint": "Les preguntes comencen en pausa. Les obres des de la pàgina de la votació, una a una, en grups o totes alhora.",
+      "label": "Obre tu mateix les preguntes",
+      "locked": "Aquest esborrany ja comença en pausa. Aquí no el pots canviar."
+    },
     "voter_results": {
       "help_all": "Qui vota pot veure els resultats a la pàgina de votació. Els resultats ocults fins al final apareixen quan acaba la votació.",
       "help_by_question": "Qui vota veu el resultat de cada pregunta quan es tanca, i tots els resultats quan acaba la votació.",
       "help_by_question_hidden": "Amb els resultats ocults, els votants els veuran tots quan acabi la votació.",
       "label": "Mostra els resultats als votants"
-    },
-    "voting_mode": {
-      "all": "Tot alhora",
-      "by_question": "Pregunta per pregunta",
-      "by_question_hint": "Les preguntes comencen tancades. Les obres una a una des de la pàgina de la votació, i el resultat de cada pregunta es mostra quan la tanques.",
-      "label": "Com es vota"
     },
     "weight": {
       "equal": "Una persona, un vot",
@@ -1920,7 +1919,6 @@
       "room_none_one": "Cap pregunta oberta. {{count}} de {{total}} tancada",
       "room_none_many": "Cap pregunta oberta. {{count}} de {{total}} tancades",
       "room_none_other": "Cap pregunta oberta. {{count}} de {{total}} tancades",
-      "room_not_eligible": "Pregunta {{current}} de {{total}}, no la pots votar",
       "room_not_started": "Encara no s'ha obert cap pregunta",
       "room_open": "Pregunta {{current}} de {{total}}, oberta ara",
       "room_skipped": "Pregunta {{current}} de {{total}}, oberta. No l'has votada.",
@@ -2031,7 +2029,6 @@
       "weight_value": "El teu vot val {{weight}}"
     },
     "room": {
-      "blocked": "Ara hi ha més d'una pregunta oberta. Podràs votar quan només n'hi hagi una.",
       "closed_label": "Pregunta {{number}}, tancada",
       "closed_title": "La pregunta {{number}} s'ha tancat",
       "closed_voted_help": "Has votat.",
@@ -2042,6 +2039,7 @@
       "fold_more_other": "{{count}} preguntes més",
       "fold_more_note": "De la {{from}} a la {{to}}.",
       "kicker": "Les preguntes s'obren una a una.",
+      "kicker_set": "Les preguntes s'obren juntes.",
       "late_help": "El teu vot ha arribat quan la pregunta ja s'havia tancat i no s'ha comptat.",
       "late_title": "El teu vot ha arribat massa tard",
       "live": "En directe. S'actualitza sola.",
@@ -2052,21 +2050,24 @@
       "next": "La següent",
       "none_body": "Quan se n'obri una, apareixerà aquí sola. No cal que recarreguis la pàgina.",
       "none_title": "Ara mateix no hi ha cap pregunta oberta",
-      "not_eligible_body": "No ets a la llista de persones que poden votar aquesta pregunta.",
-      "not_eligible_title": "No pots votar la pregunta {{number}}",
       "not_started_body": "Quan l'organització obri la primera pregunta, apareixerà aquí sola. No cal que recarreguis la pàgina.",
       "not_started_line": "Encara no ha començat",
       "not_started_title": "La votació encara no ha començat",
       "note_weighted": "El teu vot val {{weight}}. Un cop emès no es pot canviar.",
       "open_label": "Pregunta {{number}}, oberta ara",
+      "open_label_set": "Preguntes obertes ara",
       "open_title": "Hi ha una pregunta oberta",
+      "open_title_set": "Hi ha preguntes obertes",
       "preparing": "S'està preparant la pregunta següent. Apareixerà aquí sola quan s'obri.",
       "questions": "Les preguntes",
       "result_title": "Resultat",
       "show_them": "Mostra-les",
       "skip": "No votar aquesta pregunta",
+      "skip_set": "No votar aquestes preguntes",
       "skipped_help": "No s'ha enviat res. Mentre segueixi oberta, encara la pots votar.",
+      "skipped_help_set": "No s'ha enviat res. Mentre segueixin obertes, encara les pots votar.",
       "skipped_title": "No has votat la pregunta {{number}}",
+      "skipped_title_set": "No has votat aquestes preguntes",
       "state": {
         "canceled": "Cancel·lada",
         "closed": "Tancada",
@@ -2075,7 +2076,6 @@
         "closed_missed": "Tancada. No l'has votada.",
         "closed_unknown": "Tancada. No s'ha pogut confirmar el teu vot.",
         "closed_voted": "Tancada. Has votat.",
-        "not_eligible": "No la pots votar.",
         "open": "Oberta ara",
         "open_lost": "Oberta. Error: el teu vot no s'ha registrat.",
         "open_skipped": "Oberta. No l'has votada.",
@@ -2087,6 +2087,7 @@
       "unconfirmed_title": "No hem pogut confirmar el teu vot",
       "vote_now": "Vota ara",
       "vote_question": "Vota la pregunta {{number}}",
+      "vote_question_set": "Vota aquestes preguntes",
       "voted_elsewhere": "Ja havies votat aquesta pregunta des d'un altre dispositiu.",
       "voted_title": "Vot emès a la pregunta {{number}}",
       "will_vote": "Votaràs: <answer>{{answer}}</answer>"
@@ -2547,6 +2548,7 @@
       },
       "error": {
         "busy": "Hi ha un altre canvi en curs. Torna-ho a provar d'aquí a uns segons.",
+        "open_all": "No s'han pogut obrir les preguntes",
         "stale": "La pregunta ja havia canviat d'estat.",
         "timeout": "Això tarda més del previst. L'estat s'actualitzarà tot sol.",
         "title": "No s'ha pogut canviar la pregunta"
@@ -2562,7 +2564,8 @@
         "resume_vote": "Següent pas: reprèn la votació"
       },
       "open": "Obre",
-      "open_off_note": "«Obre» surt desactivat mentre hi ha una altra pregunta oberta, abans de l'hora d'inici i mentre la votació està en pausa.",
+      "open_all": "Obre-les totes",
+      "open_off_note": "«Obre» surt desactivat abans de l'hora d'inici i mentre la votació està en pausa.",
       "paused_note": "Ningú la pot votar.",
       "percent": "{{percent}}%",
       "provisional": "Resultat provisional.",
@@ -2662,6 +2665,9 @@
       "count_unknown": "No s'ha pogut carregar la participació.",
       "dock": {
         "label": "Controls de la votació",
+        "questions_open_one": "{{count, number}} pregunta oberta",
+        "questions_open_many": "{{count, number}} preguntes obertes",
+        "questions_open_other": "{{count, number}} preguntes obertes",
         "state_votes": "{{state}}, {{votes}}",
         "title": "{{number}}. {{title}}"
       },
@@ -2705,11 +2711,11 @@
         "of_other": "Han votat {{count, number}} de {{total}} persones, el {{percent}}%."
       },
       "idle": {
-        "by_question_body": "Quan comenci, les preguntes començaran tancades i les aniràs obrint d'una en una.",
+        "by_question_body": "Quan comenci, les preguntes començaran en pausa i les obriràs quan vulguis.",
         "by_question_started_body": "Obre la primera pregunta per començar la votació.",
         "by_question_started_title": "Encara no hi ha cap pregunta oberta",
-        "by_question_started_viewer_body": "L'organitzador obre les preguntes d'una en una.",
-        "by_question_viewer_body": "Quan comenci, les preguntes començaran tancades i l'organitzador les obrirà d'una en una.",
+        "by_question_started_viewer_body": "L'organitzador obre les preguntes quan vol.",
+        "by_question_viewer_body": "Quan comenci, les preguntes començaran en pausa i l'organitzador les obrirà quan vulgui.",
         "canceled_body": "Els vots emesos s'han descartat. No hi ha resultats.",
         "canceled_hint": "La pots duplicar per tornar-la a convocar.",
         "canceled_title": "Votació cancel·lada",

@@ -48,8 +48,23 @@ const ReviewRow = ({
 export const ReviewScreen = ({ paused }: { paused: boolean }) => {
   const { t } = useTranslation()
   const localize = useReactComponentsLocalize()
-  const { election, state, weight, weighted, moved, voteIds, lockedNotice, change, cast, casting, facts, signOut } =
-    useVoterFlow()
+  const {
+    election,
+    form,
+    state,
+    weight,
+    weighted,
+    moved,
+    voteIds,
+    lockedNotice,
+    change,
+    cast,
+    casting,
+    facts,
+    signOut,
+  } = useVoterFlow()
+  // The open set's questions when it is answered in one form (`roomFormSet`); the classic form lists the whole vote.
+  const listed = form ?? election.questions.map((_question, index) => index)
   const words = {
     blank: t('voter.question.blank'),
     ranked: (position: number, label: string) => t('voter.answer.ranked_item', { position, label }),
@@ -82,7 +97,8 @@ export const ReviewScreen = ({ paused }: { paused: boolean }) => {
             value={t('voter.review.weight_value', { weight })}
           />
         )}
-        {election.questions.map((question, index) => {
+        {listed.map((index, position) => {
+          const question = election.questions[index]
           const notice = lockedNotice(question.id)
           const title = textOf(question.title as Parameters<typeof textOf>[0])
           // A locked question shows the SDK's notice; one already on chain shows the answer this session sent for it,
@@ -91,7 +107,7 @@ export const ReviewScreen = ({ paused }: { paused: boolean }) => {
           return (
             <ReviewRow
               key={question.id}
-              first={index === 0 && !(weighted && weight !== null)}
+              first={position === 0 && !(weighted && weight !== null)}
               label={title}
               value={
                 notice && sent === undefined

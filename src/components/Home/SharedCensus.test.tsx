@@ -191,7 +191,7 @@ describe('SharedCensus', () => {
 
     const { default: SharedCensus } = await import('./SharedCensus')
     const { rerender } = await renderSharedCensus(<SharedCensus />)
-    stashCrispIdentity('name Ada')
+    act(() => stashCrispIdentity('name Ada'))
     flow.challengePending = true
     flow.owner = 'owner-1'
     await act(async () => rerender(<SharedCensus />))

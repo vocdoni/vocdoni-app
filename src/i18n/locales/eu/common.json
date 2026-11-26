@@ -1360,17 +1360,16 @@
     },
     "settings": "Konfigurazioa",
     "start_datetime": "Hasiera-data eta -ordua",
+    "start_paused": {
+      "hint": "Galderak pausatuta hasten dira. Bozketaren orritik irekitzen dituzu, banan-banan, taldeka edo guztiak batera.",
+      "label": "Galderak zeuk irekitzea",
+      "locked": "Zirriborro honek dagoeneko pausatuta hasten da. Hemen ezin duzu aldatu."
+    },
     "voter_results": {
       "help_all": "Bozkatzaileek emaitzak bozketa-orrian ikus ditzakete. Amaiera arte ezkutuan dauden emaitzak bozketa amaitzean agertzen dira.",
       "help_by_question": "Bozkatzaileek galdera bakoitzaren emaitza ikusten dute ixten denean, eta emaitza guztiak bozketa amaitzen denean.",
       "help_by_question_hidden": "Emaitzak ezkutuan badaude, bozkatzaileek guztiak ikusiko dituzte bozketa amaitzen denean.",
       "label": "Erakutsi emaitzak bozkatzaileei"
-    },
-    "voting_mode": {
-      "all": "Dena batera",
-      "by_question": "Galdera bakoitza bere aldetik",
-      "by_question_hint": "Galderak itxita hasten dira. Banan-banan irekitzen dituzu bozketaren orritik, eta galdera bakoitzaren emaitza ixten duzunean erakusten da.",
-      "label": "Jendeak nola bozkatzen duen"
     },
     "weight": {
       "equal": "Pertsona bat, boto bat",
@@ -1880,7 +1879,6 @@
       "room_lost": "Galdera: {{current}}/{{total}}, errorea: zure botoa ez da erregistratu",
       "room_none_one": "Ez dago galderarik irekita. {{count}}/{{total}} itxita",
       "room_none_other": "Ez dago galderarik irekita. {{count}}/{{total}} itxita",
-      "room_not_eligible": "Galdera: {{current}}/{{total}}, ezin duzu bozkatu",
       "room_not_started": "Oraindik ez da galderarik ireki",
       "room_open": "Galdera: {{current}}/{{total}}, orain irekita",
       "room_skipped": "Galdera: {{current}}/{{total}}, irekita. Ez duzu bozkatu.",
@@ -1977,7 +1975,6 @@
       "weight_value": "Zure botoak {{weight}} balio du"
     },
     "room": {
-      "blocked": "Orain galdera bat baino gehiago dago irekita. Bakarra irekita dagoenean bozkatu ahal izango duzu.",
       "closed_label": "{{number}}. galdera, itxita",
       "closed_title": "{{number}}. galdera itxi da",
       "closed_voted_help": "Bozkatu duzu.",
@@ -1987,6 +1984,7 @@
       "fold_more_other": "Beste {{count}} galdera",
       "fold_more_note": "{{from}}. galderatik {{to}}. galderara.",
       "kicker": "Galderak banan-banan irekitzen dira.",
+      "kicker_set": "Galderak elkarrekin irekitzen dira.",
       "late_help": "Zure botoa galdera itxi ondoren iritsi zen eta ez da zenbatu.",
       "late_title": "Zure botoa berandu iritsi da",
       "live": "Zuzenean. Bere kabuz eguneratzen da.",
@@ -1997,21 +1995,24 @@
       "next": "Hurrengoa",
       "none_body": "Bat irekitzen denean, hemen agertuko da bere kabuz. Ez duzu orria berrkargatu beharrik.",
       "none_title": "Une honetan ez dago galderarik irekita",
-      "not_eligible_body": "Ez zaude galdera hau bozka dezaketen pertsonen zerrendan.",
-      "not_eligible_title": "Ezin duzu {{number}}. galderan bozkatu",
       "not_started_body": "Erakundeak lehen galdera irekitzen duenean, hemen agertuko da berez. Ez duzu orria berriz kargatu behar.",
       "not_started_line": "Ez da oraindik hasi",
       "not_started_title": "Bozketa ez da oraindik hasi",
       "note_weighted": "Zure botoak {{weight}} balio du. Behin emanda, ezin da aldatu.",
       "open_label": "{{number}}. galdera, orain irekita",
+      "open_label_set": "Orain irekita dauden galderak",
       "open_title": "Galdera bat irekita dago",
+      "open_title_set": "Galderak irekita daude",
       "preparing": "Hurrengo galdera prestatzen ari da. Hemen agertuko da bere kabuz, irekitzen denean.",
       "questions": "Galderak",
       "result_title": "Emaitza",
       "show_them": "Erakutsi",
       "skip": "Galdera hau ez bozkatu",
+      "skip_set": "Galdera hauek ez bozkatu",
       "skipped_help": "Ez da ezer bidali. Irekita dagoen bitartean, oraindik bozka dezakezu.",
+      "skipped_help_set": "Ez da ezer bidali. Irekita dauden bitartean, oraindik bozka ditzakezu.",
       "skipped_title": "Ez duzu {{number}}. galderan bozkatu",
+      "skipped_title_set": "Ez duzu galdera hauetan bozkatu",
       "state": {
         "canceled": "Bertan behera utzita",
         "closed": "Itxita",
@@ -2020,7 +2021,6 @@
         "closed_missed": "Itxita. Ez duzu bozkatu.",
         "closed_unknown": "Itxita. Ezin izan da zure botoa berretsi.",
         "closed_voted": "Itxita. Bozkatu duzu.",
-        "not_eligible": "Ezin duzu bozkatu.",
         "open": "Orain irekita",
         "open_lost": "Irekita. Errorea: zure botoa ez da erregistratu.",
         "open_skipped": "Irekita. Ez duzu bozkatu.",
@@ -2032,6 +2032,7 @@
       "unconfirmed_title": "Ezin izan dugu zure botoa berretsi",
       "vote_now": "Bozkatu orain",
       "vote_question": "Bozkatu {{number}}. galderan",
+      "vote_question_set": "Bozkatu galdera hauetan",
       "voted_elsewhere": "Galdera honetan beste gailu batetik bozkatu zenuen jada.",
       "voted_title": "Botoa eman da {{number}}. galderan",
       "will_vote": "Hau bozkatuko duzu: <answer>{{answer}}</answer>"
@@ -2455,6 +2456,7 @@
       },
       "error": {
         "busy": "Beste aldaketa bat abian da. Saiatu berriro segundo batzuen buruan.",
+        "open_all": "Galderak ezin izan dira ireki",
         "stale": "Galderak lehendik ere egoera aldatuta zuen.",
         "timeout": "Espero baino gehiago irauten ari da. Egoera bere kabuz eguneratuko da.",
         "title": "Ezin izan da galdera aldatu"
@@ -2469,7 +2471,8 @@
         "resume_vote": "Hurrengo urratsa: berrekin bozketari"
       },
       "open": "Ireki",
-      "open_off_note": "«Ireki» desgaituta dago beste galdera bat irekita dagoen bitartean, hasiera-ordua baino lehen eta bozketa pausatuta dagoen bitartean.",
+      "open_all": "Ireki guztiak",
+      "open_off_note": "«Ireki» desgaituta dago hasiera-ordua baino lehen eta bozketa pausatuta dagoen bitartean.",
       "paused_note": "Inork ezin du bozkatu.",
       "percent": "%{{percent}}",
       "provisional": "Behin-behineko emaitza.",
@@ -2564,6 +2567,8 @@
       "count_unknown": "Ezin izan da parte-hartzea kargatu.",
       "dock": {
         "label": "Bozketaren kontrolak",
+        "questions_open_one": "{{count, number}} galdera irekita",
+        "questions_open_other": "{{count, number}} galdera irekita",
         "state_votes": "{{state}}, {{votes}}",
         "title": "{{number}}. {{title}}"
       },
@@ -2601,11 +2606,11 @@
         "of_other": "{{total}} pertsonatik {{count, number}}k bozkatu dute, %{{percent}}."
       },
       "idle": {
-        "by_question_body": "Hasten denean, galderak itxita egongo dira eta banan-banan irekiko dituzu.",
+        "by_question_body": "Hasten denean, galderak pausatuta egongo dira eta noiz nahi duzun irekiko dituzu.",
         "by_question_started_body": "Ireki lehen galdera bozketa hasteko.",
         "by_question_started_title": "Oraindik ez dago galdera irekirik",
-        "by_question_started_viewer_body": "Antolatzaileak galderak banan-banan irekitzen ditu.",
-        "by_question_viewer_body": "Hasten denean, galderak itxita egongo dira eta antolatzaileak banan-banan irekiko ditu.",
+        "by_question_started_viewer_body": "Antolatzaileak galderak noiz nahi duen irekitzen ditu.",
+        "by_question_viewer_body": "Hasten denean, galderak pausatuta egongo dira eta antolatzaileak noiz nahi duen irekiko ditu.",
         "canceled_body": "Emandako botoak baztertu dira. Ez dago emaitzarik.",
         "canceled_hint": "Bikoiztu dezakezu berriro deitzeko.",
         "canceled_title": "Bozketa bertan behera utzita",
