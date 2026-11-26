@@ -31,9 +31,5 @@
   // A component's props type stays exported next to it even when only that file uses it
   "ignoreExportsUsedInFile": { "interface": true, "type": true, "enum": true },
   // The snapshot harness aliases the stress theme over ~theme/system, so it mirrors that module's exports
-  // The colour-mode switcher stays for when dark mode returns (src/theme/color-mode.tsx forces light for now)
-  "ignoreIssues": {
-    "src/theme/test-themes/**": ["exports", "duplicates"],
-    "src/components/Layout/ColorModeSwitcher.tsx": ["exports"],
-  },
+  "ignoreIssues": { "src/theme/test-themes/**": ["exports", "duplicates"] },
 }

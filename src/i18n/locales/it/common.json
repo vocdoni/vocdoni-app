@@ -34,6 +34,7 @@
       "organization_logo": "Logo dell'organizzazione"
     }
   },
+  "appearance": "Aspetto",
   "aside": {
     "anonymous_receipt_gone": "La tua ricevuta è stata mostrata al momento del voto e non può essere recuperata.",
     "has_already_voted": "Il voto è stato espresso correttamente",
@@ -147,7 +148,6 @@
     "title": "Cambia password"
   },
   "close": "Chiudi",
-  "color_mode_switcher": "Selettore modalità colore",
   "common": {
     "back": "Indietro",
     "home": "Home",
@@ -1726,7 +1726,6 @@
     "teaser_dismiss": "Ignora",
     "whatsapp": "Scrivici su WhatsApp"
   },
-  "switch_mode": "Passa alla modalità {{ mode }}",
   "switch_organization": "Cambia organizzazione",
   "system": "Sistema",
   "team": {

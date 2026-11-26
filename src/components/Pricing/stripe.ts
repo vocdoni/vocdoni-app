@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAppEnv } from '~src/app-env'
 import { type ColorMode, useColorMode } from '~theme/color-mode'
+import { EMBED_DARK } from '~theme/embedColors'
 
 // Lazy initializer so loadStripe runs once (not on every render), and only when
 // a key is configured — loadStripe('') throws, and STRIPE_PUBLIC_KEY is optional.
@@ -50,10 +51,12 @@ const readAppearance = (colorMode: ColorMode): Appearance => {
   return {
     theme: colorMode === 'dark' ? ('night' as const) : ('stripe' as const),
     variables: {
-      // Raw values mirror the `bg` token
-      colorBackground: colorMode === 'dark' ? '#0a0a0a' : 'white',
+      // The page colour: Fil's dark page from the embed copy, white in light
+      colorBackground: colorMode === 'dark' ? EMBED_DARK.background : 'white',
       ...Object.fromEntries(themed),
     },
+    // In dark the fields take the guide's field ring, which Stripe's night theme draws too faint
+    ...(colorMode === 'dark' ? { rules: { '.Input': { border: `1px solid ${EMBED_DARK.fieldRing}` } } } : {}),
   }
 }
 

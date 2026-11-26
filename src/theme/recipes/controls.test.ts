@@ -28,7 +28,7 @@ describe('button', () => {
     const outline = layer(button({ variant: 'outline' }))
     expect(outline.boxShadow).toBe('var(--chakra-shadows-shadow-control)')
     expect(outline.borderWidth).toBe('0')
-    expect(outline.background).toBe('var(--chakra-colors-bg-panel)')
+    expect(outline.background).toBe('var(--chakra-colors-surface-control)')
   })
 
   it('fills the primary from the palette and greys it when disabled', () => {
@@ -68,6 +68,13 @@ describe('button', () => {
 })
 
 describe('input and textarea', () => {
+  it('outline the focus in the palette focus ring with no dark override, and in the error colour when invalid', () => {
+    const styles = layer(input({}))
+    expect(JSON.stringify(styles)).not.toContain('dark')
+    expect(JSON.stringify(styles)).toContain('var(--chakra-colors-color-palette-focus-ring)')
+    expect(JSON.stringify(styles)).toContain('var(--chakra-colors-status-error-fg)')
+  })
+
   it('are 34px panels with a ring and no border', () => {
     const styles = layer(input({}))
     expect(styles['--input-height']).toBe('var(--chakra-sizes-control-md)')
@@ -101,6 +108,16 @@ describe('checkbox, radio and switch', () => {
       expect(checkboxStyles.variants?.size?.[size]?.control).toMatchObject({ boxSize: '4' })
       expect(radioStyles.variants?.size?.[size]?.itemControl).toMatchObject({ boxSize: '4' })
     }
+  })
+
+  it('fill a checked box in dark too, since no dark rule sits over the checked fill', () => {
+    const checkbox = system.sva(system.getSlotRecipe('checkbox'))
+    const control = layer(checkbox({ size: 'md', variant: 'solid' }).control) as Record<string, any>
+    expect(JSON.stringify(control)).not.toContain('dark')
+    expect(control.background).toBe('var(--chakra-colors-checkbox-empty)')
+    expect(control['&:is([data-state=checked], [data-state=indeterminate])'].background).toBe(
+      'var(--chakra-colors-color-palette-solid)'
+    )
   })
 
   it('draw the unchecked outline in border.strong', () => {

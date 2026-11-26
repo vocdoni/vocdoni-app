@@ -99,7 +99,7 @@ export const Card = defineSlotRecipe({
           bg: 'accent.subtle',
           color: 'accent.fg',
           borderWidth: 'hairline',
-          borderColor: 'accent.solid',
+          borderColor: 'accent.line',
           p: 'var(--card-padding)',
         },
       },
@@ -128,7 +128,7 @@ export const Card = defineSlotRecipe({
           p: '10',
           cursor: 'button',
           _dragging: {
-            borderColor: 'accent.solid',
+            borderColor: 'accent.line',
           },
         },
       },

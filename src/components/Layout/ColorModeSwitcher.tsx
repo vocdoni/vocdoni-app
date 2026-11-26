@@ -1,69 +1,37 @@
-import { ButtonGroup, ButtonGroupProps, Icon, IconButton, IconButtonProps } from '@chakra-ui/react'
+import { SegmentGroup } from '@chakra-ui/react'
 import { useTheme } from 'next-themes'
-import { type FC } from 'react'
+import { type ComponentProps } from 'react'
 import { useTranslation } from 'react-i18next'
-import { DarkModeIcon, LightModeIcon, SystemModeIcon } from '~theme/icons'
-import type { IconType } from '~theme/icons'
-import { Tooltip } from '~components/ui/Tooltip'
-import { useColorMode, useColorModeValue } from '~theme/color-mode'
 
-type ColorModeSwitcherProps = Omit<IconButtonProps, 'aria-label'>
+type Mode = 'system' | 'light' | 'dark'
 
-export const ColorModeSwitcher: FC<ColorModeSwitcherProps> = (props) => {
-  const { t } = useTranslation()
-  const { toggleColorMode } = useColorMode()
-  const text = useColorModeValue('dark', 'light')
-  const SwitchIcon = useColorModeValue(DarkModeIcon, LightModeIcon)
+const isMode = (value: string | null | undefined): value is Mode =>
+  value === 'system' || value === 'light' || value === 'dark'
 
-  return (
-    <IconButton
-      variant='subtle'
-      colorPalette='gray'
-      onClick={toggleColorMode}
-      aria-label={t('switch_mode', { defaultValue: 'Switch to {{ mode }} mode', mode: text })}
-      {...props}
-    >
-      <Icon as={SwitchIcon} />
-    </IconButton>
-  )
-}
+type AppearanceSegmentProps = Omit<ComponentProps<typeof SegmentGroup.Root>, 'value' | 'onValueChange'>
 
-type Mode = 'light' | 'dark' | 'system'
-
-export const ThemeToggleGroup = (props: ButtonGroupProps) => {
+// Text only on purpose: three positions, no sun or moon icons.
+export const AppearanceSegment = (props: AppearanceSegmentProps) => {
   const { theme, setTheme } = useTheme()
   const { t } = useTranslation()
-  const selected: Mode = theme === 'light' || theme === 'dark' || theme === 'system' ? theme : 'system'
 
-  const modes: { mode: Mode; label: string; icon: IconType }[] = [
-    { mode: 'system', label: t('system', 'System'), icon: SystemModeIcon },
-    { mode: 'light', label: t('light', 'Light'), icon: LightModeIcon },
-    { mode: 'dark', label: t('dark', 'Dark'), icon: DarkModeIcon },
+  const items: { value: Mode; label: string }[] = [
+    { value: 'system', label: t('system', 'System') },
+    { value: 'light', label: t('light', 'Light') },
+    { value: 'dark', label: t('dark', 'Dark') },
   ]
 
   return (
-    <ButtonGroup
-      variant='outline'
-      aria-label={t('color_mode_switcher', 'Color mode switcher')}
+    <SegmentGroup.Root
+      aria-label={t('appearance', 'Appearance')}
       {...props}
-      border='sm'
-      borderColor='border'
-      borderRadius='sm'
-      p='1'
+      value={isMode(theme) ? theme : 'system'}
+      onValueChange={({ value }) => {
+        if (isMode(value)) setTheme(value)
+      }}
     >
-      {modes.map(({ mode, label, icon }) => (
-        <Tooltip content={label} key={mode} positioning={{ placement: 'top' }}>
-          <IconButton
-            aria-label={label}
-            onClick={() => setTheme(mode)}
-            aria-pressed={selected === mode}
-            variant='toggle'
-            size='xs'
-          >
-            <Icon as={icon} boxSize='icon.sm' />
-          </IconButton>
-        </Tooltip>
-      ))}
-    </ButtonGroup>
+      <SegmentGroup.Indicator />
+      <SegmentGroup.Items items={items} />
+    </SegmentGroup.Root>
   )
 }

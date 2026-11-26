@@ -13,12 +13,12 @@ const baseStyle = defineStyle({
 
 // Fil's field: a panel with a 1px ring, a 2px accent outline on focus and the error colour for a ring when invalid.
 export const field = defineStyle({
-  bg: 'bg.panel',
+  bg: 'bg.field',
   color: 'fg',
   borderWidth: '[0]',
   boxShadow: 'shadow.field',
   focusVisibleRing: 'outside',
-  focusRingColor: 'colorPalette.solid',
+  focusRingColor: 'colorPalette.focusRing',
   _readOnly: { bg: 'bg.muted' },
   _invalid: {
     boxShadow: '[0 0 0 {borderWidths.hairline} {colors.status.error.fg}]',

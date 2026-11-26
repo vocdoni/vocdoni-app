@@ -34,6 +34,7 @@
       "organization_logo": "Logo de l'organisation"
     }
   },
+  "appearance": "Apparence",
   "aside": {
     "anonymous_receipt_gone": "Votre reçu a été affiché lors de votre vote et ne peut pas être récupéré.",
     "has_already_voted": "Votre vote a bien été enregistré",
@@ -147,7 +148,6 @@
     "title": "Changer le mot de passe"
   },
   "close": "Fermer",
-  "color_mode_switcher": "Changer de mode d'affichage",
   "common": {
     "back": "Retour",
     "home": "Accueil",
@@ -1726,7 +1726,6 @@
     "teaser_dismiss": "Ignorer",
     "whatsapp": "Discuter sur WhatsApp"
   },
-  "switch_mode": "Passer en mode {{ mode }}",
   "switch_organization": "Changer d'organisation",
   "system": "Système",
   "team": {

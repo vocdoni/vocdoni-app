@@ -5,11 +5,17 @@ import { createAppSystem, system } from './system'
 const BRANDED = createAppSystem('#1a73e8')
 const exists = (sys: typeof system, path: string) => sys.tokens.getByName(`colors.${path}`) !== undefined
 const SCALE = { success: 'green', warning: 'orange', danger: 'red', info: 'gray' }
-// Fil's light-mode values for the slots it names; every other slot, and all of dark, is the raw scale's.
+// Fil's light-mode values for the slots it names; every other light slot is the raw scale's.
 const FIL_LIGHT: Record<string, Record<string, string>> = {
   success: { solid: '#2caa4f', fg: '#0b7636', subtle: '#f0faf3' },
   warning: { solid: '#875500', contrast: '#ffffff', fg: '#875500', subtle: '#fff8eb' },
   danger: { solid: '#ca2a30', contrast: '#ffffff', fg: '#ca2a30', subtle: '#fff0f0' },
+}
+// Fil's dark values for the slots it names; the rest of dark is the raw scale's.
+const FIL_DARK: Record<string, Record<string, string>> = {
+  success: { solid: '#2caa4f', fg: '#6fc884', contrast: '#0a0a0a', subtle: '#111111' },
+  warning: { fg: '#e4ac59', subtle: '#111111' },
+  danger: { fg: '#f97770', subtle: '#111111' },
 }
 const PALETTES = Object.keys(SCALE)
 
@@ -39,12 +45,12 @@ describe('status palettes', () => {
     }
   })
 
-  it.each(PALETTES)('resolves %s to its raw scale, except the slots Fil sets in light mode', (p) => {
+  it.each(PALETTES)('resolves %s to its raw scale, except the slots Fil sets', (p) => {
     for (const slot of ['solid', 'fg', 'subtle', 'muted', 'emphasized', 'focusRing', 'contrast', 'border', '500']) {
       for (const mode of ['_light', '_dark']) {
         const got = resolve(`${p}.${slot}`, mode)
         expect(got, `${p}.${slot} ${mode}`).not.toBe('undefined')
-        const fil = mode === '_light' ? FIL_LIGHT[p]?.[slot] : undefined
+        const fil = (mode === '_light' ? FIL_LIGHT : FIL_DARK)[p]?.[slot]
         expect(got, `${p}.${slot} ${mode}`).toBe(fil ?? resolve(`${SCALE[p]}.${slot}`, mode))
       }
     }
@@ -73,9 +79,9 @@ describe('status palettes', () => {
     }
   })
 
-  it('keeps the danger action text at Fil red in light mode and red.400 in dark mode', () => {
+  it('keeps the danger action text at Fil red in light mode and a lighter red in dark mode', () => {
     expect(resolve('danger.action', '_light')).toBe('#ca2a30')
-    expect(resolve('danger.action', '_dark')).toBe(resolve('red.400', '_dark'))
+    expect(resolve('danger.action', '_dark')).toBe('#f97770')
     expect(resolve('danger.action', '_dark')).not.toBe(resolve('danger.action', '_light'))
   })
 })

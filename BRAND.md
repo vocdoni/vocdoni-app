@@ -87,8 +87,9 @@ the distinction, and copy must never blur them.
 The app does **not** use the website's palette. vocdoni.io is cream, warm ink, Vocdoni green and a Fraunces serif;
 the app is the Fil theme: untinted greys, a blue accent unless `PRIMARY_COLOR` sets one, the status palettes (success,
 warning, danger, info) for state, Commissioner for the interface and JetBrains Mono for figures, at weights 400 to 600.
-It is light only for now. The re-theme towards the brand is planned (#1728) and will land in `src/theme/`, not in
-components.
+It ships in light and dark. The dashboard's Appearance control saves a choice on the device (system, light or dark),
+and the voter pages follow the system. The re-theme towards the brand is planned (#1728) and will land in
+`src/theme/`, not in components.
 
 So:
 

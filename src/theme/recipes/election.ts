@@ -271,6 +271,8 @@ export const QuestionChoice = defineSlotRecipe({
             borderColor: 'colorPalette.solid',
             boxShadow: '[0 0 0 1px {colors.colorPalette.solid}]',
             bg: 'accent.subtle',
+            // A line, so in dark the text blue, as the guide draws the chosen option.
+            _dark: { borderColor: 'colorPalette.fg', boxShadow: '[0 0 0 1px {colors.colorPalette.fg}]' },
             '& [data-choice-label]': { fontWeight: 'semibold' },
           },
           '& [data-choice-control][data-control-type="checkbox"]': {
@@ -398,8 +400,8 @@ export const QuestionsConfirmation = defineSlotRecipe({
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: 'full',
-      bg: 'status.success.fg',
-      color: 'accent.contrast',
+      bg: 'status.success.mark',
+      color: 'status.success.contrast',
     },
   },
 })
@@ -480,8 +482,8 @@ export const Voted = defineSlotRecipe({
     icon: {
       boxSize: 'control.floating',
       borderRadius: 'full',
-      bg: 'status.success.fg',
-      color: 'accent.contrast',
+      bg: 'status.success.mark',
+      color: 'status.success.contrast',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',

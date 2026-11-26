@@ -23,7 +23,8 @@ export const chartColors = defineSemanticTokens.colors({
   },
   meter: {
     ok: { value: '{colors.status.info.solid}' },
-    warning: { value: '{colors.status.warning.solid}' },
-    critical: { value: '{colors.status.error.solid}' },
+    // In dark the status text colours, which keep 3:1 on the dark track; Chakra's solids do not.
+    warning: { value: { _light: '{colors.status.warning.solid}', _dark: '{colors.status.warning.fg}' } },
+    critical: { value: { _light: '{colors.status.error.solid}', _dark: '{colors.status.error.fg}' } },
   },
 })

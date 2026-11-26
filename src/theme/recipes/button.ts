@@ -56,7 +56,7 @@ const solid = defineStyle({
 const outline = defineStyle({
   // Chakra's outline variant draws a 1px border; the ring replaces it.
   borderWidth: '[0]',
-  bg: 'bg.panel',
+  bg: 'surface.control',
   color: 'fg',
   boxShadow: 'shadow.control',
   _hover: { bg: 'state.hover.bg' },
@@ -191,20 +191,11 @@ const segment = defineStyle({
   borderRadius: 'l1',
   fontWeight: 'medium',
   _pressed: {
-    bg: 'bg.panel',
+    bg: 'segment.selected',
     color: 'fg',
     fontWeight: 'semibold',
     boxShadow: '[0 0 0 {borderWidths.hairline} {colors.border}]',
-    _hover: { bg: 'bg.panel' },
-  },
-})
-
-// Icon toggle in a group (colour mode); the selected one carries `aria-pressed`.
-const toggle = defineStyle({
-  ...ghost,
-  _pressed: {
-    bg: 'bg.muted',
-    _hover: { bg: 'bg.muted' },
+    _hover: { bg: 'segment.selected' },
   },
 })
 
@@ -235,6 +226,8 @@ const danger = defineStyle({
   color: 'status.error.fg',
   _hover: { bg: 'status.error.bg' },
   _expanded: { bg: 'status.error.bg' },
+  // The dark error wash is an opaque grey, so the dark hover is the neutral wash.
+  _dark: { _hover: { bg: 'state.hover.bg' }, _expanded: { bg: 'state.hover.bg' } },
 })
 
 // Round launcher pinned to a corner of the viewport (support chat).
@@ -253,6 +246,13 @@ const floating = defineStyle({
   _hover: {
     bg: 'bg.inverted/90',
     transform: 'scale(1.06)',
+  },
+  // In dark the launcher is the raised grey with a control ring and ink icon, not a light disc.
+  _dark: {
+    bg: 'surface.raised',
+    color: 'fg',
+    boxShadow: 'shadow.control',
+    _hover: { bg: 'surface.raised' },
   },
   _active: { transform: 'scale(0.96)' },
   _motionReduce: { transition: '[none]', _hover: { transform: 'none' }, _active: { transform: 'none' } },
@@ -290,7 +290,6 @@ export const Button = defineRecipe({
       'menu-item-strong': { ...menuItem, fontWeight: 'bold' },
       'menu-trigger': menuTrigger,
       segment,
-      toggle,
       disclosure,
       quiet,
       danger,

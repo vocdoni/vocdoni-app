@@ -6,7 +6,7 @@ import { figureMark } from './figureMark'
 // fill and colour, so all of them restate the one look; sizes keep Chakra's names and dimensions.
 const disc = {
   root: {
-    bg: 'bg.panel',
+    bg: 'surface.control',
     color: 'fg',
     boxShadow: 'shadow.control',
     borderWidth: '[0]',

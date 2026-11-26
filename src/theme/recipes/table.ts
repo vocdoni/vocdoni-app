@@ -23,7 +23,7 @@ export const Table = defineSlotRecipe({
     row: {
       _selected: {
         bg: 'accent.subtle',
-        boxShadow: '[inset 2px 0 0 {colors.accent.solid}]',
+        boxShadow: '[inset 2px 0 0 {colors.accent.line}]',
       },
     },
   },

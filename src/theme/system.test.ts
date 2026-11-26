@@ -1,7 +1,7 @@
 import { defaultConfig } from '@chakra-ui/react'
 import { describe, expect, it } from 'vitest'
 import { PAGE_BACKGROUNDS } from './colors'
-import { contrastRatio, PALETTE_SLOTS } from './palette'
+import { contrastRatio, minContrast, PALETTE_SLOTS } from './palette'
 import { dragHandle } from './recipes/dragHandle'
 import { VideoPreview } from './recipes/videoPreview'
 import { recipes, slotRecipes } from './recipes'
@@ -307,7 +307,7 @@ describe('PRIMARY_COLOR-driven system', () => {
   const conditions = (sys: typeof system, name: string) =>
     sys.tokens.getByName(`colors.${name}`)?.extensions?.conditions as Record<string, string> | undefined
 
-  it('uses Fil blue when no color is configured, with its light values pinned', () => {
+  it('uses Fil blue when no color is configured, with its light and dark values pinned', () => {
     expect(system.tokens.getByName('colors.brand.500')?.value).toBe('#1d62e9')
     expect(system._config.globalCss?.html).toMatchObject({ colorPalette: 'brand' })
     expect(conditions(system, 'brand.solid')?._light).toBe('{colors.brand.500}')
@@ -317,6 +317,19 @@ describe('PRIMARY_COLOR-driven system', () => {
     expect(conditions(system, 'brand.focusRing')?._light).toBe('{colors.brand.500}')
     expect(conditions(system, 'brand.solid.hover')?._light).toBe('#1554cf')
     expect(conditions(system, 'accent.fg.hover')?._light).toBe('#1554cf')
+    expect(conditions(system, 'brand.solid')?._dark).toBe('{colors.brand.500}')
+    expect(conditions(system, 'brand.contrast')?._dark).toBe('#ffffff')
+    expect(conditions(system, 'brand.fg')?._dark).toBe('#6a99f1')
+    expect(conditions(system, 'brand.subtle')?._dark).toBe('rgb(29 98 233 / 0.12)')
+    expect(conditions(system, 'brand.solid.hover')?._dark).toBe('#2d6deb')
+    expect(conditions(system, 'accent.fg.hover')?._dark).toBe('#96b8f7')
+  })
+
+  it('leaves a configured brand its generated dark slots', () => {
+    expect(conditions(BRANDED, 'brand.solid.hover')?._dark).toBe('color-mix(in oklab, {colors.brand.solid} 94%, white)')
+    expect(conditions(BRANDED, 'accent.fg.hover')?._dark).toBe('color-mix(in oklab, {colors.brand.fg} 70%, white)')
+    expect(conditions(BRANDED, 'brand.fg')?._dark).not.toBe('#6a99f1')
+    expect(conditions(BRANDED, 'brand.subtle')?._dark).toBe('{colors.brand.900}')
   })
 
   it('generates the brand scale and slots from the configured color and makes brand the global palette', () => {
@@ -338,7 +351,7 @@ describe('PRIMARY_COLOR-driven system', () => {
     const resolve = (ref: string) => system.tokens.getByName(ref.replace(/^\{|\}$/g, ''))?.value as string
     expect(ring).toEqual({ _light: '{colors.gray.800}', _dark: '{colors.gray.400}' })
     expect(contrastRatio(resolve(ring!._light), PAGE_BACKGROUNDS.light)).toBeGreaterThanOrEqual(3)
-    expect(contrastRatio(resolve(ring!._dark), PAGE_BACKGROUNDS.dark)).toBeGreaterThanOrEqual(3)
+    expect(minContrast(resolve(ring!._dark), PAGE_BACKGROUNDS.dark)).toBeGreaterThanOrEqual(3)
   })
 
   it("keeps chakra's other gray semantic slots when overriding the focus ring", () => {
@@ -365,9 +378,9 @@ describe('PRIMARY_COLOR-driven system', () => {
     }
   )
 
-  it('leaves dark-mode surfaces on the neutral ink scale rather than tinting them', () => {
-    expect(conditions(BRANDED, 'bg')).toEqual({ _light: '{colors.white}', _dark: '{colors.ink.900}' })
-    expect(BRANDED.tokens.getByName('colors.ink.900')?.value).toBe('#0a0a0a')
+  it('leaves dark-mode surfaces on the neutral grey scales rather than tinting them', () => {
+    expect(conditions(BRANDED, 'bg')).toEqual({ _light: '{colors.white}', _dark: '{colors.gray.950}' })
+    expect(BRANDED.tokens.getByName('colors.gray.950')?.value).toBe('#0a0a0a')
   })
 
   it('treats an invalid color as unset', () => {
@@ -389,8 +402,8 @@ describe('Fil roles', () => {
   const base = (name: string) => system.tokens.getByName(name)?.extensions?.conditions
 
   it('give the faint text and strong border steps their own grey', () => {
-    expect(base('colors.fg.faint')).toEqual({ _light: '{colors.gray.400}', _dark: '{colors.gray.500}' })
-    expect(base('colors.border.strong')).toEqual({ _light: '{colors.gray.400}', _dark: '{colors.gray.700}' })
+    expect(base('colors.fg.faint')).toEqual({ _light: '{colors.gray.400}', _dark: '{colors.carbon.500}' })
+    expect(base('colors.border.strong')).toEqual({ _light: '{colors.gray.400}', _dark: '{colors.carbon.500}' })
   })
 
   it('draws depth as a 1px ring, with no blur or offset', () => {

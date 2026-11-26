@@ -14,17 +14,25 @@ const STEPS = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '90
 // Every slot chakra defines on its own palettes. Recipes read them through `colorPalette.<slot>`.
 const SLOTS = ['solid', 'contrast', 'fg', 'muted', 'subtle', 'emphasized', 'focusRing', 'border'] as const
 
-// Fil's light-mode values for the slots it names, set over the stock scale; dark keeps the scale's own.
+// Fil's values for the slots it names, set over the stock scale; a slot not named here keeps the scale's own.
 const LIGHT: Partial<Record<StatusPalette, Partial<Record<(typeof SLOTS)[number], string>>>> = {
   success: { solid: '#2caa4f', fg: '#0b7636', subtle: '#f0faf3' },
   warning: { solid: '#875500', contrast: '#ffffff', fg: '#875500', subtle: '#fff8eb' },
   danger: { solid: '#ca2a30', contrast: '#ffffff', fg: '#ca2a30', subtle: '#fff0f0' },
 }
 
+// Fil's dark values: the status text on the dark page, and the green fill with its dark label.
+const DARK: Partial<Record<StatusPalette, Partial<Record<(typeof SLOTS)[number], string>>>> = {
+  success: { solid: '#2caa4f', fg: '#6fc884', contrast: '#0a0a0a', subtle: '{colors.bg.subtle}' },
+  warning: { fg: '#e4ac59', subtle: '{colors.bg.subtle}' },
+  danger: { fg: '#f97770', subtle: '{colors.bg.subtle}' },
+}
+
 const slot = (name: StatusPalette, slotName: (typeof SLOTS)[number]) => {
   const stock = `{colors.${SCALES[name]}.${slotName}}`
   const light = LIGHT[name]?.[slotName]
-  return { value: light ? { _light: light, _dark: stock } : stock }
+  const dark = DARK[name]?.[slotName]
+  return { value: light || dark ? { _light: light ?? stock, _dark: dark ?? stock } : stock }
 }
 
 const palette = (name: StatusPalette) => {
@@ -61,7 +69,12 @@ export const statusColors = defineSemanticTokens.colors({
   },
   info: palette('info'),
   status: {
-    success: statusRole('success'),
+    success: {
+      ...statusRole('success'),
+      // The done disc's fill (a vote cast, a step finished): the success ink in light, the green in dark, under
+      // `status.success.contrast` (white in light, near black in dark).
+      mark: { value: { _light: '{colors.success.text}', _dark: '{colors.success.solid}' } },
+    },
     warning: statusRole('warning'),
     error: statusRole('danger'),
     info: statusRole('info'),

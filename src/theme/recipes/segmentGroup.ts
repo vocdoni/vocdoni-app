@@ -1,7 +1,7 @@
 import { defineSlotRecipe, type SystemStyleObject } from '@chakra-ui/react'
 import { segmentGroupAnatomy } from '@chakra-ui/react/anatomy'
 
-// A sunken track holding 28px segments; the chosen one is a panel with a 1px ring. One size, whatever the prop.
+// A sunken track holding 28px segments; the chosen one is a lighter fill with a 1px ring. One size, whatever the prop.
 const size: Record<string, SystemStyleObject> = { item: { height: '7', px: '3', gap: '2', textStyle: 'control' } }
 
 export const SegmentGroup = defineSlotRecipe({
@@ -22,11 +22,11 @@ export const SegmentGroup = defineSlotRecipe({
       '&[data-state=checked]': { color: 'fg', fontWeight: 'semibold' },
       '&[data-state=checked][data-ssr]': {
         boxShadow: '[0 0 0 {borderWidths.hairline} {colors.border}]',
-        bg: 'bg.panel',
+        bg: 'segment.selected',
       },
     },
     indicator: {
-      '--segment-indicator-bg': 'colors.bg.panel',
+      '--segment-indicator-bg': 'colors.segment.selected',
       shadow: '[0 0 0 {borderWidths.hairline} {colors.border}]',
     },
   },

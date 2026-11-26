@@ -46,7 +46,7 @@ describe('Vike error page', () => {
 
     render(<ErrorPage />)
 
-    expect(appProviders).toHaveBeenCalledWith(expect.objectContaining({ language: 'ca' }))
+    expect(appProviders).toHaveBeenCalledWith(expect.objectContaining({ language: 'ca', followSystem: true }))
     expect(publicLayout).toHaveBeenCalledWith(expect.objectContaining({ pathname: '/ca/processes/0xabc' }))
     expect(errorView).toHaveBeenCalledWith(
       expect.objectContaining({

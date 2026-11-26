@@ -8,6 +8,7 @@ import { PageContainer } from '~components/ui/PageContainer'
 import { stripPublicLanguagePrefix } from '~i18n/public-language'
 import { Routes } from '~routes'
 import { useAppEnv, useLanguagesEnv } from '~src/app-env'
+import { useFollowSystemColorMode } from '~theme/color-mode'
 import type { HeaderOrganizationLogo } from '~src/pages/shared/headerOrganizationLogo'
 
 type PublicLayoutProps = PropsWithChildren<{
@@ -42,6 +43,8 @@ const PublicLayout = ({
   simpleFooter = false,
   children,
 }: PublicLayoutProps) => {
+  // The voter has no appearance control and always follows the system.
+  useFollowSystemColorMode()
   const { SHOW_ORG_LOGO } = useAppEnv()
   const normalizedPathname = stripPublicLanguagePrefix(pathname, Object.keys(useLanguagesEnv()))
   const isOrganizationPage = normalizedPathname === '/organization' || normalizedPathname.includes('/organization/')

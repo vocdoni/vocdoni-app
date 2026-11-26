@@ -8,16 +8,13 @@ export const ballotColors = defineSemanticTokens.colors({
       // Unselected states only: a selected choice reads `colorPalette.solid`, like Chakra's checkbox, so it
       // follows the brand.
       border: {
-        value: {
-          _light: '{colors.border.field}',
-          _dark: '{colors.ink.700}',
-        },
+        value: '{colors.border.field}',
       },
       // Circle and fill of the single-choice radio.
       ring: {
         value: {
           _light: '{colors.fg.faint}',
-          _dark: '{colors.gray.500}',
+          _dark: '{colors.border.strong}',
         },
       },
       bg: {

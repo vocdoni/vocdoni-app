@@ -44,11 +44,11 @@ describe('QuestionsTypeBadge recipe', () => {
 })
 
 describe('QuestionsConfirmation recipe', () => {
-  it('draws the confirmed answer as a success disc with a white tick', () => {
+  it('draws the confirmed answer as the success mark disc', () => {
     expect(QuestionsConfirmation.base.check).toMatchObject({
       borderRadius: 'full',
-      bg: 'status.success.fg',
-      color: 'accent.contrast',
+      bg: 'status.success.mark',
+      color: 'status.success.contrast',
     })
   })
 })

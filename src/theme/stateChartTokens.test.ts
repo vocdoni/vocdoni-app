@@ -20,13 +20,13 @@ const systems = { stock: system, branded: createAppSystem('#1a73e8') }
 describe.each(Object.entries(systems))('interaction-state and chart tokens (%s)', (_label, sys) => {
   it.each<[string, string, string]>([
     ['state.hover.bg', 'rgb(0 0 0 / 0.04)', 'bg.muted'],
-    ['state.selected.bg', 'rgb(0 0 0 / 0.06)', 'ink.700'],
-    ['state.selected.fg', 'gray.900', 'white'],
-    ['state.hover.fg', 'gray.900', 'white'],
-    ['state.current.bg', 'rgb(0 0 0 / 0.06)', 'gray.800'],
+    ['state.selected.bg', 'rgb(0 0 0 / 0.06)', 'rgb(255 255 255 / 0.1)'],
+    ['state.selected.fg', 'gray.900', 'carbon.100'],
+    ['state.hover.fg', 'gray.900', 'carbon.100'],
+    ['state.current.bg', 'rgb(0 0 0 / 0.06)', 'rgb(255 255 255 / 0.1)'],
     ['chart.track', 'bg.emphasized', 'bg.emphasized'],
-    ['meter.warning', '#875500', 'orange.500'],
-    ['meter.critical', '#ca2a30', 'red.600'],
+    ['meter.warning', '#875500', '#e4ac59'],
+    ['meter.critical', '#ca2a30', '#f97770'],
     ['meter.ok', 'gray.solid', 'gray.solid'],
   ])('%s resolves to the value the consumer had before', (token, light, dark) => {
     // A literal (Fil's translucent selection) is compared as written; anything else is a token name.
