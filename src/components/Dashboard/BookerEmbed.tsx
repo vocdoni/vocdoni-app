@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAppEnv } from '~src/app-env'
 import { useColorMode } from '~theme/color-mode'
-import { EMBED_DARK, embedBrandColor } from '~theme/embedColors'
+import { EMBED_DARK, embedBrandColors } from '~theme/embedColors'
 
 export type BookerProps = {
   callback?: () => void
@@ -29,6 +29,7 @@ const Booker = ({ callback }: BookerProps) => {
   useEffect(() => {
     ;(async function () {
       const cal = await getCalApi({ namespace: '30min' })
+      const brand = embedBrandColors(appEnv.PRIMARY_COLOR)
       cal('ui', {
         hideEventTypeDetails: false,
         layout: 'month_view',
@@ -39,7 +40,9 @@ const Booker = ({ callback }: BookerProps) => {
             'cal-bg': EMBED_DARK.dialog,
             'cal-text': EMBED_DARK.text,
             'cal-border': EMBED_DARK.fieldRing,
-            'cal-brand': embedBrandColor(appEnv.PRIMARY_COLOR),
+            'cal-brand': brand.brand,
+            'cal-brand-text': brand.text,
+            'cal-brand-emphasis': brand.emphasis,
           },
         },
       })

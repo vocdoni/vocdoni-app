@@ -119,6 +119,9 @@ export const generatePaletteScale = (baseHex: string): PaletteScale => {
   return scale
 }
 
+// Mixes `t` (0..1) of white into the colour, in OKLab like the scale: the dark hover of a generated brand.
+export const tintHex = (hex: string, t: number): string => rgbToHex(labToRgb(mix(rgbToLab(hexToRgb(hex)), 1, t)))
+
 // WCAG minimum for non-text UI (3:1). A solid surface below this against the
 // page background is invisible, so the semantic `solid` slot steps away from
 // 500 until it clears the bar.

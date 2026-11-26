@@ -1,5 +1,11 @@
 import { PAGE_BACKGROUNDS } from './colors'
-import { generateBrandSemanticTokens, generatePaletteScale, normalizeHexColor, type PaletteScale } from './palette'
+import {
+  generateBrandSemanticTokens,
+  generatePaletteScale,
+  normalizeHexColor,
+  tintHex,
+  type PaletteScale,
+} from './palette'
 
 // Stripe and Cal.com render in iframes, so theme CSS vars are unreachable; these raw values mirror the Fil dark
 // tokens (bg, the dialog grey, fg, field ring, primary). The one place for them, shared by both embeds. Light keeps
@@ -10,15 +16,19 @@ export const EMBED_DARK = {
   text: '#ededed',
   fieldRing: '#707070',
   primary: '#1d62e9',
+  primaryText: '#ffffff',
+  primaryHover: '#2d6deb',
 }
 
-// The booker's brand in dark: the `solid` the app's palette gives a configured PRIMARY_COLOR, so it matches the
-// buttons. Without one the palette is Fil's blue, which is the default.
-export const embedBrandColor = (primaryColor?: string): string => {
+// The booker's brand in dark, as the app's buttons paint it: the `solid` the palette gives a configured PRIMARY_COLOR,
+// its label (the palette's contrast colour) and its hover. Without one the palette is Fil's blue, which is the default.
+export const embedBrandColors = (primaryColor?: string) => {
   const brand = normalizeHexColor(primaryColor)
-  if (!brand) return EMBED_DARK.primary
+  if (!brand) return { brand: EMBED_DARK.primary, text: EMBED_DARK.primaryText, emphasis: EMBED_DARK.primaryHover }
   const scale = generatePaletteScale(brand)
+  const tokens = generateBrandSemanticTokens(scale, PAGE_BACKGROUNDS)
   // The token is a reference to a scale step, `{colors.brand.<step>}`: the step the buttons fill with.
-  const step = Number(/brand\.(\d+)/.exec(generateBrandSemanticTokens(scale, PAGE_BACKGROUNDS).solid._dark)?.[1])
-  return scale[step as keyof PaletteScale]
+  const step = Number(/brand\.(\d+)/.exec(tokens.solid._dark)?.[1]) as keyof PaletteScale
+  // The app's solid hover in dark is the solid mixed 6% towards white.
+  return { brand: scale[step], text: tokens.contrast._dark, emphasis: tintHex(scale[step], 0.06) }
 }
