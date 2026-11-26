@@ -339,6 +339,11 @@ describe('certificate voter flow', () => {
       expect(screen.getByText(/close every window of the browser and open the voting link again/)).toBeInTheDocument()
       const retry = screen.getByRole('button', { name: 'Try again' })
       await user.click(retry)
+      await waitFor(() => expect(navigate).toHaveBeenCalledTimes(1))
+      // back from the gateway: the page comes back from the back/forward cache
+      act(() => {
+        window.dispatchEvent(new Event('pageshow'))
+      })
       await user.click(retry)
       await waitFor(() => expect(navigate).toHaveBeenCalledTimes(2))
       const [a, b] = navigate.mock.calls.map(([url]) => new URL(url))
@@ -381,6 +386,50 @@ describe('certificate voter flow', () => {
       expect(screen.getByRole('button', { name: 'Sign in with a digital certificate' })).toBeInTheDocument()
     }
   )
+
+  it('"Try again" loads while the login starts', async () => {
+    useCensus([])
+    const navigate = vi.fn()
+    const user = userEvent.setup()
+    render(<CertAuthError code='internal' navigate={navigate} />, { appEnv })
+
+    const retry = screen.getByRole('button', { name: 'Try again' })
+    await user.click(retry)
+
+    await waitFor(() => expect(navigate).toHaveBeenCalledTimes(1))
+    expect(retry).toHaveAttribute('data-loading')
+  })
+
+  it('"Try again" recovers and says so when the login cannot start', async () => {
+    useCensus([])
+    const navigate = vi.fn(() => {
+      throw new Error('blocked')
+    })
+    const user = userEvent.setup()
+    render(<CertAuthError code='internal' navigate={navigate} />, { appEnv })
+
+    const retry = screen.getByRole('button', { name: 'Try again' })
+    await user.click(retry)
+
+    await waitFor(() => expect(navigate).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(retry).not.toHaveAttribute('data-loading'))
+    expect(retry).toBeEnabled()
+    expect(screen.getByText("We couldn't sign you in with your certificate.")).toBeInTheDocument()
+  })
+
+  it('signing in again after a refused code recovers and says so when the login cannot start', async () => {
+    useCensus([])
+    auth0.mockRejectedValue(spentCode())
+    const user = userEvent.setup()
+    landWith(`certCode=${CODE}&state=${STATE}`)
+    const again = await screen.findByRole('button', { name: 'Sign in with a digital certificate' })
+    vi.spyOn(crypto.subtle, 'digest').mockRejectedValue(new Error('no crypto'))
+
+    await user.click(again)
+
+    expect(await screen.findByText("We couldn't sign you in with your certificate.")).toBeInTheDocument()
+    expect(again).not.toHaveAttribute('data-loading')
+  })
 
   it('announces the sign-in in progress', async () => {
     useCensus([])

@@ -171,6 +171,59 @@ const OpenInBrowser = ({ platform }: { platform: 'android' | 'ios' | 'other' }) 
 }
 
 /**
+ * A button that starts a certificate login: loading until the page leaves for the gateway, or back to
+ * normal with the generic error if the login can't start.
+ */
+const StartCertAuthButton = ({
+  start,
+  disabled,
+  children,
+}: {
+  start: () => Promise<void>
+  disabled?: boolean
+  children: ReactNode
+}) => {
+  const { t } = useTranslation()
+  const [starting, setStarting] = useState(false)
+  const [failed, setFailed] = useState(false)
+
+  // the page can come back from the back/forward cache after a navigation to the gateway
+  useEffect(() => {
+    const reset = () => setStarting(false)
+    window.addEventListener('pageshow', reset)
+    return () => window.removeEventListener('pageshow', reset)
+  }, [])
+
+  return (
+    <>
+      {failed && (
+        <Alert status='error'>
+          <AlertIndicator />
+          <AlertDescription>{certErrorMessage(t, 'generic')}</AlertDescription>
+        </Alert>
+      )}
+      <Button
+        w='full'
+        disabled={disabled}
+        loading={starting}
+        onClick={async () => {
+          setStarting(true)
+          setFailed(false)
+          try {
+            await start()
+          } catch {
+            setStarting(false)
+            setFailed(true)
+          }
+        }}
+      >
+        {children}
+      </Button>
+    </>
+  )
+}
+
+/**
  * Step 0 of a certificate census: the terms, then the certificate button. `showPending`: false where the
  * gateway's answer is already on screen, so the "page didn't load" hint would be wrong.
  */
@@ -185,14 +238,12 @@ export const CertAuthStart = ({
   const { election } = useElection()
   const start = useStartCertAuth(navigate)
   const [accepted, setAccepted] = useState(false)
-  const [starting, setStarting] = useState(false)
   // a login this tab started moments ago that never came back with an answer
   const [pending, setPending] = useState(() => showPending && !!election && takeUnansweredCertAuth(election.id))
 
   // the page can come back from the back/forward cache after a navigation to the gateway
   useEffect(() => {
     const reset = (event: PageTransitionEvent) => {
-      setStarting(false)
       // restored by going back from the gateway page: it did load, so the login is only forgotten
       if (event.persisted) {
         if (election) takeUnansweredCertAuth(election.id, { backForward: true })
@@ -242,21 +293,9 @@ export const CertAuthStart = ({
           </CheckboxLabel>
         </CheckboxRoot>
       </FormControl>
-      <Button
-        w='full'
-        disabled={!accepted}
-        loading={starting}
-        onClick={async () => {
-          setStarting(true)
-          try {
-            await start()
-          } catch {
-            setStarting(false)
-          }
-        }}
-      >
+      <StartCertAuthButton start={start} disabled={!accepted}>
         {t('csp.cert.start', { defaultValue: 'Sign in with a digital certificate' })}
-      </Button>
+      </StartCertAuthButton>
       <Text textStyle='body-sm' color='fg.muted'>
         {t('csp.cert.picker_help', {
           defaultValue:
@@ -394,9 +433,7 @@ export const CertAuthError = ({
       {platform && <OpenInBrowser platform={platform} />}
       {/* a sticky code too: a retry reaches a new host, so the browser asks for the certificate again */}
       {(retryable || (sticky && !platform)) && start && (
-        <Button w='full' onClick={() => start()}>
-          {t('csp.cert.retry', { defaultValue: 'Try again' })}
-        </Button>
+        <StartCertAuthButton start={start}>{t('csp.cert.retry', { defaultValue: 'Try again' })}</StartCertAuthButton>
       )}
       {sticky && !platform && (
         <Text textStyle='body-sm' color='fg.muted'>
@@ -438,9 +475,9 @@ const CertAuthAgain = () => {
   const start = useStartCertAuth()
   if (!start) return null
   return (
-    <Button w='full' onClick={() => start()}>
+    <StartCertAuthButton start={start}>
       {t('csp.cert.start', { defaultValue: 'Sign in with a digital certificate' })}
-    </Button>
+    </StartCertAuthButton>
   )
 }
 
