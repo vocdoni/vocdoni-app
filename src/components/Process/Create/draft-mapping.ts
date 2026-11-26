@@ -78,6 +78,7 @@ export const votingProcessToForm = (process: VotingProcessResponse, disableAnony
             credentials: [...authFields],
             use2FA: twoFaFields.length > 0,
             use2FAMethod: twoFaMethod ?? 'email',
+            ...(process.census?.certAuth && { certAuth: true }),
           }
         : defaultProcessValues.census,
     // A process always has at least one question (the API rejects an empty list),
@@ -165,6 +166,7 @@ export const votingProcessToCreateRequest = (
     anonymous: disableAnonymous ? undefined : process.census?.anonymous,
     authFields: process.census?.authFields,
     twoFaFields: process.census?.twoFaFields,
+    certAuth: process.census?.certAuth,
     // Absent for an organization-wide census, which is exactly what we want to
     // send back for one.
     groupId: process.census?.groupId,

@@ -278,6 +278,15 @@ describe('votingProcessToForm', () => {
       expect(votingProcessToForm(process({ census: spec as any })).census).toEqual(census)
     })
 
+    it('round-trips a certificate census through the census spec and the clone request', () => {
+      const census = { credentials: ['nationalId'], use2FA: true, use2FAMethod: 'email' as const, certAuth: true }
+      const spec = buildCensusSpec({ ...defaultProcessValues, groupId: 'group-1', census })
+
+      expect(spec).toEqual({ groupId: 'group-1', authFields: ['nationalId'], twoFaFields: ['email'], certAuth: true })
+      expect(votingProcessToForm(process({ census: spec })).census).toEqual(census)
+      expect(votingProcessToCreateRequest(process({ census: spec }), '0xorg').census?.certAuth).toBe(true)
+    })
+
     it('restores anonymous voting', () => {
       expect(votingProcessToForm(process({ census: { anonymous: true } })).anonymousVoting).toBe(true)
     })

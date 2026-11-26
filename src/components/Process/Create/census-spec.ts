@@ -27,5 +27,10 @@ export const buildCensusSpec = (form: CensusSpecSource, disableAnonymous?: boole
   if (form.census?.use2FA && form.census?.use2FAMethod) {
     spec.twoFaFields = getTwoFaFields(form.census.use2FAMethod)
   }
+  // A certificate census: the backend requires authFields to be exactly ['nationalId'].
+  if (form.census?.certAuth) {
+    spec.certAuth = true
+    spec.authFields = ['nationalId']
+  }
   return spec
 }
