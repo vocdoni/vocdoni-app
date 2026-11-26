@@ -1,6 +1,6 @@
 import { ChakraProvider } from '@chakra-ui/react'
 import { act } from '@testing-library/react'
-import { hydrateRoot } from 'react-dom/client'
+import { hydrateRoot, type Root } from 'react-dom/client'
 import { renderToString } from 'react-dom/server'
 import { getAppSystem } from '~theme/system'
 import { ElectionVideo } from './ElectionVideo'
@@ -22,11 +22,14 @@ describe('ElectionVideo hydration', () => {
     container.innerHTML = renderToString(element)
     const onRecoverableError = vi.fn()
 
+    let root: Root | undefined
     await act(async () => {
-      hydrateRoot(container, element, { onRecoverableError })
+      root = hydrateRoot(container, element, { onRecoverableError })
     })
 
     expect(onRecoverableError).not.toHaveBeenCalled()
+    // The lazy player can resolve after the test: unmounting cancels that render before jsdom is torn down.
+    act(() => root?.unmount())
     container.remove()
   })
 })
