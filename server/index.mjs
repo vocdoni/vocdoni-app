@@ -100,6 +100,10 @@ app.use((error, _req, res, _next) => {
   res.status(500).send('Internal Server Error')
 })
 
-app.listen(port, host, () => {
+app.listen(port, host, (error) => {
+  if (error) {
+    console.error(error)
+    process.exit(1)
+  }
   console.log(`Server running at http://localhost:${port}`)
 })
