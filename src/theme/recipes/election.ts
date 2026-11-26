@@ -389,6 +389,18 @@ export const QuestionsConfirmation = defineSlotRecipe({
     title: {
       fontWeight: 'semibold',
     },
+    // The same success disc as `Voted`, at the size of a card's title line.
+    check: {
+      boxSize: '5',
+      mt: '0.5',
+      flexShrink: '0',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 'full',
+      bg: 'status.success.fg',
+      color: 'accent.contrast',
+    },
   },
 })
 

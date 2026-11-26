@@ -1,4 +1,4 @@
-import { ElectionResults, QuestionChoice, QuestionsTypeBadge, Voted } from './election'
+import { ElectionResults, QuestionChoice, QuestionsConfirmation, QuestionsTypeBadge, Voted } from './election'
 import { link } from './typography'
 
 describe('ElectionResults recipe', () => {
@@ -40,5 +40,15 @@ describe('QuestionsTypeBadge recipe', () => {
   it('is a ringed tag, not a filled pill', () => {
     expect(QuestionsTypeBadge.base.box.borderColor).toBe('border.emphasized')
     expect(QuestionsTypeBadge.base.box.bg).toBeUndefined()
+  })
+})
+
+describe('QuestionsConfirmation recipe', () => {
+  it('draws the confirmed answer as a success disc with a white tick', () => {
+    expect(QuestionsConfirmation.base.check).toMatchObject({
+      borderRadius: 'full',
+      bg: 'status.success.fg',
+      color: 'accent.contrast',
+    })
   })
 })

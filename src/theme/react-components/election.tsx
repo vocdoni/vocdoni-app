@@ -485,6 +485,8 @@ export const electionComponents: ComponentsPartialDefinition = {
   )),
   QuestionsConfirmation: defineComponent<'QuestionsConfirmation', BoxProps>(
     ({ election, answersView, onConfirm, onCancel }) => {
+      const recipe = useSlotRecipe({ key: 'QuestionsConfirmation' })
+      const styles = recipe()
       const { t } = useTranslation()
 
       return (
@@ -510,16 +512,7 @@ export const electionComponents: ComponentsPartialDefinition = {
                 gap='3'
                 alignItems='flex-start'
               >
-                <Flex
-                  boxSize='5'
-                  mt='0.5'
-                  flexShrink='0'
-                  alignItems='center'
-                  justifyContent='center'
-                  borderRadius='full'
-                  bg='status.success.fg'
-                  color='accent.contrast'
-                >
+                <Flex css={styles.check}>
                   <Icon as={CheckIcon} boxSize='3.5' />
                 </Flex>
                 <Flex direction='column' gap='1' flex='1'>
