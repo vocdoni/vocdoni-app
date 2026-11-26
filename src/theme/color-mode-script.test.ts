@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { colorModeScript, isVoterPageId } from './color-mode-script'
+import { colorModeScript, isPublicHomePath, isVoterPageId } from './color-mode-script'
 
 // Runs the inline script as the browser would, with the given system preference.
 const run = (followSystem: boolean, system: 'light' | 'dark') => {
@@ -64,4 +64,19 @@ describe('isVoterPageId', () => {
   ])('%s -> %s', (pageId, expected) => {
     expect(isVoterPageId(pageId)).toBe(expected)
   })
+})
+
+describe('isPublicHomePath', () => {
+  const languages = ['en', 'es']
+
+  it.each(['/', '/en', '/es/'])('takes the public home %s, with or without a language', (pathname) => {
+    expect(isPublicHomePath(pathname, languages)).toBe(true)
+  })
+
+  it.each(['/admin', '/en/admin', '/xx', '/en/processes/abc', undefined])(
+    'leaves %s to the saved choice',
+    (pathname) => {
+      expect(isPublicHomePath(pathname, languages)).toBe(false)
+    }
+  )
 })

@@ -8,6 +8,15 @@ export const VOTER_COLOR_MODE_STORAGE_KEY = 'theme-preference-voter'
 export const isVoterPageId = (pageId: string | null | undefined): boolean =>
   !!pageId && /\/(processes|organization)\/|\/home-process$|\/_error$/.test(pageId)
 
+// The root (`/` or `/:lang`) is a client-rendered voter shell on a custom domain or with a shared census, and the
+// dashboard otherwise. The server cannot see the host, so the path decides, and the root keeps the system's mode.
+export const isPublicHomePath = (pathname: string | undefined, languages: readonly string[]): boolean => {
+  if (!pathname) return false
+  const segments = pathname.split('/').filter(Boolean)
+  const rest = languages.includes(segments[0]) ? segments.slice(1) : segments
+  return rest.length === 0
+}
+
 // Sets the colour mode on <html> before first paint, as next-themes does with attribute='class': the client-rendered
 // routes never run next-themes' own script, so without this the shell paints light before the bundle loads.
 export const colorModeScript = (followSystem: boolean): string => {

@@ -3,8 +3,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { colorModeScript } from '~theme/color-mode-script'
 import headHtmlBegin from './+headHtmlBegin.server'
 
-const context = (pageId: string | null = '/src/pages/@lang/@catchAll') =>
-  ({ globalContext: { commitSha: '0123456' }, pageId }) as PageContextServer
+const context = (pageId: string | null = '/src/pages/@lang/@catchAll', urlPathname?: string) =>
+  ({ globalContext: { commitSha: '0123456' }, pageId, urlPathname }) as PageContextServer
 
 // The build-commit tag goes first so it sits as high in <head> as Vike allows. The sha comes from the globalContext
 // resolved at server boot, so the render never reads the env or git.
@@ -27,6 +27,18 @@ describe('headHtmlBegin', () => {
 
   it("applies the device's saved choice on the client-rendered routes", () => {
     expect(headHtmlBegin(context())).toContain("localStorage.getItem('theme-preference')")
+  })
+
+  // The public home is the custom-domain organisation or the shared census, both client-rendered voter shells; the
+  // dashboard reached from it keeps its saved choice.
+  it.each(['/', '/en', '/es/'])('makes the public home %s follow the system, never the saved choice', (urlPathname) => {
+    const html = headHtmlBegin(context('/src/pages/@lang/@catchAll', urlPathname))
+    expect(html).toContain("localStorage.getItem('theme-preference-voter')")
+    expect(html).not.toContain("getItem('theme-preference')")
+  })
+
+  it.each(['/admin', '/en/admin', '/en/processes/new', '/xx'])('keeps the saved choice on %s', (urlPathname) => {
+    expect(headHtmlBegin(context('/src/pages/@lang/@catchAll', urlPathname))).toContain("getItem('theme-preference')")
   })
 
   it.each([
