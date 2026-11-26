@@ -606,13 +606,15 @@ export const electionComponents: ComponentsPartialDefinition = {
     const styles = recipe()
     const { t } = useTranslation('react-components')
     const hasMultipleQuestions = (questions?.length ?? 0) > 1
-    // Only a process that has ended has a final result; live and provisional ones keep every bar in full ink.
-    const { status } = useElection()
-    const isFinal = status === 'ENDED' || status === 'RESULTS'
+    // Only a question whose tally is final has a leader; a live or provisional one keeps every bar in full ink,
+    // even once the vote has ended. The library passes `questions` in the election's order.
+    const { election, results } = useElection()
+    const finalIds = new Set(results?.questions.filter((result) => result.finalResults).map((r) => r.questionId))
     return (
       <Box css={[styles.wrapper, !hasMultipleQuestions ? { gridTemplateColumns: '1fr' } : undefined]} {...props}>
         {secretText ? <Text css={styles.secret}>{secretText}</Text> : null}
-        {questions?.map((question) => {
+        {questions?.map((question, questionIndex) => {
+          const isFinal = finalIds.has(election?.questions[questionIndex]?.id ?? '')
           const leader = isFinal ? clearLeader(question.choices) : -1
           return (
             <Box key={question.title} css={styles.question}>
