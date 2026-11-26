@@ -14,8 +14,9 @@ import { linkSaasOAuth } from '@vocdoni/rainbowkit-wallets'
 import { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router'
 import { GoogleIcon, LinkIcon } from '~theme/icons'
-import { api, ApiEndpoints, getApiErrorMessage } from '~components/Auth/api'
+import { apiErrorDetails, ApiEndpoints, ErrorCode, getApiErrorMessage } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { PageTitle } from '~components/ui/PageTitle'
@@ -24,6 +25,7 @@ import { OAuthProvider, OAuthProviders } from '~constants'
 import { QueryKeys } from '~queries/keys'
 import { useAppEnv } from '~src/app-env'
 import { User, useUpdateProfile } from '~src/queries/account'
+import { Routes } from '~src/router/routes'
 import { ChangePasswordButton } from './Password'
 
 interface ProfileFormData {
@@ -39,6 +41,7 @@ const AccountForm = ({ profile }: { profile?: User }) => {
   const updateProfile = useUpdateProfile()
   const queryClient = useQueryClient()
   const { bearedFetch, bearer } = useAuth()
+  const navigate = useNavigate()
   const [linkingProvider, setLinkingProvider] = useState<OAuthProvider | null>(null)
   const [unlinkingProvider, setUnlinkingProvider] = useState<OAuthProvider | null>(null)
   // Kept after the dialog closes so its labels don't blank out during the exit animation.
@@ -123,23 +126,42 @@ const AccountForm = ({ profile }: { profile?: User }) => {
     },
   })
 
-  const requestPasswordReset = useMutation({
-    mutationFn: (email: string) =>
-      api(ApiEndpoints.PasswordRecovery, {
-        method: 'POST',
-        body: { email },
-      }),
+  // Accounts without a password (OAuth-only) prove they own the mailbox with an emailed code, then
+  // choose the password on the setup page.
+  const requestPasswordSetup = useMutation({
+    mutationFn: () => bearedFetch<void>(ApiEndpoints.PasswordSetup, { method: 'POST' }),
     onSuccess: () => {
       toast({
-        title: t('password_request.success', { defaultValue: 'Password reset email sent' }),
-        status: 'success',
+        title: t('password_setup.request.success', { defaultValue: 'We sent you an email with a code' }),
+        type: 'success',
       })
+      navigate(Routes.auth.passwordSetup)
     },
     onError: (error: Error) => {
+      if (apiErrorDetails(error)?.code === ErrorCode.VerificationMaxAttempts) {
+        toast({
+          title: t('password_setup.request.sent_recently', {
+            defaultValue: 'A code was sent recently, check your email or try again in a minute',
+          }),
+          type: 'error',
+        })
+        // the code from the earlier send may still be valid, so let the user type it in
+        navigate(Routes.auth.passwordSetup)
+        return
+      }
+      if (apiErrorDetails(error)?.code === ErrorCode.UserAlreadyHasPassword) {
+        // set elsewhere (another tab) while this cached profile still says otherwise
+        queryClient.invalidateQueries({ queryKey: QueryKeys.profile })
+        toast({
+          title: t('password_setup.already_set', { defaultValue: 'Your account already has a password' }),
+          type: 'info',
+        })
+        return
+      }
       toast({
-        title: t('password_request.error', { defaultValue: 'Failed to request password reset' }),
-        description: error.message,
-        status: 'error',
+        title: t('password_setup.request.error', { defaultValue: 'Failed to send the password setup email' }),
+        description: getApiErrorMessage(error),
+        type: 'error',
       })
     },
   })
@@ -209,13 +231,13 @@ const AccountForm = ({ profile }: { profile?: User }) => {
               </HStack>
             ) : (
               <Button
-                onClick={() => profile?.email && requestPasswordReset.mutate(profile.email)}
+                onClick={() => requestPasswordSetup.mutate()}
                 size='sm'
                 variant='outline'
-                loading={requestPasswordReset.isPending}
+                loading={requestPasswordSetup.isPending}
                 alignSelf='start'
               >
-                {t('password_request.action', { defaultValue: 'Request password change' })}
+                {t('password_setup.request.action', { defaultValue: 'Set a password' })}
               </Button>
             )}
           </FormControl>

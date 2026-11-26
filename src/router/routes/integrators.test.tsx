@@ -54,7 +54,7 @@ describe('integrators routes', () => {
     // Check that the route has an element (AccountProtectedRoute)
     expect(result.current.element).toBeDefined()
 
-    // Check children - should have one main child with OrganizationTypeGuard
+    // Check children - one main child: the layout, which wraps IntegratorOrgGuard
     const children = result.current.children ?? []
     expect(children.length).toBeGreaterThan(0)
 

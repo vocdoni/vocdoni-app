@@ -987,17 +987,26 @@
   "password_recovery_failed": "Falha na recuperação da palavra-passe",
   "password_recovery_sent": "Email de recuperação enviado",
   "password_recovery_sent_description": "Verifica a tua caixa de entrada para encontrar a ligação de reposição.",
-  "password_request": {
-    "action": "Pedir alteração da palavra-passe",
-    "error": "Falha ao pedir a reposição da palavra-passe",
-    "success": "Email de reposição da palavra-passe enviado"
-  },
   "password_reset": {
     "subtitle": "Se o teu email corresponder a uma conta existente, receberás uma mensagem com um código para repor a palavra-passe.",
     "title": "Reposição da palavra-passe"
   },
   "password_reset_failed": "Falha na reposição da palavra-passe",
   "password_reset_successful": "Palavra-passe reposta com sucesso",
+  "password_setup": {
+    "already_set": "A tua conta já tem uma palavra-passe",
+    "error": "Não foi possível definir a palavra-passe",
+    "request": {
+      "action": "Definir uma palavra-passe",
+      "error": "Não foi possível enviar o email para definir a palavra-passe",
+      "sent_recently": "Enviámos-te um código há pouco. Verifica o teu email ou tenta novamente dentro de um minuto",
+      "success": "Enviámos-te um email com um código"
+    },
+    "submit": "Definir palavra-passe",
+    "subtitle": "Introduz o código que te enviámos por email e escolhe uma palavra-passe para iniciares sessão com o teu email.",
+    "success": "Palavra-passe definida com sucesso",
+    "title": "Definir uma palavra-passe"
+  },
   "password_update": {
     "actions": {
       "save": "Guardar palavra-passe"

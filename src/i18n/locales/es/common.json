@@ -987,17 +987,26 @@
   "password_recovery_failed": "Error al enviar el correo de recuperación",
   "password_recovery_sent": "Correo de recuperación enviado",
   "password_recovery_sent_description": "Revisa tu bandeja de entrada para el enlace de restablecimiento.",
-  "password_request": {
-    "action": "Solicitar cambio de contraseña",
-    "error": "No se pudo solicitar el restablecimiento de contraseña",
-    "success": "Correo de restablecimiento enviado"
-  },
   "password_reset": {
     "subtitle": "Si tu correo electrónico corresponde a una cuenta existente, recibirás un correo con un código para restablecer tu contraseña.",
     "title": "Restablecimiento de contraseña"
   },
   "password_reset_failed": "Error al restablecer la contraseña",
   "password_reset_successful": "Contraseña restablecida correctamente",
+  "password_setup": {
+    "already_set": "Tu cuenta ya tiene una contraseña",
+    "error": "No se ha podido establecer la contraseña",
+    "request": {
+      "action": "Establecer una contraseña",
+      "error": "No se ha podido enviar el correo para establecer la contraseña",
+      "sent_recently": "Ya te enviamos un código hace poco; revisa tu correo o vuelve a intentarlo en un minuto",
+      "success": "Te hemos enviado un correo con un código"
+    },
+    "submit": "Establecer contraseña",
+    "subtitle": "Introduce el código que te hemos enviado por correo y elige una contraseña para iniciar sesión con tu correo.",
+    "success": "Contraseña establecida correctamente",
+    "title": "Establece una contraseña"
+  },
   "password_update": {
     "actions": {
       "save": "Guardar contraseña"

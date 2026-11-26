@@ -1,4 +1,4 @@
-import { mockUseOrganization, render, screen, TestMemoryRouter } from '~src/test-utils'
+import { act, fireEvent, mockUseOrganization, render, screen, TestMemoryRouter } from '~src/test-utils'
 import { setReactProvidersMock, setAuthMock, getAuthMock } from '~src/test-utils-react-providers-mock'
 import OrganizationDashboard from './index'
 
@@ -7,12 +7,16 @@ vi.mock('~components/Auth/useAuth', () => ({
 }))
 
 let electionsQueryState: any = { data: null, isLoading: false, isError: false, error: null }
+const useQueryOptions = vi.fn()
 
 vi.mock('@tanstack/react-query', async () => {
   const actual = await vi.importActual<any>('@tanstack/react-query')
   return {
     ...actual,
-    useQuery: () => electionsQueryState,
+    useQuery: (options: unknown) => {
+      useQueryOptions(options)
+      return electionsQueryState
+    },
   }
 })
 
@@ -21,11 +25,19 @@ vi.mock('~src/queries/account', () => ({
 }))
 
 vi.mock('~src/queries/organization', () => ({
-  paginatedElectionsQuery: () => ({ queryKey: ['elections'], queryFn: vi.fn() }),
+  paginatedElectionsQuery: (address?: string) => ({
+    queryKey: ['elections', address],
+    queryFn: vi.fn(),
+    enabled: !!address,
+  }),
 }))
 
+const playerProps = vi.fn()
 vi.mock('react-player', () => ({
-  default: () => <div>Player</div>,
+  default: (props: { onPause?: () => void }) => {
+    playerProps(props)
+    return <div>Player</div>
+  },
 }))
 
 vi.mock('~components/Layout/WhatsappButton', () => ({
@@ -79,6 +91,21 @@ describe('OrganizationDashboard', () => {
     expect(screen.queryByText('Error loading voting processes')).not.toBeInTheDocument()
   })
 
+  it('lists the voting processes from the session address, without waiting for the organization to load', () => {
+    // useOrganization still has no organization object; the address alone is enough to start.
+    render(
+      <TestMemoryRouter>
+        <OrganizationDashboard />
+      </TestMemoryRouter>
+    )
+
+    expect(useQueryOptions).toHaveBeenCalledWith(expect.objectContaining({ queryKey: ['elections', '0xabc'] }))
+    for (const [options] of useQueryOptions.mock.calls) {
+      expect(options.enabled).not.toBe(false)
+    }
+    expect(screen.queryByText('Create your first organization')).not.toBeInTheDocument()
+  })
+
   it('renders dashboard header', () => {
     const env = (import.meta as any).env || {}
     Object.defineProperty(import.meta, 'env', {
@@ -92,5 +119,42 @@ describe('OrganizationDashboard', () => {
       </TestMemoryRouter>
     )
     expect(screen.getByText('Dashboard')).toBeInTheDocument()
+  })
+
+  describe('tutorial video', () => {
+    const renderWithVideo = (src: string) =>
+      render(
+        <TestMemoryRouter>
+          <OrganizationDashboard />
+        </TestMemoryRouter>,
+        { appEnv: { VIDEO_TUTORIAL: { en: src } } }
+      )
+
+    beforeEach(() => playerProps.mockClear())
+
+    it('shows the YouTube thumbnail and loads the player only when it is clicked, then plays', () => {
+      renderWithVideo('https://www.youtube.com/watch?v=OQRF_4-zGSk')
+
+      const preview = screen.getByLabelText('How to create your first vote', { selector: 'button' })
+      expect(preview.querySelector('img')).toHaveAttribute('src', 'https://i.ytimg.com/vi/OQRF_4-zGSk/hqdefault.jpg')
+      expect(playerProps).not.toHaveBeenCalled()
+
+      fireEvent.click(preview)
+
+      expect(playerProps).toHaveBeenLastCalledWith(expect.objectContaining({ playing: true }))
+      expect(playerProps.mock.lastCall![0]).not.toHaveProperty('light')
+
+      // Pausing in the player sticks: later renders do not tell it to play again
+      act(() => playerProps.mock.lastCall![0].onPause())
+
+      expect(playerProps).toHaveBeenLastCalledWith(expect.objectContaining({ playing: false }))
+    })
+
+    it('keeps a click-to-load preview for a video that is not on YouTube', () => {
+      renderWithVideo('https://example.com/tutorial.mp4')
+
+      expect(screen.getByLabelText('How to create your first vote', { selector: 'button' })).toBeInTheDocument()
+      expect(playerProps).not.toHaveBeenCalled()
+    })
   })
 })

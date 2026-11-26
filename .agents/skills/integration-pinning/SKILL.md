@@ -1,18 +1,18 @@
 ---
 name: integration-pinning
-description: "Run vocdoni-app's integration and e2e suite against unmerged upstream work with the /integration PR comment (saas-backend, vocdoni-node, integrator-sdk pins), and read its results. Use when a PR depends on an unmerged saas-backend, vocdoni-node or vocdoni-integrator-sdk change, when asked to pin, re-run or reset the integration run, when the Integration check or its PR comment fails, or when deciding whether a pinned PR may merge."
+description: "Run vocdoni-app's integration and e2e suite against unmerged upstream work with the /integration PR comment (saas-backend, vocdoni-sequencer, integrator-sdk pins), and read its results. Use when a PR depends on an unmerged saas-backend, vocdoni-sequencer or vocdoni-integrator-sdk change, when asked to pin, re-run or reset the integration run, when the Integration check or its PR comment fails, or when deciding whether a pinned PR may merge."
 ---
 
 # Pinning upstream changes in the integration run
 
 The integration workflow (`.github/workflows/integration.yml`) runs against the published `:main` images of
-`vocdoni/vocdoni-node` and `vocdoni/saas-backend` and the npm `@vocdoni/*` packages from the lockfile. When a PR here
+`vocdoni/vocdoni-sequencer` and `vocdoni/saas-backend` and the npm `@vocdoni/*` packages from the lockfile. When a PR here
 depends on upstream work that is not merged yet, that run fails or proves nothing. Details are in
 `integration/README.md` ("Pinning upstream commits").
 
 ## The rule
 
-When a PR depends on an unmerged `saas-backend`, `vocdoni-node` or `vocdoni-integrator-sdk` change:
+When a PR depends on an unmerged `saas-backend`, `vocdoni-sequencer` or `vocdoni-integrator-sdk` change:
 
 1. Open the PR with its usual description, linking the upstream PR.
 2. Post a **separate PR comment** holding only the command, pointing at that upstream PR, for example
@@ -21,9 +21,10 @@ When a PR depends on an unmerged `saas-backend`, `vocdoni-node` or `vocdoni-inte
 
 ## Command syntax
 
-- Keys: `vocdoni-node=`, `saas-backend=`, `integrator-sdk=` (the SDK repo, built, packed and installed through pnpm
+- Keys: `vocdoni-sequencer=`, `saas-backend=`, `integrator-sdk=` (the SDK repo, built, packed and installed through pnpm
   overrides for that run only). Each is optional. A ref is a SHA, branch, tag, or PR number (bare `760` or `#760`).
-  Upstreams are built from source, so the run takes longer.
+  Upstreams are built from source, so the run takes longer. A `vocdoni-sequencer` ref must include 62b1ae30 (the
+  `voconed migrate` subcommand) or be later; see `integration/README.md`, "Pinning upstream commits".
 - Refs that are all branches, tags or PRs make the pin **sticky**: every later push re-runs against those refs at their
   current heads. Any SHA makes it a one-shot run, and so does a bare `/integration` (`:main` images and npm packages),
   without changing the sticky refs. `/integration reset` goes back to the `:main` images and npm packages.
@@ -41,7 +42,7 @@ upstream PR re-run nothing here: push to this PR or comment again.
 
 A green pinned run is not a green light:
 
-- `saas-backend` or `vocdoni-node`: merge only after the upstream change is merged **and deployed** to the environment
+- `saas-backend` or `vocdoni-sequencer`: merge only after the upstream change is merged **and deployed** to the environment
   the base branch uses (`develop` → api-dev and vochain dev).
 - `integrator-sdk`: merge only after it is published to npm and bumped here; the pinned run commits nothing.
 - The pin only reaches the e2e job. Lint, type checks and unit tests (`test.yml`) still use the lockfile packages, so a

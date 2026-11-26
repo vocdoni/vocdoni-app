@@ -968,17 +968,26 @@
   "password_recovery_failed": "Passwortwiederherstellung fehlgeschlagen",
   "password_recovery_sent": "Wiederherstellungs-E-Mail gesendet",
   "password_recovery_sent_description": "Überprüfe deinen Posteingang auf den Link zum Zurücksetzen.",
-  "password_request": {
-    "action": "Passwortänderung anfordern",
-    "error": "Passwort-Zurücksetzen konnte nicht angefordert werden",
-    "success": "E-Mail zum Zurücksetzen des Passworts gesendet"
-  },
   "password_reset": {
     "subtitle": "Wenn deine E-Mail-Adresse einem bestehenden Konto entspricht, erhältst du eine E-Mail mit einem Code zum Zurücksetzen deines Passworts.",
     "title": "Passwort zurücksetzen"
   },
   "password_reset_failed": "Passwort zurücksetzen fehlgeschlagen",
   "password_reset_successful": "Passwort erfolgreich zurückgesetzt",
+  "password_setup": {
+    "already_set": "Dein Konto hat bereits ein Passwort",
+    "error": "Das Passwort konnte nicht festgelegt werden",
+    "request": {
+      "action": "Passwort festlegen",
+      "error": "Die E-Mail zum Festlegen des Passworts konnte nicht gesendet werden",
+      "sent_recently": "Wir haben dir vor Kurzem einen Code geschickt. Prüfe deine E-Mails oder versuche es in einer Minute erneut",
+      "success": "Wir haben dir eine E-Mail mit einem Code geschickt"
+    },
+    "submit": "Passwort festlegen",
+    "subtitle": "Gib den Code ein, den wir dir per E-Mail geschickt haben, und wähle ein Passwort, um dich mit deiner E-Mail-Adresse anzumelden.",
+    "success": "Passwort erfolgreich festgelegt",
+    "title": "Passwort festlegen"
+  },
   "password_update": {
     "actions": {
       "save": "Passwort speichern"

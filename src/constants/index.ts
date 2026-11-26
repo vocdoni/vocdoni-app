@@ -9,6 +9,10 @@ export const MaxProcessDurationDays = 90
 export const MaxMembersPerOrg = 50_000
 export const MaxQuestionsPerProcess = 15
 
+// Trust server-prefetched data for one poll interval, counted from when the server fetched it: HTML served from the
+// SSR cache can be a minute old, and then the providers refetch on mount.
+export const PrefetchedStaleTime = 30_000
+
 export const LocalStorageKeys = {
   DashboardMenuReduced: 'dashboard.menu.reduced',
 } as const

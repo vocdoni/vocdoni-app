@@ -19,11 +19,12 @@ export const QueryKeys = {
       address ?? null,
       params ?? null,
     ],
+    // Prefix of every elections list of every organization, to mark them all stale at once.
+    electionLists: ['organizations', 'elections'],
     // No `info` key here on purpose: the organization read is owned by react-providers and
     // keyed through its exported `organizationQueryKeys.organization(address)`. Adding an
     // app-local one again would split the cache and fetch the same endpoint twice.
     users: (address?: string) => ['organizations', 'users', address].filter(Boolean),
-    names: ['organizations', 'names'],
     pendingUsers: (address?: string) => ['organizations', 'users', 'pending', address].filter(Boolean),
     languages: ['organizations', 'languages'],
     roles: ['organizations', 'roles'],

@@ -21,7 +21,7 @@ const importedFontCss = () =>
 
 describe('font config', () => {
   it('the app loads exactly the configured weights, one static import each', () => {
-    expect(importedFontCss()).toEqual(LOADED_FONT_WEIGHTS.map((weight) => `${FONT_PACKAGE}/${weight}.css`))
+    expect(importedFontCss()).toEqual(LOADED_FONT_WEIGHTS.map((weight) => `${FONT_PACKAGE}/latin-${weight}.css`))
   })
 
   it('body and heading stacks lead with the loaded family', () => {

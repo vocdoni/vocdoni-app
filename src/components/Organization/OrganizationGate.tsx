@@ -2,7 +2,7 @@ import { useOrganization } from '@vocdoni/react-components'
 import { PropsWithChildren } from 'react'
 import { useAuth } from '~components/Auth/useAuth'
 import { OrganizationsUnavailablePage } from '~components/Organization/OrganizationsUnavailable'
-import { PageLoader } from '~components/ui/Loader'
+import { PageSkeleton } from '~components/ui/PageSkeleton'
 
 /**
  * Guards dashboard page content until the active organization has loaded. Pages read
@@ -17,5 +17,6 @@ export const OrganizationGate = ({ children }: PropsWithChildren) => {
   // (addresses exist but effect hasn't run). Only pass through in the first case.
   if ((!currentAddress && !addresses.length) || organization) return <>{children}</>
   if (error) return <OrganizationsUnavailablePage onRetry={() => fetch()} />
-  return <PageLoader />
+  // The same placeholder as the rest of the first load, so the page does not swap loaders
+  return <PageSkeleton />
 }

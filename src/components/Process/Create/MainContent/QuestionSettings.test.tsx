@@ -14,7 +14,7 @@ const QuestionSettingsHarness = ({
   return (
     <FormProvider {...methods}>
       {questions.map((_, index) => (
-        <QuestionSettings key={index} index={index} />
+        <QuestionSettings key={index} index={index} control={methods.control} setValue={methods.setValue} />
       ))}
     </FormProvider>
   )

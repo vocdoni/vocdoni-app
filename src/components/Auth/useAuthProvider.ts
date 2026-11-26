@@ -1,12 +1,11 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { VocdoniApiError } from '@vocdoni/api-client'
-import { AuthStorageKeys, clearAuthStorageKeys } from '@vocdoni/rainbowkit-wallets'
 import { useAuth as useSdkAuth } from '@vocdoni/react-providers'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useDisconnect } from 'wagmi'
 import { api, ApiEndpoints, ApiParams } from '~components/Auth/api'
 import { useLogin, useRegister, useVerifyMail } from '~components/Auth/authQueries'
+import { clearOAuthStorage, OAuthStorageKeys } from '~components/Auth/oauthStorage'
 import { useToast } from '~components/Toast'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { sameAddress } from '~utils/address'
@@ -36,7 +35,6 @@ export const useAuthProvider = () => {
   const { token: bearer, expiry, isAuthenticated, setSession, logout: sdkLogout } = useSdkAuth()
   const { client: apiClient } = useApiClient()
   const toast = useToast()
-  const { disconnect } = useDisconnect()
   const { t } = useTranslation()
   const queryClient = useQueryClient()
 
@@ -103,58 +101,68 @@ export const useAuthProvider = () => {
   })
   const addresses = useMemo(() => addressesData?.addresses ?? [], [addressesData])
 
+  // Bumped by refreshAddresses so the selection re-reads SignerAddress even when the
+  // refetched list is structurally identical (same data object, so the memo would not rerun).
+  const [selectionVersion, setSelectionVersion] = useState(0)
+
   // `currentAddress` must never surface a value that hasn't been checked against the
   // logged-in account's address list: the stored SignerAddress key survives logout (by
   // design, see `logout` below) so it can belong to a *previous* user on this browser.
-  // Seeding it here as the initial state used to expose that stale value to every
-  // address-keyed query (org info, subscription, ...) for the whole window until the
-  // `auth/addresses` query resolved. Start unset instead; `applySelection` below is the
-  // only place allowed to set it, and it only runs once the address list is known.
-  const [currentAddress, setCurrentAddress] = useState<string | undefined>(undefined)
-
-  // Pick the active address from an address list: prefer the stored selection when it is
-  // still owned by the user, otherwise fall back to the first one. Persists the choice.
-  // Only called once the address list for the current session is known, so the address it
-  // sets has always been validated as belonging to the logged-in account.
-  const applySelection = useCallback((list: string[]) => {
-    if (!list.length) {
-      setCurrentAddress(undefined)
-      return
-    }
+  // It is derived from the address list of the current session (no list, no address), and
+  // in the same render the list arrives, so a loaded session never lacks its address.
+  // Prefer the stored selection when the user still owns it, otherwise the first address.
+  const selection = useMemo(() => {
+    const stored = getStorageItem(LocalStorageKeys.SignerAddress) ?? undefined
+    const list = addressesData?.addresses ?? []
     // Normalized comparison: the stored value may differ from the API list in case or
     // `0x` prefix (checksummed wallets, bare addresses). Always persist and
     // expose the canonical value from the list, not the stored variant.
-    const stored = getStorageItem(LocalStorageKeys.SignerAddress)
-    const selected = (stored && list.find((address) => sameAddress(address, stored))) || list[0]
-    setStorageItem(LocalStorageKeys.SignerAddress, selected)
-    setCurrentAddress(selected)
-  }, [])
+    const address =
+      addressesData && list.length ? list.find((a) => stored && sameAddress(a, stored)) || list[0] : undefined
+    // Settled: the list arrived, or the API gave a definitive "no" (a 4xx, e.g. 404 "user has no
+    // organizations"). A stored value that is not the selected address was then not confirmed, so
+    // anything fetched for it while the list was pending (see `unconfirmedAddress`) must go.
+    const settled = !!addressesData || isClientError(addressesError)
+    const rejected = settled && stored && stored !== address ? stored : undefined
+    return { address, rejected, version: selectionVersion }
+  }, [addressesData, addressesError, selectionVersion])
+  const currentAddress = selection.address
 
   useEffect(() => {
-    if (!addressesData) return
-    applySelection(addressesData.addresses ?? [])
-  }, [addressesData, applySelection])
+    if (selection.rejected) {
+      const rejected = selection.rejected
+      queryClient.removeQueries({ predicate: (query) => query.queryKey.includes(rejected) })
+    }
+    if (selection.address) setStorageItem(LocalStorageKeys.SignerAddress, selection.address)
+  }, [selection, queryClient])
+
+  // The stored selection while the address list for this session is still pending. The
+  // private app prefetches it so its data is ready when the list confirms it. Unconfirmed:
+  // never render data keyed by it; render through `currentAddress` only.
+  const unconfirmedAddress =
+    bearer && !addressesData && !addressesError
+      ? (getStorageItem(LocalStorageKeys.SignerAddress) ?? undefined)
+      : undefined
 
   // Re-fetch the address list and re-apply the selection. Callers that change the active
   // org (org switcher, freshly created/provisioned org) set SignerAddress first, then call
   // this so currentAddress and every address-keyed query pick up the new selection.
   const refreshAddresses = useCallback(async () => {
-    const res = await refetchAddresses()
-    applySelection(res.data?.addresses ?? [])
-  }, [refetchAddresses, applySelection])
+    await refetchAddresses()
+    setSelectionVersion((version) => version + 1)
+  }, [refetchAddresses])
 
   const logout = useCallback(() => {
-    clearAuthStorageKeys()
+    // Includes the Google OAuth wallet seed: removing it is what disconnecting the wagmi connector did.
+    clearOAuthStorage()
     sdkLogout()
-    setCurrentAddress(undefined)
-    disconnect()
     // Wipe the query cache so a different account logging in afterwards doesn't inherit the
     // previous user's profile (the profile key is static). Without this, e.g. an integrator's
     // cached org survives logout and the next non-integrator login is misrouted to /integrators.
     // We intentionally keep signerAddress: the same user resumes their last-selected org, and
     // refreshAddresses overwrites it when a different user doesn't own that address.
     queryClient.clear()
-  }, [disconnect, queryClient, sdkLogout])
+  }, [queryClient, sdkLogout])
 
   // The stored token is trusted blindly on load (`isAuthenticated` is just "a token exists"),
   // so the address list doubles as the session probe. The backend only answers it with a 401
@@ -184,6 +192,7 @@ export const useAuthProvider = () => {
     // updateSigner / signerRefresh / setBearer).
     addresses,
     currentAddress,
+    unconfirmedAddress,
     refreshAddresses,
     // Set only when the address list could not be read at all (after retries).
     // Distinguishes "this account owns no organizations" from "we don't know".
@@ -199,7 +208,7 @@ export const useAuthProvider = () => {
  * under the rainbowkit AuthStorageKeys) into the react-providers session.
  */
 export const readOAuthSession = () => {
-  const token = getStorageItem(AuthStorageKeys.Token)
+  const token = getStorageItem(OAuthStorageKeys.Token)
   if (!token) return null
-  return { token, expirity: getStorageItem(AuthStorageKeys.Expiry) ?? '' }
+  return { token, expirity: getStorageItem(OAuthStorageKeys.Expiry) ?? '' }
 }

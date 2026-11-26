@@ -1,6 +1,6 @@
-import { Fragment, type ReactElement } from 'react'
+import { type ComponentType, createElement, Fragment, type ReactElement } from 'react'
 import type { LoaderFunction, LoaderFunctionArgs, RouteObject } from 'react-router'
-import { renderHook } from '@testing-library/react'
+import { render, renderHook } from '@testing-library/react'
 import { Routes } from '.'
 import { mockUseClient } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
@@ -11,6 +11,18 @@ vi.mock('@tanstack/react-query', () => ({
     ensureQueryData: vi.fn(),
   }),
 }))
+
+const ProcessView = () => null
+vi.mock('~elements/dashboard/processes/view', () => ({ default: ProcessView }))
+
+const WalletPanel = vi.fn((_props: { processLinks?: boolean }) => null)
+vi.mock('~components/Wallet/Wallet', () => ({ default: WalletPanel }))
+
+// The page a route's `lazy` resolves to, rendered with whatever props the route fixes.
+const lazyComponent = async (route: RouteObject | undefined) => {
+  const lazy = route?.lazy as (() => Promise<{ Component: ComponentType }>) | undefined
+  return (await lazy!()).Component
+}
 
 vi.mock('../SuspenseLoader', () => ({
   SuspenseLoader: ({ children }: { children: React.ReactNode }) => children ?? Fragment,
@@ -63,7 +75,7 @@ describe('dashboard process routes', () => {
 
     // The view sits on the parent; the tab routes render nothing of their own, so
     // switching between them keeps the parent element (and its state) mounted.
-    expect(processRoute?.element).toBeTruthy()
+    expect(await lazyComponent(processRoute)).toBe(ProcessView)
     expect(processRoute?.shouldRevalidate).toBe(shouldRevalidateDashboardProcess)
     expect(processRoute?.children?.map((child) => (child.index ? 'index' : child.path))).toEqual([
       'index',
@@ -97,8 +109,15 @@ describe('admin settings billing routes', () => {
   it('renders billing, and its Stripe return, with the wallet panel', async () => {
     const routes = await settingsRoutes()
 
-    expect(findRoute(routes, Routes.dashboard.settings.billing)?.element).toBeTruthy()
-    expect(findRoute(routes, Routes.dashboard.settings.billingReturn)?.element).toBeTruthy()
+    for (const path of [Routes.dashboard.settings.billing, Routes.dashboard.settings.billingReturn]) {
+      WalletPanel.mockClear()
+      render(createElement(await lazyComponent(findRoute(routes, path))))
+      expect(WalletPanel).toHaveBeenCalledWith({ processLinks: true }, undefined)
+    }
+    // The same component on both, so replacing the return URL does not remount the panel
+    expect(await lazyComponent(findRoute(routes, Routes.dashboard.settings.billing))).toBe(
+      await lazyComponent(findRoute(routes, Routes.dashboard.settings.billingReturn))
+    )
   })
 
   it('redirects the retired subscription and wallet tabs to billing', async () => {
