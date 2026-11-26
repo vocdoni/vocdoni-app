@@ -3,6 +3,7 @@ import {
   generateBrandSemanticTokens,
   generatePaletteScale,
   normalizeHexColor,
+  SOLID_HOVER_TINT,
   tintHex,
   type PaletteScale,
 } from './palette'
@@ -29,6 +30,5 @@ export const embedBrandColors = (primaryColor?: string) => {
   const tokens = generateBrandSemanticTokens(scale, PAGE_BACKGROUNDS)
   // The token is a reference to a scale step, `{colors.brand.<step>}`: the step the buttons fill with.
   const step = Number(/brand\.(\d+)/.exec(tokens.solid._dark)?.[1]) as keyof PaletteScale
-  // The app's solid hover in dark is the solid mixed 6% towards white.
-  return { brand: scale[step], text: tokens.contrast._dark, emphasis: tintHex(scale[step], 0.06) }
+  return { brand: scale[step], text: tokens.contrast._dark, emphasis: tintHex(scale[step], SOLID_HOVER_TINT) }
 }

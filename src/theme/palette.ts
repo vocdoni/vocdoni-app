@@ -119,7 +119,10 @@ export const generatePaletteScale = (baseHex: string): PaletteScale => {
   return scale
 }
 
-// Mixes `t` (0..1) of white into the colour, in OKLab like the scale: the dark hover of a generated brand.
+// How far a generated brand's solid moves towards white on hover in dark (system.ts mixes it with color-mix).
+export const SOLID_HOVER_TINT = 0.06
+
+// Mixes `t` (0..1) of white into the colour, in OKLab like the scale.
 export const tintHex = (hex: string, t: number): string => rgbToHex(labToRgb(mix(rgbToLab(hexToRgb(hex)), 1, t)))
 
 // WCAG minimum for non-text UI (3:1). A solid surface below this against the

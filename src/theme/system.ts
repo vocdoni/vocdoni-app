@@ -7,7 +7,13 @@ import {
 } from '@chakra-ui/react'
 import { DEFAULT_PRIMARY_COLOR, PAGE_BACKGROUNDS } from './colors'
 import { withEscapeHatch } from './escapeHatch'
-import { generateAccentTokens, generateBrandSemanticTokens, generatePaletteScale, normalizeHexColor } from './palette'
+import {
+  generateAccentTokens,
+  generateBrandSemanticTokens,
+  generatePaletteScale,
+  normalizeHexColor,
+  SOLID_HOVER_TINT,
+} from './palette'
 import { recipes, slotRecipes } from './recipes'
 import semanticTokens from './semantic'
 import { textStyles } from './textStyles'
@@ -63,7 +69,9 @@ export const createAppSystem = (primaryColor?: string) => {
       hover: {
         value: {
           _light: brand ? 'color-mix(in oklab, {colors.brand.solid} 88%, black)' : FIL_ACCENT.solidHover,
-          _dark: brand ? 'color-mix(in oklab, {colors.brand.solid} 94%, white)' : FIL_ACCENT_DARK.solidHover,
+          _dark: brand
+            ? `color-mix(in oklab, {colors.brand.solid} ${Math.round((1 - SOLID_HOVER_TINT) * 100)}%, white)`
+            : FIL_ACCENT_DARK.solidHover,
         },
       },
     },
