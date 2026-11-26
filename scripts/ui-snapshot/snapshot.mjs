@@ -240,6 +240,8 @@ let interrupted = false
 // Spawns `command` in its own process group, so stopping it also stops what it started. Output goes to the log
 // file and to memory, for the readiness checks. `exit` resolves once the child and its output pipes are closed.
 const spawnApp = ({ command, args, env, logFile }) => {
+  // An interrupt during an await before the spawn has already run the cleanup, so nothing may start after it.
+  if (interrupted) fail('interrupted')
   const log = fs.createWriteStream(logFile)
   let output = ''
   const child = spawn(command, args, {
