@@ -200,6 +200,54 @@
   },
   "csp": {
     "authenticate": "Identificarse",
+    "cert": {
+      "contact_organization": "Si sigues teniendo problemas, contacta con {{organization}}.",
+      "contact_organization_unnamed": "Si sigues teniendo problemas, contacta con la organización que gestiona este proceso de votación.",
+      "copy_failed": "No se ha podido copiar. Copia la dirección desde la barra de direcciones del navegador.",
+      "copy_link": "Copiar enlace",
+      "errors": {
+        "backend_unavailable": "El servicio de votación no ha respondido. Vuelve a intentarlo en unos minutos.",
+        "check_unavailable": "Ahora mismo no podemos comprobar tu certificado. Vuelve a intentarlo en unos minutos.",
+        "code_refused": "Tu acceso con certificado ha caducado. Vuelve a acceder.",
+        "code_refused_contact": "Tu acceso con certificado ha caducado, o el correo electrónico o el teléfono no coinciden. Vuelve a acceder.",
+        "expired": "Este certificado ha caducado. Pide uno nuevo a su emisor.",
+        "generic": "No hemos podido identificarte con tu certificado.",
+        "identity_invalid": "No hemos podido leer la identidad de este certificado. Usa otro certificado si tienes.",
+        "identity_unsupported_document": "Este certificado no tiene DNI ni NIE. Necesitas un certificado emitido con tu DNI o NIE.",
+        "invalid_chain": "No hemos podido verificar este certificado. Usa otro certificado si tienes.",
+        "mismatch": "Tu acceso con certificado no ha terminado en esta pestaña. Vuelve a acceder.",
+        "no_certificate": "No se ha seleccionado ningún certificado.",
+        "not_in_census": "El DNI/NIE de este certificado no está en el censo de este proceso de votación.",
+        "not_yet_valid": "Este certificado aún no está activo. Si lo has obtenido hoy, vuelve a intentarlo más tarde. Si no, revisa la fecha y la hora de tu dispositivo.",
+        "process_unavailable": "Ahora mismo no se puede acceder a este proceso de votación con certificado.",
+        "rate_limited": "Demasiados intentos. Vuelve a intentarlo más tarde.",
+        "revocation_unknown": "No hemos podido confirmar con su emisor que este certificado siga siendo válido. Usa otro certificado si tienes.",
+        "revoked": "Este certificado ha sido revocado.",
+        "test_certificate": "Este es un certificado de pruebas. Usa tu certificado real.",
+        "unsupported_certificate": "Este certificado no se acepta. Usa un certificado personal de FNMT, idCAT, ACCV, DIGITEL, Bewor o Sectigo.",
+        "unsupported_profile": "Este certificado es para una empresa, un representante o un empleado. Usa el certificado emitido a tu nombre como persona física.",
+        "unsupported_purpose": "Este certificado no se puede usar para iniciar sesión. Usa el certificado con el que te identificas.",
+        "weak_algorithm": "Este certificado es demasiado antiguo para usarlo aquí. Pide uno nuevo a su emisor.",
+        "zero_weight": "No tienes suficiente poder de voto para acceder a la votación."
+      },
+      "in_app": {
+        "explanation": "Has abierto este enlace dentro de una app. Su visor integrado no puede usar tu certificado digital, pero tu navegador sí.",
+        "open": "Abrir en tu navegador",
+        "steps": "Copia el enlace y ábrelo en tu navegador. Muchas apps también tienen una opción en su menú para abrir la página en el navegador."
+      },
+      "link_copied": "Enlace copiado",
+      "not_a_certificate": "idCAT Mòbil y Cl@ve no son certificados: necesitas un certificado digital instalado en este dispositivo.",
+      "not_loaded": "¿No se ha cargado la página del certificado? Prueba desde otra red, como los datos móviles, o copia el enlace y ábrelo en otro dispositivo.",
+      "other_device": "¿Tienes el certificado en otro dispositivo? Copia el enlace y ábrelo allí.",
+      "picker_help": "Tu navegador te pedirá que elijas un certificado: elige el que lleva tu nombre. Aceptamos certificados de FNMT, idCAT, ACCV, DIGITEL, Bewor y Sectigo.",
+      "reference": "Referencia de soporte: {{reference}}",
+      "restart_browser": "Si el navegador no te vuelve a pedir que elijas un certificado, cierra todas las ventanas del navegador y vuelve a abrir el enlace de la votación.",
+      "retry": "Volver a intentarlo",
+      "signing_in": "Identificándote…",
+      "start": "Acceder con certificado digital",
+      "title": "Certificado digital",
+      "unavailable": "Aquí no está disponible el acceso con certificado digital."
+    },
     "contact_match_help": "Debe coincidir con el registrado en el sistema",
     "fields": {
       "birthDate": "Fecha de nacimiento",
@@ -1862,6 +1910,15 @@
       "configure": "Configurar autenticación de votantes",
       "edit": "Editar autenticación de votantes"
     },
+    "cert": {
+      "description": "Los votantes se identifican con su certificado personal (FNMT, idCAT…), que acredita su DNI/NIE.",
+      "label": "Certificado digital",
+      "missing_label": "un DNI/NIE válido",
+      "missing_members_one": "{{count}} miembro no puede iniciar sesión: le falta {{fields}}.",
+      "missing_members_many": "{{count}} miembros no pueden iniciar sesión: les falta {{fields}}.",
+      "missing_members_other": "{{count}} miembros no pueden iniciar sesión: les falta {{fields}}.",
+      "not_a_certificate": "Los votantes necesitan un certificado ya instalado: idCAT Mòbil y Cl@ve no son certificados."
+    },
     "code": {
       "description": "Antes de votar, enviamos un código de 6 dígitos al correo electrónico o al teléfono del votante. Así demuestra que es suyo y nadie puede votar con los datos de otra persona.",
       "email_description": "Se envía al correo electrónico de tu base de miembros.",
@@ -1906,6 +1963,8 @@
     },
     "protection": {
       "basic_risk": "Cualquiera que conozca estos datos podría votar en lugar de un miembro.",
+      "cert": "Un certificado personal acredita al votante: haría falta el certificado de un miembro para votar en su lugar.",
+      "cert_code": "Haría falta el certificado personal de un miembro y acceso a su correo o teléfono para votar en su lugar.",
       "good_code_risk": "Cualquiera que pueda abrir el correo o el teléfono de un miembro podría votar en su lugar.",
       "good_details_risk": "Haría falta conocer varios datos, al menos uno privado, para votar en lugar de un miembro.",
       "label": "Protección",
@@ -1922,6 +1981,7 @@
       "surname": "García López"
     },
     "save": {
+      "anyway": "Guardar igualmente",
       "failed": "La configuración de acceso no se ha guardado",
       "submit": "Guardar",
       "unchecked": "Guardado, pero no hemos podido comprobar tu base de miembros"
@@ -1947,6 +2007,9 @@
       "valid_count_other": "Los {{count}} miembros pueden iniciar sesión."
     },
     "summary": {
+      "cert_missing_members_one": "{{count}} miembro no puede iniciar sesión.",
+      "cert_missing_members_many": "{{count}} miembros no pueden iniciar sesión.",
+      "cert_missing_members_other": "{{count}} miembros no pueden iniciar sesión.",
       "code_choice": "Código de un solo uso por correo o SMS",
       "code_email": "Código de un solo uso por correo",
       "code_none": "Sin código de un solo uso",
