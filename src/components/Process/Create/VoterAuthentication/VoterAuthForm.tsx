@@ -198,14 +198,11 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
   }, [])
 
   // A dimmed previous outcome was computed for the details ticked before the
-  // current ones, so while re-checking its labels come from those.
+  // current ones, so while re-checking its labels and wording come from those.
   const settledValues = useRef(values)
   if (censusCheck.status !== 'checking') settledValues.current = values
-  const fieldNames = describeFields(
-    t,
-    i18n.language,
-    censusCheck.status === 'checking' ? settledValues.current : values
-  )
+  const shownValues = censusCheck.status === 'checking' ? settledValues.current : values
+  const fieldNames = describeFields(t, i18n.language, shownValues)
 
   const saveAnyway = (issues: CensusCheckIssues | null) => certAuth && certCensusSavable(issues)
 
@@ -491,7 +488,7 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
             previous={censusCheck.previous}
             missingFields={fieldNames.missing}
             duplicateFields={fieldNames.duplicate}
-            certAuth={certAuth}
+            certAuth={shownValues.certAuth}
             missingByField={(censusCheck.status === 'checking'
               ? censusCheck.previous?.missingByField
               : censusCheck.missingByField

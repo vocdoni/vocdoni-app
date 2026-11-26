@@ -718,6 +718,26 @@ describe('VoterAuthentication', () => {
     expect(status).not.toHaveTextContent(/birth date/i)
   })
 
+  it('words a shown result for the census it was checked for while the certificate is re-checked', async () => {
+    mockValidateCensus
+      .mockRejectedValueOnce(membersError({ memberIds: ['m1'], duplicates: [], missingData: ['m2', 'm3'] }))
+      .mockReturnValue(new Promise(() => {}))
+    const user = userEvent.setup()
+    render(<TestForm initialCensus={{ credentials: ['nationalId'], use2FA: false, use2FAMethod: 'email' }} />, {
+      appEnv: { CERT_GATEWAY_URL: 'https://cert.test:15140' },
+    })
+    const dialog = await openDialog(user)
+    await waitFor(() => expect(dialog.getByRole('status')).toHaveAttribute('data-status', 'invalid'))
+
+    // The re-check with the certificate never answers here, so the red result stays on screen.
+    await user.click(dialog.getByRole('checkbox', { name: /digital certificate/i }))
+
+    const status = dialog.getByRole('status')
+    expect(status).toHaveAttribute('data-status', 'checking')
+    expect(status).toHaveTextContent(/2 members are missing/)
+    expect(status).not.toHaveTextContent(/can't sign in/)
+  })
+
   it('asks for a choice before saving an empty configuration, without calling the backend', async () => {
     const user = userEvent.setup()
     render(<TestForm initialCensus={null} />)
