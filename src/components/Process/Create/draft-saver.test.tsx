@@ -132,8 +132,10 @@ describe('useFormDraftSaver', () => {
     const second = result.current.saveDraft(false)
 
     inFlight.resolve()
-    await first
-    await second
+    await act(async () => {
+      await first
+      await second
+    })
 
     expect(create).toHaveBeenCalledTimes(1)
     expect(storeDraftId).toHaveBeenCalledWith('draft-1')
@@ -157,7 +159,7 @@ describe('useFormDraftSaver', () => {
     const publishing = result.current.writeDraft(() => ({ published: true }) as never)
 
     inFlight.resolve()
-    const [, publishedId] = await Promise.all([autoSaving, publishing])
+    const [, publishedId] = await act(() => Promise.all([autoSaving, publishing]))
 
     expect(create).toHaveBeenCalledTimes(1)
     expect(storeDraftId).toHaveBeenCalledWith('draft-1')
@@ -259,7 +261,7 @@ describe('useFormDraftSaver', () => {
       // then delete.
       const { result, storeDraftId } = renderSaver(null, { persist: true })
 
-      const publishedId = await result.current.writeDraft(() => ({ published: true }) as never)
+      const publishedId = await act(() => result.current.writeDraft(() => ({ published: true }) as never))
       expect(getStoredDraftId(orgAddress)).toBe('draft-1')
 
       result.current.clearPublishedDraftId(publishedId)
