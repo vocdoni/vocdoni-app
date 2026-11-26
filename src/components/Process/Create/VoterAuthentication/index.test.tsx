@@ -335,6 +335,21 @@ describe('VoterAuthentication', () => {
     expect(storedCensus()).toEqual({ credentials: ['nationalId'], use2FA: true, use2FAMethod: 'email', certAuth: true })
   })
 
+  it('restores the previous details when the digital certificate is unticked', async () => {
+    const user = userEvent.setup()
+    render(<TestForm />, { appEnv: { CERT_GATEWAY_URL: 'https://cert.test:15140' } })
+    const dialog = await openDialog(user)
+    const certificate = dialog.getByRole('checkbox', { name: /digital certificate/i })
+
+    await user.click(certificate)
+    expect(dialog.getByRole('checkbox', { name: /national id/i })).toBeChecked()
+    expect(dialog.getByRole('checkbox', { name: /member number/i })).not.toBeChecked()
+
+    await user.click(certificate)
+    expect(dialog.getByRole('checkbox', { name: /member number/i })).toBeChecked()
+    expect(dialog.getByRole('checkbox', { name: /national id/i })).not.toBeChecked()
+  })
+
   it('re-checks the members when the digital certificate is toggled on the same national ID', async () => {
     const user = userEvent.setup()
     render(<TestForm initialCensus={{ credentials: ['nationalId'], use2FA: false, use2FAMethod: 'email' }} />, {

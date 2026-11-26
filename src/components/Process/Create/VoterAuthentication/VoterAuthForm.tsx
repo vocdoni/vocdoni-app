@@ -169,6 +169,8 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
   const codeMethod = watch('codeMethod') ?? 'none'
   const certAuth = watch('certAuth') ?? false
   const values: VoterAuthFormData = { credentials, codeMethod, certAuth }
+  // The details ticked before the certificate replaced them, put back if it is unticked.
+  const credentialsBeforeCert = useRef<VoterAuthField[] | null>(null)
   const configured = hasAuthConfig(values)
   // A password alone is refused before saving, so the backend never gets a census it would reject.
   const passwordAlone = passwordNeedsAnotherCredential(credentials, codeMethod)
@@ -318,7 +320,13 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
                       onCheckedChange={({ checked }) => {
                         field.onChange(checked === true)
                         // the certificate proves the national ID: it is the only credential
-                        if (checked === true) setValue('credentials', [...CERT_AUTH_CREDENTIALS])
+                        if (checked === true) {
+                          credentialsBeforeCert.current = credentials
+                          setValue('credentials', [...CERT_AUTH_CREDENTIALS])
+                        } else if (credentialsBeforeCert.current) {
+                          setValue('credentials', credentialsBeforeCert.current)
+                          credentialsBeforeCert.current = null
+                        }
                       }}
                       {...optionCardStyles}
                     >
