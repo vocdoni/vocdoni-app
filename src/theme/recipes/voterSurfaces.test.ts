@@ -132,6 +132,14 @@ describe('voter cards (card `ballot`, `ballot-notice`)', () => {
     expect(at(body, '48rem')).toBeUndefined()
   })
 
+  it('pads the feature card 20px and 22px, the same ring', () => {
+    expect(layer(card({ variant: 'ballot-feature' }).root)).toMatchObject({
+      paddingInline: 'var(--chakra-spacing-card)',
+      paddingBlock: 'var(--chakra-spacing-5)',
+      boxShadow: 'var(--chakra-shadows-shadow-ring)',
+    })
+  })
+
   it('pads a notice card 18px and 20px with a semibold title over a quiet note', () => {
     const styles = card({ variant: 'ballot-notice' })
     expect(layer(styles.root)).toMatchObject({

@@ -21,8 +21,19 @@ export const VoteStatusLine = ({ context = 'screen' }: { context?: 'head' | 'scr
       </Status.Root>
     )
   }
-  // The paused state shows in both the head and the screen: the open-until line gives way to the paused indicator.
-  if (facts.status === 'PAUSED') {
+  // A question-by-question vote whose first question has not opened (the backend reports every unopened question as
+  // paused, also before the start date) is not paused and not open until anything: it has not started.
+  if (facts.room?.voteState === 'ready' && !facts.endedBySchedule) {
+    return (
+      <Status.Root size='ballot' tone='closed'>
+        <Status.Indicator />
+        {t('voter.room.not_started_line')}
+      </Status.Root>
+    )
+  }
+  // The paused state shows in both the head and the screen: the open-until line gives way to the paused indicator. A
+  // question-by-question vote held between questions reads PROCESS_UNKNOWN from the SDK, so its room says it too.
+  if (facts.status === 'PAUSED' || facts.room?.voteState === 'paused') {
     return (
       <Status.Root size='ballot' tone='warning'>
         <Status.Indicator />
@@ -80,7 +91,7 @@ export const VoteLiveLine = ({ state }: { state: VoteState }) => {
   if (state === 'paused') return <VoteStatusLine />
   if (state === 'ready') {
     return (
-      <Status.Root size='ballot' tone='gray'>
+      <Status.Root size='ballot' tone='closed'>
         <Status.Indicator />
         {t('voter.room.not_started_line')}
       </Status.Root>

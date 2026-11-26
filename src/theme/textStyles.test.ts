@@ -102,6 +102,10 @@ describe('text styles', () => {
     ],
     ['ballot-rank', { fontFamily: 'figure', fontSize: 'item', lineHeight: 'moderate', letterSpacing: 'voter' }],
     ['ballot-figure', { fontFamily: 'figure', fontSize: 'xs', lineHeight: 'moderate', letterSpacing: 'voter' }],
+    [
+      'ballot-figure-fold',
+      { fontFamily: 'figure', fontSize: 'ballot.fold', lineHeight: 'moderate', letterSpacing: 'none' },
+    ],
     ['ballot-receipt', { fontFamily: 'figure', fontSize: 'sm', lineHeight: 'moderate', letterSpacing: 'voter' }],
     ['ballot-code', { fontFamily: 'figure', fontSize: 'sm', lineHeight: 'moderate', letterSpacing: 'none' }],
     [

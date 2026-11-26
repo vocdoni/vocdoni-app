@@ -727,13 +727,105 @@ PROCESSES.push(
 )
 /** V_LIVE paused by the organisation: what the page reads once it refetches (the paused mid-ballot capture). */
 export const VOTER_LIVE_PAUSED = voterVote(V_LIVE, { status: 'PAUSED', description: VOTER_DESCRIPTION })
-/** B_QBQ_LIVE between questions: the third one closed, none open (the room's "no question is open" capture). */
-export const VOTER_ROOM_NONE_OPEN = qbqVote(B_QBQ_LIVE, [
-  ['RESULTS', closedAt('09:41:00')],
-  ['RESULTS', closedAt('09:53:00')],
-  ['RESULTS', closedAt('10:05:00')],
-  'PAUSED',
-])
+// Question by question, voter side (boards V4VoterWideLive / M4VoterLive): the boards' questions on the voter census
+// (member A-1001), dated like the other voter votes, not secret (the SDK refuses a secret question with no published
+// keys before signing). Which questions the member has voted on is in QBQ_VOTED.
+export const V_QBQ_READY = '650000000000000000001010'
+export const V_QBQ_LIVE = '650000000000000000001011'
+export const V_QBQ_BETWEEN = '650000000000000000001012'
+export const V_QBQ_MANY = '650000000000000000001013'
+export const V_QBQ_WEIGHTED = '650000000000000000001014'
+export const V_QBQ_HELD = '650000000000000000001015'
+export const V_QBQ_ENDED = '650000000000000000001016'
+export const V_QBQ_UPCOMING = '650000000000000000001017'
+export const V_QBQ_ANON_SIGNED = '650000000000000000001018'
+// The creator shows each closed question's result to voters (`metadata.voterResults`): the member voted question 3
+// (3e) or did not (3d).
+export const V_QBQ_RESULTS = '65000000000000000000101a'
+export const V_QBQ_RESULTS_MISSED = '65000000000000000000101b'
+
+// Twenty questions for board 1b: the four of the board's open part (13 to 16) in place.
+const QBQ_TWENTY = Array.from({ length: 20 }, (_x, i) => {
+  const named = {
+    12: 'Pressupost de 2027',
+    13: 'Quota de les entitats sòcies',
+    14: "Reglament de la sala d'actes",
+    15: "Calendari d'assemblees",
+  }[i]
+  const title = named ?? MANY[i % MANY.length][0]
+  return [title, `${title}?`, [120, 30, 10]]
+})
+const voterQbq = (
+  id,
+  statuses,
+  {
+    census = VOTER_CENSUS,
+    list = QBQ,
+    startDate = '2026-06-08T07:00:00.000Z',
+    endDate = '2030-06-17T18:00:00.000Z',
+  } = {}
+) =>
+  boardVote(id, 'Assemblea General de tardor', {
+    initialStatus: 'PAUSED',
+    unlisted: true,
+    census,
+    startDate,
+    endDate,
+    questions: statuses.map((entry, i) => {
+      const [status, more] = Array.isArray(entry) ? entry : [entry, {}]
+      return { ...qbqQuestion(id, i + 1, list[i], status, more), secretUntilTheEnd: false }
+    }),
+  })
+// Per vote, the questions (1-based) the member has voted on: /check says hasVoted, /sign-info lists their nullifier.
+const QBQ_VOTED = {
+  [V_QBQ_LIVE]: [1, 2],
+  [V_QBQ_BETWEEN]: [1, 2, 3],
+  [V_QBQ_MANY]: Array.from({ length: 12 }, (_x, i) => i + 1),
+  [V_QBQ_HELD]: [1, 2, 3],
+  [V_QBQ_ENDED]: [1, 2],
+  [V_QBQ_RESULTS]: [1, 2, 3],
+  [V_QBQ_RESULTS_MISSED]: [1, 2],
+}
+const SHOWS_RESULT = { metadata: { voterResults: 'perQuestion' } }
+const CLOSED_1 = ['RESULTS', closedAt('09:41:00')]
+const CLOSED_2 = ['RESULTS', closedAt('09:53:00')]
+PROCESSES.push(
+  voterQbq(V_QBQ_READY, ['PAUSED', 'PAUSED', 'PAUSED', 'PAUSED']),
+  voterQbq(V_QBQ_LIVE, [CLOSED_1, CLOSED_2, 'ONGOING', 'PAUSED']),
+  voterQbq(V_QBQ_BETWEEN, [CLOSED_1, CLOSED_2, ['RESULTS', closedAt('09:58:00')], 'PAUSED']),
+  voterQbq(
+    V_QBQ_MANY,
+    QBQ_TWENTY.map((_q, i) =>
+      i < 12
+        ? ['RESULTS', closedAt(`0${Math.floor(i / 2) + 3}:${String((i * 7) % 60).padStart(2, '0')}:00`)]
+        : i === 12
+          ? 'ONGOING'
+          : 'PAUSED'
+    ),
+    { list: QBQ_TWENTY }
+  ),
+  voterQbq(V_QBQ_WEIGHTED, [CLOSED_1, CLOSED_2, 'ONGOING', 'PAUSED'], { census: { ...VOTER_CENSUS, weighted: true } }),
+  // Paused as a whole while question 3 was open, which the member had voted on: the paused screen (board M1).
+  voterQbq(V_QBQ_HELD, [CLOSED_1, CLOSED_2, ['PAUSED', { voted: true }], 'PAUSED']),
+  voterQbq(V_QBQ_ENDED, [CLOSED_1, CLOSED_2, ['RESULTS', closedAt('09:58:00')], ['ENDED', closedAt('10:00:00')]], {
+    endDate: VOTER_ENDED,
+  }),
+  voterQbq(V_QBQ_UPCOMING, ['PAUSED', 'PAUSED', 'PAUSED', 'PAUSED'], { startDate: '2030-06-15T07:00:00.000Z' }),
+  voterQbq(V_QBQ_ANON_SIGNED, [CLOSED_1, CLOSED_2, 'ONGOING', 'PAUSED'], { census: VOTER_ANON_CENSUS }),
+  // Question 3 just closed with a public tally and the result switch on every question.
+  ...[V_QBQ_RESULTS, V_QBQ_RESULTS_MISSED].map((id) =>
+    voterQbq(id, [
+      [CLOSED_1[0], { ...CLOSED_1[1], ...SHOWS_RESULT }],
+      [CLOSED_2[0], { ...CLOSED_2[1], ...SHOWS_RESULT }],
+      ['RESULTS', { ...closedAt('09:58:00'), ...SHOWS_RESULT }],
+      ['PAUSED', SHOWS_RESULT],
+    ])
+  )
+)
+/** V_QBQ_LIVE with question 3 closed (the voter did not vote it): frame 3c. */
+export const VOTER_QBQ_MISSED = voterQbq(V_QBQ_LIVE, [CLOSED_1, CLOSED_2, ['RESULTS', closedAt('10:05:00')], 'PAUSED'])
+/** V_QBQ_LIVE paused as a whole while question 3 is open: frame 2 paused (board M2). */
+export const VOTER_QBQ_PAUSED = voterQbq(V_QBQ_LIVE, [CLOSED_1, CLOSED_2, ['PAUSED', { voted: true }], 'PAUSED'])
 /** V_RESULTS_SECRET extended by the organiser: open and secret again (the hidden results capture). */
 export const VOTER_RESULTS_SECRET_REOPENED = voterVote(V_RESULTS_SECRET, { secret: true })
 /** A relay that never settles (the sending capture). */
@@ -1003,15 +1095,17 @@ on('POST', '/processes/([0-9a-f]{24})/check', (m) => {
   const voted = m[1] === V_VOTED || m[1] === V_RESULTS_SECRET
   // An anonymous census never reports hasVoted (the CSP cannot link a ballot to a voter); it only knows it signed.
   const signed = voted || m[1] === V_ANON_SIGNED
+  // Question by question: the member voted (or, anonymous, signed) some of the questions only.
+  const qbqDone = QBQ_VOTED[m[1]] ?? (m[1] === V_QBQ_ANON_SIGNED ? [1, 2, 3] : [])
   return {
     belongsToProcess: m[1] !== V_NOT_IN,
     ...(p.census.weighted ? { weight: '03' } : {}),
-    questions: p.questions.map((qq) => ({
+    questions: p.questions.map((qq, i) => ({
       questionId: qq.id,
       upstreamId: qq.upstreamId,
       canVote: true,
-      hasVoted: voted,
-      hasSigned: signed,
+      hasVoted: voted || (m[1] !== V_QBQ_ANON_SIGNED && qbqDone.includes(i + 1)),
+      hasSigned: signed || qbqDone.includes(i + 1),
     })),
   }
 })
@@ -1019,6 +1113,16 @@ on('POST', '/processes/([0-9a-f]{24})/sign-info', (m) => {
   const p = processById(m[1])
   // An anonymous census lists what was consumed with no address or nullifier.
   if (m[1] === V_ANON_SIGNED) return { consumed: (p?.questions ?? []).map((qq) => ({ questionId: qq.id })) }
+  if (m[1] === V_QBQ_ANON_SIGNED)
+    return { consumed: (p?.questions ?? []).slice(0, 3).map((qq) => ({ questionId: qq.id })) }
+  if (QBQ_VOTED[m[1]]) {
+    return {
+      consumed: (p?.questions ?? [])
+        .map((qq, i) => ({ questionId: qq.id, nullifier: hex64(String(i + 1)), at: i + 1 }))
+        .filter((x) => QBQ_VOTED[m[1]].includes(x.at))
+        .map(({ at: _at, ...rest }) => rest),
+    }
+  }
   const consumed =
     m[1] === V_VOTED || m[1] === V_RESULTS_SECRET
       ? (p?.questions ?? []).map((qq, i) => ({ questionId: qq.id, nullifier: hex64(String(i + 1)) }))
@@ -1030,6 +1134,13 @@ on('POST', '/processes/([0-9a-f]{24})/sign-batch', (m, q, body) => {
   try {
     ballots = JSON.parse(body || '{}').ballots ?? []
   } catch {}
+  // Like the CSP: a question that is not open cannot be signed (all-at-once votes are all ONGOING).
+  const p = processById(m[1])
+  const notOpenAt = ballots.findIndex((b) => {
+    const qq = p?.questions.find((x) => x.upstreamId === b.upstreamId)
+    return qq && qq.status !== 'ONGOING'
+  })
+  if (notOpenAt >= 0) return [401, { error: `question is not open for voting: at index ${notOpenAt}`, code: 40001 }]
   return {
     signatures: ballots.map((ballot) => ({
       upstreamId: ballot.upstreamId,

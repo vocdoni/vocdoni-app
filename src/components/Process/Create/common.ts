@@ -67,6 +67,8 @@ export type Process = {
   streamUri?: string
   draft?: boolean
   votingMode: VotingMode
+  /** Voters see the results on the voting page, in both modes (`metadata.voterResults` on every question). */
+  showVoterResults: boolean
 }
 
 export const defaultQuestion: Question = {
@@ -96,4 +98,5 @@ export const defaultProcessValues: Process = {
   censusType: CensusTypes.CSP,
   streamUri: '',
   votingMode: 'all',
+  showVoterResults: false,
 }

@@ -37,6 +37,7 @@ test.describe('voting on an anonymous census', () => {
       title: `E2E anon ${seed}`,
       questions: [{ title: 'Do you approve?', choices: [{ label: 'Yes' }, { label: 'No' }] }],
       anonymous: true,
+      voterResults: true,
     })
     expect(processId).toBeTruthy()
 

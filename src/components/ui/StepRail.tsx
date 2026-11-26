@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 import { CheckIcon } from '~theme/icons'
 import { StepRail as stepRailRecipe } from '~theme/recipes/steps'
 
-export type StepRailState = 'pending' | 'now' | 'done'
+export type StepRailState = 'pending' | 'now' | 'done' | 'skipped' | 'more'
 
 export type StepRailItem = {
   id: string
@@ -21,7 +21,8 @@ export type StepRailProps = {
   items: StepRailItem[]
 }
 
-/** The voter's numbered agenda (from `lg`, inside VoterShell's rail): to come, current (`aria-current`) and done. */
+/** The voter's numbered agenda (from `lg`, inside VoterShell's rail): to come, current (`aria-current`), done, skipped (closed without the voter's
+ * vote) and a fold row. */
 export const StepRail = ({ items }: StepRailProps) => {
   const styles = useSlotRecipe({ recipe: stepRailRecipe })()
   return (

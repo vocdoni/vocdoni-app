@@ -12,12 +12,14 @@ import { batchSize, sendingPhase } from '../voter-flow'
  */
 export const SendingScreen = () => {
   const { t } = useTranslation()
-  const { statuses, moved, election } = useVoterFlow()
+  const { statuses, moved, election, state: flowState } = useVoterFlow()
   const phase = sendingPhase(statuses)
   // The questions in flight, at their most: one that confirms while the others wait still belongs to this batch.
   const largest = useRef(0)
   largest.current = Math.max(largest.current, batchSize(statuses))
-  const count = largest.current || election.questions.length
+  // A question cast on its own sends one answer from the first frame, before the SDK reports any status (the
+  // fallback to every question would read "3 answers" for a frame): the call names the question it carries.
+  const count = flowState.castQuestionId ? 1 : largest.current || election.questions.length
   const state = (step: 1 | 2 | 3): PhaseState => (phase > step ? 'done' : phase === step ? 'now' : 'next')
   return (
     <VoterScreenFrame kind='sending' privateContent>

@@ -179,6 +179,10 @@ export const Card = defineSlotRecipe({
       'ballot-notice': {
         root: { ...voterCard, px: '5', py: '4.5' },
       },
+      // The same card around the one thing the screen is about (the open question), a little roomier: 20px and 22px.
+      'ballot-feature': {
+        root: { ...voterCard, px: 'card', py: '5' },
+      },
     },
   },
   compoundVariants: [

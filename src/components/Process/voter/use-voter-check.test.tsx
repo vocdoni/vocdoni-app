@@ -1,24 +1,25 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { focusManager, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { act, renderHook } from '@testing-library/react'
 import { VocdoniApiError } from '@vocdoni/api-client'
 import type { ReactNode } from 'react'
 import { useVoterCheck } from './use-voter-check'
 
-const run = (check: () => Promise<unknown>) => {
-  const client = new QueryClient()
+const run = (check: () => Promise<unknown>, statusKey = 'ONGOING:ONGOING') => {
+  // The app's own default: an answer under 30 s old is fresh, so only an explicit `staleTime: 0` refetches on focus.
+  const client = new QueryClient({ defaultOptions: { queries: { staleTime: 30_000 } } })
   const wrapper = ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={client}>{children}</QueryClientProvider>
   )
   const hook = renderHook(
-    () =>
+    ({ key }: { key: string }) =>
       useVoterCheck({
         id: 'p1',
         authToken: 'tok',
         connected: true,
         check: check as Parameters<typeof useVoterCheck>[0]['check'],
-        statusKey: 'ONGOING:ONGOING',
+        statusKey: key,
       }),
-    { wrapper }
+    { wrapper, initialProps: { key: statusKey } }
   )
   return { ...hook, client }
 }
@@ -41,7 +42,7 @@ describe('useVoterCheck', () => {
     // The provider renders at least every 30 s (its clock); here every 10 s, for ten minutes.
     for (let i = 0; i < 60; i++) {
       await advance(10_000)
-      rerender()
+      rerender({ key: 'ONGOING:ONGOING' })
     }
     // 5, 10, 20, 40 s, then about every minute: ten checks or more, not the three or four before the timer starves.
     expect(check.mock.calls.length).toBeGreaterThanOrEqual(10)
@@ -99,12 +100,54 @@ describe('useVoterCheck', () => {
     expect(result.current.membership).toBe('sessionLost')
   })
 
+  it('asks again when a question changes status, and not on a render where nothing changed (second device)', async () => {
+    const check = vi
+      .fn()
+      .mockResolvedValueOnce(member)
+      .mockResolvedValue({ ...member, questions: [{ questionId: 'q1', canVote: true, hasVoted: true }] })
+    const { rerender, result } = run(check)
+    await advance(0)
+    expect(result.current.votedIds).toEqual([])
+    rerender({ key: 'ONGOING:ONGOING' })
+    await advance(30_000)
+    expect(check).toHaveBeenCalledTimes(1)
+    rerender({ key: 'ONGOING:ENDED' })
+    await advance(0)
+    expect(check).toHaveBeenCalledTimes(2)
+    expect(result.current.votedIds).toEqual(['q1'])
+  })
+
+  it('asks again when the tab regains focus, even right after an answer (second device)', async () => {
+    const check = vi
+      .fn()
+      .mockResolvedValueOnce(member)
+      .mockResolvedValue({ ...member, questions: [{ questionId: 'q1', canVote: true, hasVoted: true }] })
+    const { result } = run(check)
+    await advance(0)
+    expect(result.current.votedIds).toEqual([])
+    await act(async () => {
+      focusManager.setFocused(false)
+      focusManager.setFocused(true)
+    })
+    await advance(0)
+    expect(check).toHaveBeenCalledTimes(2)
+    expect(result.current.votedIds).toEqual(['q1'])
+  })
+
   it('stops at once on an expired session, with no retry (401)', async () => {
     const check = vi.fn().mockRejectedValue(new VocdoniApiError(401, { error: 'expired' }, 'expired', 401))
     const { result } = run(check)
     await advance(0)
     expect(result.current.membership).toBe('sessionLost')
     await advance(120_000)
+    expect(check).toHaveBeenCalledTimes(1)
+  })
+
+  it('never polls on its own: only focus, reconnect, a status change and a cast check again', async () => {
+    const check = vi.fn().mockResolvedValue(member)
+    run(check)
+    await advance(0)
+    await advance(10 * 60_000)
     expect(check).toHaveBeenCalledTimes(1)
   })
 

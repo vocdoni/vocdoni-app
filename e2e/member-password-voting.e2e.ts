@@ -45,6 +45,7 @@ test.describe('voting with a member password census', () => {
       questions: [{ title: 'Do you approve?', choices: [{ label: 'Yes' }, { label: 'No' }] }],
       credentials: ['memberNumber', 'password'],
       twoFactor: false,
+      voterResults: true,
     })
     expect(processId).toBeTruthy()
 

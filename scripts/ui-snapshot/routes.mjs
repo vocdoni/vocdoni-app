@@ -28,6 +28,17 @@ import {
   V_CHECKING,
   V_LIVE,
   V_NOT_IN,
+  V_QBQ_ANON_SIGNED,
+  V_QBQ_BETWEEN,
+  V_QBQ_ENDED,
+  V_QBQ_HELD,
+  V_QBQ_LIVE,
+  V_QBQ_MANY,
+  V_QBQ_READY,
+  V_QBQ_RESULTS,
+  V_QBQ_RESULTS_MISSED,
+  V_QBQ_UPCOMING,
+  V_QBQ_WEIGHTED,
   V_PAUSED,
   V_RESULTS,
   V_RESULTS_COUNTING,
@@ -39,7 +50,8 @@ import {
   VOTER_LIVE_PAUSED,
   VOTER_MEMBER,
   VOTER_RESULTS_SECRET_REOPENED,
-  VOTER_ROOM_NONE_OPEN,
+  VOTER_QBQ_MISSED,
+  VOTER_QBQ_PAUSED,
 } from './mock-saas.mjs'
 
 // At phone width these triggers sit behind a drawer or menu, so their states are desktop only.
@@ -97,6 +109,14 @@ const CHECK_VOTE = [['button', /^(Check your vote|Comprova el teu vot)$/]]
 const COUNTING = [CHECK_VOTE, ...IDENTIFY, SHOW_RESULTS]
 // Anonymous censuses: "Verifica el teu comprovant" is a link on the closed screen and on the authorised-vote screen; the
 // shortened code of the boards (14b) is not a whole code, so submitting it shows the error under the field.
+// Question by question (boards V4VoterWideLive / M4VoterLive and the QbQ cases of V4VoterWideMore): identify, then the
+// frame the open question decides. Captures with a cast need SDK #118 (plan Merge 0).
+const QBQ_CHOOSE = [['css', onScreen('roomQuestion', 'label[data-choice-card]:has(input[value="0"])')]]
+// The primary arms 800 ms after the question shows (VOTER_CAST_ARM_MS): a capture of the chosen ballot waits for it.
+const QBQ_ARMED = [['wait', onScreen('roomQuestion', '[data-testid="voter-cast"]:not([aria-disabled])')]]
+const QBQ_BACK = [['css', onScreen('roomQuestion', '[data-scope="action-bar"] button:not([data-testid])')]]
+const QBQ_SKIP = [['button', /^(Do not vote on this question|No votar aquesta pregunta)$/]]
+const SHOW_THEM = [['button', /^(Show them|Mostra-les)$/]]
 const VERIFY_RECEIPT = [['css', '[data-testid="voter-verify-receipt"]']]
 const SHORT_CODE = [['fill', 'input[name="code"]', 'a3f1\u20269c2e']]
 const voter = (slug, id, states) => ({ slug, path: `/processes/${id}`, auth: false, ...(states && { states }) })
@@ -254,11 +274,51 @@ export const ROUTES = [
   voter('voter-closed', B_AAO_ENDED),
   voter('voter-paused', V_PAUSED, [{ slug: 'paused', open: IDENTIFY }]),
   voter('voter-canceled', B_AAO_CANCELED),
-  // The room of a question-by-question vote (board V4VoterWideLive 1 and 4): one question open, then the next page read
-  // says the third one closed and none is open (it follows the process read, no reload).
-  voter('voter-room', B_QBQ_LIVE, [
-    { slug: 'none-open', open: [[['mock', `/processes/${B_QBQ_LIVE}`, VOTER_ROOM_NONE_OPEN]], [['refocus']]] },
+  voter('voter-qbq-ready', V_QBQ_READY, [{ slug: 'not-started', open: IDENTIFY }]),
+  voter('voter-qbq-live', V_QBQ_LIVE, [
+    { slug: 'identify-mismatch', open: [[['fill', 'input[name="memberNumber"]', '0000']], ...IDENTIFY.slice(1)] },
+    { slug: 'question', open: IDENTIFY },
+    { slug: 'question-chosen', open: [...IDENTIFY, QBQ_CHOOSE, QBQ_ARMED] },
+    { slug: 'room-open', open: [...IDENTIFY, QBQ_BACK] },
+    { slug: 'skipped', open: [...IDENTIFY, QBQ_SKIP] },
+    { slug: 'voted', open: [...IDENTIFY, QBQ_CHOOSE, [['css', '[data-testid="voter-cast"]']]] },
+    {
+      slug: 'missed',
+      open: [
+        ...IDENTIFY,
+        [['mock', `/processes/${V_QBQ_LIVE}`, VOTER_QBQ_MISSED]],
+        [['refocus']],
+        [['wait', onScreen('roomMissed', 'h1')]],
+      ],
+    },
+    {
+      slug: 'paused-mid-ballot',
+      open: [
+        ...IDENTIFY,
+        QBQ_CHOOSE,
+        [['mock', `/processes/${V_QBQ_LIVE}`, VOTER_QBQ_PAUSED]],
+        [['refocus']],
+        [['wait', onScreen('roomQuestion', '[role="status"]')]],
+      ],
+    },
   ]),
+  voter('voter-qbq-between', V_QBQ_BETWEEN, [{ slug: 'none-open', open: IDENTIFY }]),
+  voter('voter-qbq-many', V_QBQ_MANY, [
+    { slug: 'question', open: IDENTIFY, viewports: DESKTOP },
+    { slug: 'room-open', open: [...IDENTIFY, QBQ_BACK] },
+    { slug: 'unfolded', open: [...IDENTIFY, QBQ_BACK, SHOW_THEM, SHOW_THEM], viewports: DESKTOP },
+  ]),
+  voter('voter-qbq-weighted', V_QBQ_WEIGHTED, [
+    { slug: 'question-weighted', open: [...IDENTIFY, QBQ_CHOOSE, QBQ_ARMED] },
+  ]),
+  voter('voter-qbq-paused', V_QBQ_HELD, [{ slug: 'paused', open: IDENTIFY }]),
+  voter('voter-qbq-ended', V_QBQ_ENDED, [{ slug: 'already-voted', open: [CHECK_VOTE, ...IDENTIFY] }]),
+  voter('voter-qbq-upcoming', V_QBQ_UPCOMING),
+  // The result switch (R5): the question that just closed shows its tally, to a voter who voted it (3e) and to one who
+  // did not (3d).
+  voter('voter-qbq-results', V_QBQ_RESULTS, [{ slug: 'closed-voted', open: IDENTIFY }]),
+  voter('voter-qbq-results-missed', V_QBQ_RESULTS_MISSED, [{ slug: 'missed-result', open: IDENTIFY }]),
+  voter('voter-qbq-anon-signed', V_QBQ_ANON_SIGNED, [{ slug: 'authorised', open: IDENTIFY }]),
   // Anonymous censuses (boards V4VoterWideMore 12 to 14b): the receipt that must be kept (copy and download), a vote
   // signed from another device (no codes to show), and the verify page from the closed screen and from that vote.
   voter('voter-anon-cast', V_ANON, [{ slug: 'receipt', open: CAST }]),

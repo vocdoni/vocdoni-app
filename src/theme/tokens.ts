@@ -41,6 +41,8 @@ const fontSizes = defineTokens.fontSizes({
     lead: { value: '1.125rem' },
     code: { value: '1.625rem' },
     status: { value: '0.84375rem' },
+    // A fold's count in the agenda's badge ("+4", board V4VoterWideLive 1b).
+    fold: { value: '0.6875rem' },
   },
   // The headline sentence of a vote's turnout card from `lg` (`turnout-headline`).
   headline: { value: '2.125rem' },
@@ -181,6 +183,8 @@ const spacing = defineTokens.spacing({
     options: { value: '22px' },
     // Above the agenda list on the welcome screen: the same 22px.
     agenda: { value: '{spacing.ballot.options}' },
+    // Above the light rule that sets a choice apart under a ballot's answers (V4VoterWideLive 2): the options' 22px.
+    aside: { value: '{spacing.ballot.options}' },
   },
 })
 

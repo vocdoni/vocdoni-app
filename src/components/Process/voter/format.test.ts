@@ -157,6 +157,14 @@ describe('voterTurnout', () => {
     expect(voterTurnout(election, {})).toEqual({ count: 184, total: 312 })
   })
 
+  it('says "at least" question by question, where the count is the highest per-question one', () => {
+    const byQuestion = { ...(election as object), initialStatus: 'PAUSED' } as never
+    expect(voterTurnout(byQuestion, {})).toEqual({ count: 184, total: 312, atLeast: true })
+    expect(
+      voterTurnout({ initialStatus: 'PAUSED', questions: [{ id: 'q1', results: { voteCount: 0 } }] } as never, {})
+    ).toEqual({ count: 0 })
+  })
+
   it('omits the denominator when the read has none, and everything when the deployment hides counts', () => {
     expect(voterTurnout({ questions: [{ id: 'q1', results: { voteCount: 3 } }] } as never, {})).toEqual({ count: 3 })
     expect(voterTurnout(election, { HIDE_VOTER_COUNT: true })).toBeNull()

@@ -1,6 +1,7 @@
 import { processVoteCount } from '@vocdoni/api-client'
 import type { VotingProcessQuestion, VotingProcessResponse } from '@vocdoni/api-types'
 import { BallotType, questionSelectionRange, tryInferQuestionBallotType } from '@vocdoni/ballot'
+import { isQuestionByQuestion } from '~src/types/voting-process'
 import { deriveQuestionState } from '~utils/vote-state'
 import type { Answer } from './voter-flow'
 
@@ -162,11 +163,20 @@ export const describeAnswer = (
   return joinLabels(labels)
 }
 
-export type Turnout = { count: number; total?: number }
+export type Turnout = {
+  count: number
+  total?: number
+  /**
+   * The count is a floor: a question-by-question vote counts each question's voters apart, and the figure is the
+   * highest of them, so more people may have voted on another question (the organiser's "at least").
+   */
+  atLeast?: boolean
+}
 
 /**
  * Who has voted, for the closed screen and the results (spec D4 "Turnout", audit F16): nothing when the deployment
- * hides counts; the denominator is the questions' `maxVoters` when the read carries it.
+ * hides counts; the denominator is the questions' `maxVoters` when the read carries it. Question by question the
+ * count is the highest per-question one, so it is flagged `atLeast`, as the organiser's headline words it.
  */
 export const voterTurnout = (
   election: Pick<VotingProcessResponse, 'questions'>,
@@ -176,7 +186,8 @@ export const voterTurnout = (
   const results = election.questions.map((question) => ({ ...question.results, questionId: question.id }))
   const count = processVoteCount({ questions: results } as Parameters<typeof processVoteCount>[0])
   const totals = election.questions.map((question) => question.results?.maxVoters ?? 0).filter((value) => value > 0)
-  return totals.length ? { count, total: Math.max(...totals) } : { count }
+  const atLeast = count > 0 && isQuestionByQuestion(election as VotingProcessResponse)
+  return { count, ...(totals.length ? { total: Math.max(...totals) } : {}), ...(atLeast ? { atLeast } : {}) }
 }
 
 /** How a question was answered, for the line under its title on the results (boards M10, M11). */

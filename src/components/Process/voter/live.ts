@@ -1,10 +1,17 @@
+import { isBeforeStart } from '@vocdoni/api-client'
 import type { VotingProcessResponse } from '@vocdoni/api-types'
-import { isTerminalQuestion } from '~utils/vote-state'
+import { isQuestionByQuestion } from '~src/types/voting-process'
+import { deriveVoteState, isTerminalQuestion } from '~utils/vote-state'
 import { resultsFinal } from './format'
 
 // Every timing of the voter page lives here (spec D5, audit F8).
 /** The process read's poll while nothing is about to change. */
 export const VOTER_POLL_MS = 30_000
+/**
+ * The poll of a question-by-question vote while it is live: the organiser opens and closes questions in front of a
+ * room, and a voter waiting for the next one should not sit 30 s behind them (live test, 2026-11-24).
+ */
+export const VOTER_QBQ_POLL_MS = 10_000
 /** The poll right after the scheduled end, until the stored status catches up. Provisional (spec D5). */
 export const VOTER_END_POLL_MS = 5_000
 /** How long the faster poll lasts after the end instant before going back to `VOTER_POLL_MS`. */
@@ -59,6 +66,18 @@ export const isSettledProcess = (process: VotingProcessResponse | null | undefin
   return over && resultsFinal(process)
 }
 
+/**
+ * A question-by-question vote the organiser is running now: started by its date and not ended (`deriveVoteState`
+ * `live`, `paused` as a whole, or `ready` once the start passed, waiting for the first question). Only then does the
+ * room poll at `VOTER_QBQ_POLL_MS` (gate-3 F5). A paused room polls fast too, so the voters get their ballot back
+ * within seconds of the organiser resuming (QA review 2026-11-25).
+ */
+export const isLiveRoom = (process: VotingProcessResponse | null | undefined, now: Date): boolean => {
+  if (!process || !isQuestionByQuestion(process) || isBeforeStart(process.startDate, now)) return false
+  const state = deriveVoteState(process, now)
+  return state === 'live' || state === 'paused' || state === 'ready'
+}
+
 export type VoterLiveState = {
   /** Until when (ms epoch) the end-instant window keeps the fast poll; unset before the end instant. */
   endWindowUntil?: number
@@ -68,6 +87,12 @@ export type VoterLiveState = {
 }
 
 type IntervalQuery = { state: { data: unknown } }
+
+// 'always' while the vote can still change: the page sets a 30 s `staleTime` for its prefetched data, and a live vote's
+// poll keeps the read younger than that, so a plain `true` would never refetch on focus. The voter coming back sees
+// the vote's state at once. A settled vote has no poll left, and no focus or reconnect refetch either.
+const refetchOnReturn = (query: IntervalQuery) =>
+  isSettledProcess(query.state.data as VotingProcessResponse | undefined) ? false : ('always' as const)
 
 /**
  * The `queryOptions` and `resultsQueryOptions` of the voter page's `ElectionProvider` (audit F8: the provider owns
@@ -81,11 +106,12 @@ export const voterLiveQueryOptions = ({ endWindowUntil, factor, now }: VoterLive
     refetchInterval: (query: IntervalQuery) => {
       if (isSettledProcess(query.state.data as VotingProcessResponse | undefined)) return false as const
       const fast = endWindowUntil !== undefined && now() < endWindowUntil
-      return Math.round((fast ? VOTER_END_POLL_MS : VOTER_POLL_MS) * factor)
+      const live = isLiveRoom(query.state.data as VotingProcessResponse | undefined, new Date(now()))
+      return Math.round((fast ? VOTER_END_POLL_MS : live ? VOTER_QBQ_POLL_MS : VOTER_POLL_MS) * factor)
     },
     refetchIntervalInBackground: false,
-    refetchOnWindowFocus: true,
-    refetchOnReconnect: true,
+    refetchOnWindowFocus: refetchOnReturn,
+    refetchOnReconnect: refetchOnReturn,
   },
   resultsQueryOptions: {
     refetchInterval: false as const,

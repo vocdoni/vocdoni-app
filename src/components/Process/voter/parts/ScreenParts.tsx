@@ -63,8 +63,8 @@ export const ScreenHeading = ({ children, focus = false, id, mt = '2' }: Heading
   )
 }
 
-export const ScreenHelp = ({ children }: { children: ReactNode }) => (
-  <Text as='div' textStyle='ballot-body' color='fg.muted' mt='2.5'>
+export const ScreenHelp = ({ children, id }: { children: ReactNode; id?: string }) => (
+  <Text as='div' id={id} textStyle='ballot-body' color='fg.muted' mt='2.5'>
     {children}
   </Text>
 )

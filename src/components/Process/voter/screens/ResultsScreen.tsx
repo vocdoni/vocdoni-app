@@ -35,9 +35,13 @@ const ResultsTurnout = ({ turnout, share }: { turnout: Turnout; share: boolean }
   return (
     // data-testid: the e2e observers read the live count from here; its English sentence starts with the number.
     <Text as='span' data-testid='process-vote-count'>
-      {percent !== undefined
-        ? t('voter.results.turnout_share', { count: turnout.count, total: turnout.total, percent })
-        : t('voter.results.turnout', { count: turnout.count })}
+      {turnout.atLeast
+        ? percent !== undefined
+          ? t('voter.results.turnout_any_share', { count: turnout.count, total: turnout.total, percent })
+          : t('voter.results.turnout_any', { count: turnout.count })
+        : percent !== undefined
+          ? t('voter.results.turnout_share', { count: turnout.count, total: turnout.total, percent })
+          : t('voter.results.turnout', { count: turnout.count })}
     </Text>
   )
 }

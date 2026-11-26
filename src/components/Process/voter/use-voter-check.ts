@@ -61,6 +61,10 @@ export const useVoterCheck = ({ id, authToken, connected, check, statusKey }: Vo
       current.state.status === 'error' && !isUnauthorized(current.state.error) && !isTerminal(current.state.error)
         ? checkRetryDelay(failures.current, factor)
         : false,
+    // Focus and reconnect check again even when the last answer is recent: the app's default `staleTime` (30 s) would
+    // skip it, and a second device that voted meanwhile must be heard when the tab comes back (live test, 2026-11-24).
+    // Nothing polls this query: a status change (below), focus, reconnect and every cast are its only triggers.
+    staleTime: 0,
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
     gcTime: 0,
@@ -96,5 +100,7 @@ export const useVoterCheck = ({ id, authToken, connected, check, statusKey }: Vo
     answers.every((question) => question.hasVoted || !question.canVote)
   // The questions the check's last answer lists as on chain, re-read after every cast and when a status changes.
   const votedIds = answers.filter((question) => question.hasVoted).map((question) => question.questionId)
-  return { membership, votedElsewhere, votedIds }
+  // The questions this voter is not eligible for (a question restricted to part of the census).
+  const ineligibleIds = answers.filter((question) => !question.canVote).map((question) => question.questionId)
+  return { membership, votedElsewhere, votedIds, ineligibleIds }
 }

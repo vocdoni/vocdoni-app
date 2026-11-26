@@ -4,7 +4,8 @@ import type { ReactElement, ReactNode } from 'react'
 import { render } from '~src/test-utils'
 import type { AppEnv } from '~src/app-env-build'
 import { VoterFlowContext, type VoterFlow } from './flow-context'
-import { initialVoterState, type VoterFacts } from './voter-flow'
+import { initialVoterState, type RoomCast, type RoomFacts, type VoterFacts } from './voter-flow'
+import type { QuestionState, VoteState } from '~utils/vote-state'
 
 /** A two-question single-choice vote, open until 2026-12-01, for the screen tests. */
 export const testElection = (over: Partial<Record<string, unknown>> = {}) =>
@@ -37,9 +38,10 @@ export const testElection = (over: Partial<Record<string, unknown>> = {}) =>
 export const testFacts = (over: Partial<VoterFacts> = {}): VoterFacts => ({
   loaded: true,
   status: 'ONGOING',
-  questionByQuestion: false,
+  room: null,
   endedBySchedule: false,
   secretUntilTheEnd: false,
+  resultsShown: true,
   connected: true,
   challengePending: false,
   membership: 'ok',
@@ -51,6 +53,18 @@ export const testFacts = (over: Partial<VoterFacts> = {}): VoterFacts => ({
   questionCount: 2,
   answered: [false, false],
   ...over,
+})
+
+/** A question-by-question room for the screen tests: q1, q2… in these states, cast as given. */
+export const testRoom = (
+  questions: Array<QuestionState | [QuestionState, RoomCast]>,
+  voteState: VoteState = 'live'
+): RoomFacts => ({
+  voteState,
+  questions: questions.map((entry, index) => {
+    const [state, cast] = Array.isArray(entry) ? entry : [entry, 'none' as RoomCast]
+    return { id: `q${index + 1}`, state, cast, endedAt: null }
+  }),
 })
 
 /** A flow value for a screen test: every action is a spy. */
@@ -80,7 +94,12 @@ export const testFlow = (over: Partial<VoterFlow> = {}): VoterFlow => ({
   signOut: vi.fn(),
   showResults: vi.fn(),
   checkReceipt: vi.fn(),
+  recheck: vi.fn(),
   verifyReceipt: vi.fn(),
+  park: vi.fn(),
+  skip: vi.fn(),
+  resume: vi.fn(),
+  castQuestion: vi.fn(async () => undefined),
   leaveReceipt: vi.fn(),
   ...over,
 })

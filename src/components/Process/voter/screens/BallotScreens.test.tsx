@@ -83,6 +83,42 @@ describe('sending', () => {
     expect(items[1]).toHaveAttribute('aria-current', 'step')
     expect(items[2]).toHaveAttribute('data-state', 'next')
   })
+
+  // The first frame of a cast, before the SDK reports any status, used to count every question of the ballot.
+  it('counts the one question being cast from the first frame, not the whole ballot', async () => {
+    const i18nInstance = await createTestI18n({
+      resources: {
+        en: {
+          common: {
+            voter: { sending: { sending_one: 'Sending {{count}} answer', sending_other: 'Sending {{count}} answers' } },
+          },
+        },
+      },
+      useReactI18next: true,
+    })
+    renderWithFlow(
+      <SendingScreen />,
+      testFlow({ statuses: [], state: { ...initialVoterState, castQuestionId: 'q1' } }),
+      { i18nInstance }
+    )
+    expect(screen.getByText('Sending 1 answer')).toBeInTheDocument()
+    expect(screen.queryByText('Sending 2 answers')).toBeNull()
+  })
+
+  it('counts the whole ballot for an all-at-once cast before any status', async () => {
+    const i18nInstance = await createTestI18n({
+      resources: {
+        en: {
+          common: {
+            voter: { sending: { sending_one: 'Sending {{count}} answer', sending_other: 'Sending {{count}} answers' } },
+          },
+        },
+      },
+      useReactI18next: true,
+    })
+    renderWithFlow(<SendingScreen />, testFlow({ statuses: [] }), { i18nInstance })
+    expect(screen.getByText('Sending 2 answers')).toBeInTheDocument()
+  })
 })
 
 describe('receipt', () => {
