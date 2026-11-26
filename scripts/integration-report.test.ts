@@ -56,10 +56,32 @@ describe('integration-report.sh', () => {
         '- integrator-sdk: npm (lockfile)',
         `- Run: ${RUN_URL}`,
         '',
-        'One-shot run: pushes keep using the previous sticky refs, if any.',
+        'One-shot run: pushes to this PR keep running as they did before this comment.',
         '',
       ].join('\n')
     )
+  })
+
+  it('says a bare /integration comment re-runs on every push', () => {
+    expect(report({ STICKY: 'true' })).toBe(
+      [
+        '✅ Integration run: **success**',
+        '',
+        appLine,
+        '- vocdoni-sequencer: :main image',
+        '- saas-backend: :main image',
+        '- integrator-sdk: npm (lockfile)',
+        `- Run: ${RUN_URL}`,
+        '',
+        'Pushes to this PR re-run the suite against the `:main` images and npm packages until `/integration reset`.',
+        '',
+      ].join('\n')
+    )
+  })
+
+  it('says sticky refs are re-resolved on every push', () => {
+    const out = report({ SAAS_REF: 'feat/x', STICKY: 'true' })
+    expect(out).toContain('These refs are re-resolved on every push to this PR until `/integration reset`.')
   })
 
   it('puts the e2e failure excerpt in a collapsed block with a fence it cannot close', () => {
@@ -130,7 +152,7 @@ describe('integration-report.sh', () => {
   it('reports a reset', () => {
     expect(report({ RESET: 'true', RESULT: '' })).toBe(
       [
-        'Sticky integration refs cleared; pushes use the `:main` images and the npm SDK again.',
+        'Sticky integration run cleared; pushes to this PR no longer re-run the suite unless it targets stage or main.',
         '',
         `- Run: ${RUN_URL}`,
         '',
@@ -160,6 +182,14 @@ describe('integration-report.sh', () => {
         '',
       ].join('\n')
     )
+  })
+
+  it('says a push run with a bare sticky comment ran unpinned', () => {
+    const out = report({ EVENT: 'pull_request', STICKY: 'true' })
+    expect(out).toContain(
+      "No ref is pinned: this PR's sticky `/integration` comment re-runs it on every push, against the :main images and npm packages."
+    )
+    expect(out).not.toContain('this PR targets stage or main')
   })
 
   it('says a push run on stage or main ran unpinned, and includes its failure output', () => {

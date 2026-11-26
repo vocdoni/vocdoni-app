@@ -68,8 +68,8 @@ function sticky(comments: Comment[]) {
   return res.stdout
 }
 
-function refs(sequencer: string, saas: string, sdk = '') {
-  return `vocdoni_sequencer_ref=${sequencer}\nsaas_backend_ref=${saas}\nintegrator_sdk_ref=${sdk}\n`
+function refs(sequencer: string, saas: string, sdk = '', isSticky = sequencer + saas + sdk !== '') {
+  return `vocdoni_sequencer_ref=${sequencer}\nsaas_backend_ref=${saas}\nintegrator_sdk_ref=${sdk}\nsticky=${isSticky}\n`
 }
 
 const WRITER = 'alice'
@@ -139,6 +139,53 @@ describe('integration-sticky.sh', () => {
         { body: '/integration integrator-sdk=release/1.0.0', user: { login: WRITER } },
       ])
     ).toBe(refs('', '', 'release/1.0.0'))
+  })
+
+  it('a bare /integration is sticky with no refs', () => {
+    expect(sticky([{ body: '/integration', user: { login: WRITER } }])).toBe(refs('', '', '', true))
+  })
+
+  it('a bare /integration after a pinned comment drops the pins and stays sticky', () => {
+    expect(
+      sticky([
+        {
+          body: '/integration vocdoni-sequencer=feat/a saas-backend=#760 integrator-sdk=main',
+          user: { login: WRITER },
+        },
+        { body: '/integration', user: { login: WRITER } },
+      ])
+    ).toBe(refs('', '', '', true))
+  })
+
+  it('a pinned comment after a bare /integration sets the pins', () => {
+    expect(
+      sticky([
+        { body: '/integration', user: { login: WRITER } },
+        { body: '/integration saas-backend=760', user: { login: WRITER } },
+      ])
+    ).toBe(refs('', '#760'))
+  })
+
+  it('a SHA-only comment after a bare /integration keeps it sticky', () => {
+    expect(
+      sticky([
+        { body: '/integration', user: { login: WRITER } },
+        { body: '/integration vocdoni-sequencer=1a2b3c4', user: { login: WRITER } },
+      ])
+    ).toBe(refs('', '', '', true))
+  })
+
+  it('reset after a bare /integration clears the sticky state', () => {
+    expect(
+      sticky([
+        { body: '/integration', user: { login: WRITER } },
+        { body: '/integration reset', user: { login: WRITER } },
+      ])
+    ).toBe(refs('', ''))
+  })
+
+  it('a read-only user bare /integration is ignored', () => {
+    expect(sticky([{ body: '/integration', user: { login: READER } }])).toBe(refs('', ''))
   })
 
   it('a writer sticky comment counts', () => {

@@ -35,9 +35,11 @@ function expectError(input: string) {
 
 describe('integration-pins.sh', () => {
   describe('accepted comments', () => {
-    it('bare /integration pins nothing and is one-shot', () => {
-      expectOk('/integration', '', '', '', false)
-      expectOk('/integration\n', '', '', '', false)
+    it('bare /integration pins nothing and is sticky', () => {
+      expectOk('/integration', '', '', '', true)
+      expectOk('/integration\n', '', '', '', true)
+      expectOk('/integration \t ', '', '', '', true)
+      expectOk('/integration\r\nmore text', '', '', '', true)
     })
 
     it('SHA-only refs are one-shot', () => {

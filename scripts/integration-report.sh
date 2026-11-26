@@ -6,6 +6,7 @@
 #
 # EVENT=issue_comment is the reply to a `/integration` comment. EVENT=pull_request
 # is the report of a push run on a PR, posted as a new comment each time.
+# STICKY is true when the comment, or the PR's sticky state on a push run, re-runs the suite on push.
 #
 # Env: EVENT, REPO, SERVER_URL, RUN_URL, PARSED, RESOLVE, RESULT, RESET, STICKY,
 #   CHECKOUT, HEAD_SHA, SEQUENCER_REF, SAAS_REF, SDK_REF, SEQUENCER_SHA, SAAS_SHA, SDK_SHA,
@@ -93,6 +94,8 @@ if [ "$EVENT" = pull_request ]; then
   echo
   if [ -n "$SEQUENCER_REF$SAAS_REF$SDK_REF" ]; then
     echo "The refs come from this PR's sticky \`/integration\` comment, re-resolved on this push."
+  elif [ "$STICKY" = true ]; then
+    echo "No ref is pinned: this PR's sticky \`/integration\` comment re-runs it on every push, against the :main images and npm packages."
   else
     echo "No ref is pinned: this PR targets stage or main, so it ran against the :main images and npm packages."
   fi
@@ -118,7 +121,7 @@ fi
       echo "❌ Integration run: **error** resolving the PR ($RESOLVE), see the run log; comment again to retry."
     fi
   elif [ "$RESET" = true ]; then
-    echo "Sticky integration refs cleared; pushes use the \`:main\` images and the npm SDK again."
+    echo "Sticky integration run cleared; pushes to this PR no longer re-run the suite unless it targets stage or main."
     echo
     echo "- Run: $RUN_URL"
   else
@@ -129,12 +132,15 @@ fi
     upstream saas-backend saas-backend "$SAAS_REF" "$SAAS_SHA" ':main image'
     upstream integrator-sdk vocdoni-integrator-sdk "$SDK_REF" "$SDK_SHA" 'npm (lockfile)'
     echo "- Run: $RUN_URL"
-    if [ "$STICKY" = true ]; then
+    if [ "$STICKY" = true ] && [ -n "$SEQUENCER_REF$SAAS_REF$SDK_REF" ]; then
       echo
       echo "These refs are re-resolved on every push to this PR until \`/integration reset\`."
+    elif [ "$STICKY" = true ]; then
+      echo
+      echo "Pushes to this PR re-run the suite against the \`:main\` images and npm packages until \`/integration reset\`."
     else
       echo
-      echo "One-shot run: pushes keep using the previous sticky refs, if any."
+      echo "One-shot run: pushes to this PR keep running as they did before this comment."
     fi
   fi
   failure_block "$excerpt"

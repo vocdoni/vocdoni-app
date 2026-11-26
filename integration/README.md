@@ -116,8 +116,8 @@ Each key is optional:
 /integration vocdoni-sequencer=<ref> saas-backend=<ref> integrator-sdk=<ref>
 ```
 
-- A bare `/integration` is an ordinary run: `:main` images and the npm packages
-  from the lockfile.
+- A bare `/integration` runs against the `:main` images and the npm packages from
+  the lockfile, and sticks like any comment without a SHA (see "One-shot or sticky").
 - A ref is a commit SHA (7-40 hex), a branch, a tag, or a PR number for that
   upstream repo's PR head. Write the PR number bare (`saas-backend=760`), which is
   the recommended form. `saas-backend=#760` still works. GitHub autolinks `#760` to
@@ -141,22 +141,24 @@ Each key is optional:
   run gets 90 minutes instead of 45.
 - The result is posted back to the PR as a comment with the App head, the upstream
   SHAs and the run link. A failed run's comment includes the failing step's output.
-  A push run on a pinned PR posts a new comment each time, with the same details.
+  A push run on a PR with a sticky comment posts a new comment each time, with
+  the same details.
 - The comment trigger runs the workflow file from `develop` (the default branch),
   so changes to the workflow only take effect once merged.
 
 ### One-shot or sticky
 
-- A comment with any SHA runs once.
-- A comment whose refs are all branches, tags or `#PR`s sticks: every push to the
-  PR re-resolves those refs and builds them again, until `/integration reset`. A
-  later sticky comment replaces the earlier one, for all three keys.
-- A bare `/integration` is one-shot and does not change the sticky state.
+- A comment with any SHA runs once and does not change the sticky state.
+- Any other comment sticks, a bare `/integration` included: every push to the PR
+  re-runs the suite, re-resolving and rebuilding the refs it names, until
+  `/integration reset`. After a bare `/integration` the pushes run against the
+  `:main` images and the npm packages. A later sticky comment replaces the earlier
+  one for all three keys, so a bare `/integration` after a pinned one drops the pins.
 - `/integration reset` clears the sticky state, and takes no other token.
-- Only sticky refs from users with write access count, checked the same way as
+- Only sticky comments from users with write access count, checked the same way as
   comment runs. Other comments are ignored for this purpose.
-- A sticky pin also runs the end-to-end job on pull requests into `develop`, which
-  otherwise skip it, so every push to that PR runs the suite against those refs.
+- A sticky comment also runs the end-to-end job on pull requests into `develop`,
+  which otherwise skip it, so every push to that PR runs the suite.
 - A push to an upstream PR does not trigger a run: comment the same line again, or
   re-run the workflow from the Actions tab.
 - The `pull_request` run uses the workflow from the PR's merge commit, so once this

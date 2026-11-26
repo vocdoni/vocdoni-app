@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Derives the sticky upstream refs of a PR from its `/integration` comments.
-# Walks comments oldest first: a sticky comment sets the state,
-# `/integration reset` clears it, one-shot comments leave it alone.
+# Walks comments oldest first: a sticky comment (no SHA, a bare `/integration`
+# included) sets the state for all three keys, `/integration reset` clears it,
+# one-shot comments leave it alone.
 # Only commenters with write access count, checked live as in comment runs.
 #
 # Usage:
@@ -10,7 +11,8 @@
 # Input: JSON array of issue comments on stdin, oldest first ({body, user: {login}}).
 # Env: REPO (owner/repo), GH_TOKEN for gh.
 # Output (stdout, exit 0): vocdoni_sequencer_ref=<ref or empty>, saas_backend_ref=<ref or empty>,
-# integrator_sdk_ref=<ref or empty>
+# integrator_sdk_ref=<ref or empty>, sticky=true|false (true while a sticky comment is in effect,
+# even with no refs, so pushes re-run the suite)
 set -euo pipefail
 
 if [ -z "${REPO:-}" ]; then
@@ -47,6 +49,7 @@ encoded="$(jq -r '.[] | {login: (.user.login // ""), body: (.body // "")} | @bas
 sequencer_ref=""
 saas_ref=""
 sdk_ref=""
+sticky=false
 while IFS= read -r b64; do
   [ -n "$b64" ] || continue
   item="$(printf '%s' "$b64" | base64 -d)"
@@ -65,11 +68,14 @@ while IFS= read -r b64; do
     sequencer_ref=""
     saas_ref=""
     sdk_ref=""
+    sticky=false
   elif [ "$(sed -n 's/^sticky=//p' <<<"$parsed")" = true ]; then
     sequencer_ref="$(sed -n 's/^vocdoni_sequencer_ref=//p' <<<"$parsed")"
     saas_ref="$(sed -n 's/^saas_backend_ref=//p' <<<"$parsed")"
     sdk_ref="$(sed -n 's/^integrator_sdk_ref=//p' <<<"$parsed")"
+    sticky=true
   fi
 done <<<"$encoded"
 
-printf 'vocdoni_sequencer_ref=%s\nsaas_backend_ref=%s\nintegrator_sdk_ref=%s\n' "$sequencer_ref" "$saas_ref" "$sdk_ref"
+printf 'vocdoni_sequencer_ref=%s\nsaas_backend_ref=%s\nintegrator_sdk_ref=%s\nsticky=%s\n' \
+  "$sequencer_ref" "$saas_ref" "$sdk_ref" "$sticky"

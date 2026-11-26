@@ -8,10 +8,11 @@ name: Integration
 # "Pinning upstream commits").
 #
 # A writer's `/integration vocdoni-sequencer=<ref> saas-backend=<ref> integrator-sdk=<ref>`
-# comment on a pull request runs it once against those refs (each key is optional).
-# Refs that are branches, tags or PR numbers (760 or #760) also stick to the PR until `/integration reset`,
-# and the pull_request event re-resolves sticky refs on every push. workflow_dispatch
-# takes the same refs as inputs.
+# comment on a pull request runs it against those refs (each key is optional). Unless a ref
+# is a commit SHA, the comment also sticks to the PR until `/integration reset`: the
+# pull_request event re-runs the suite on every push, re-resolving the refs, or against the
+# `:main` images and npm packages for a bare `/integration`. workflow_dispatch takes the
+# same refs as inputs.
 #
 # Every run that reaches the e2e job says what happened on the PR. A /integration comment
 # gets a reply; a push run on a pull request gets its own comment, each time, so nobody has
@@ -33,8 +34,8 @@ name: Integration
 #
 # Where it runs, and why: on every merge into `develop` (the integration point,
 # where a break should surface), on pull requests promoting `develop` onward to
-# `stage` or to `main` (production), and on any pull request with pinned refs —
-# the moments where shipping a broken email/2FA journey would actually reach users.
+# `stage` or to `main` (production), and on any pull request with a sticky `/integration`
+# comment: the moments where shipping a broken email/2FA journey would actually reach users.
 # Other feature PRs targeting `develop` deliberately do NOT run it: they are already
 # covered by test.yml, and this job costs several minutes and a live chain.
 on:
@@ -125,8 +126,8 @@ jobs:
             fail "${reason:-$2}"
           }
           if [ "$EVENT_NAME" = pull_request ]; then
-            # Sticky pins from the PR's own comments. Refs are re-resolved here
-            # on every push; checkout_ref stays empty (the default merge ref).
+            # Sticky state from the PR's own comments: the refs and sticky=true|false.
+            # Refs are re-resolved here on every push; checkout_ref stays empty (the default merge ref).
             if ! gh api --paginate "repos/$REPO/issues/$PR_NUMBER/comments" | jq -s 'add // []' | scripts/integration-sticky.sh >> "$GITHUB_OUTPUT"; then
               fail "could not read the sticky refs of PR #$PR_NUMBER (see the run log)"
             fi
@@ -335,10 +336,10 @@ jobs:
     #
     # A failed or cancelled images job skips this job; a skipped one (no pins) does not.
     #
-    # For a pull_request the job runs when the base is stage or main (release and
-    # hotfix PRs, as before), or when a ref is pinned, sticky or one-shot. Other
-    # feature PRs into develop run only test.yml.
-    if: ${{ !cancelled() && needs.resolve.outputs.reset != 'true' && (needs.resolve.result == 'success' || (needs.resolve.result == 'skipped' && github.event_name != 'issue_comment')) && (needs.images.result == 'success' || needs.images.result == 'skipped') && (github.event_name != 'pull_request' || github.base_ref == 'stage' || github.base_ref == 'main' || needs.resolve.outputs.vocdoni_sequencer_ref != '' || needs.resolve.outputs.saas_backend_ref != '' || needs.resolve.outputs.integrator_sdk_ref != '') }}
+    # For a pull_request the job runs when the base is stage or main, or when the PR has a sticky
+    # `/integration` comment, with or without refs (resolve's sticky output). Other feature PRs
+    # into develop run only test.yml.
+    if: ${{ !cancelled() && needs.resolve.outputs.reset != 'true' && (needs.resolve.result == 'success' || (needs.resolve.result == 'skipped' && github.event_name != 'issue_comment')) && (needs.images.result == 'success' || needs.images.result == 'skipped') && (github.event_name != 'pull_request' || github.base_ref == 'stage' || github.base_ref == 'main' || needs.resolve.outputs.vocdoni_sequencer_ref != '' || needs.resolve.outputs.saas_backend_ref != '' || needs.resolve.outputs.integrator_sdk_ref != '' || needs.resolve.outputs.sticky == 'true') }}
     runs-on: ubuntu-latest
     # The suite publishes real on-chain processes and casts real votes, running
     # twice (desktop and mobile). An SDK build adds a lot of time, and so does
