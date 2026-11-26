@@ -5,7 +5,7 @@ import {
   RETRYABLE_CERT_ERRORS,
   startCertAuth,
   STICKY_CERT_ERRORS,
-  takeUnansweredCertAuth,
+  unansweredCertAuth,
 } from './cert-auth'
 
 const PID = '0123456789abcdef01234567'
@@ -55,7 +55,7 @@ describe('cert-auth', () => {
     )
   })
 
-  it('stores only state, codeVerifier and when it started, and sends the challenge to the gateway', async () => {
+  it('stores only state, codeVerifier, when it started and the page load, and sends the challenge to the gateway', async () => {
     const target = new URL(
       await startCertAuth({
         gatewayUrl: 'https://cert.vocdoni.io:15140',
@@ -66,7 +66,8 @@ describe('cert-auth', () => {
     )
     expect(sessionStorage).toHaveLength(1)
     const stored = JSON.parse(sessionStorage.getItem(certAuthStorageKey(PID))!)
-    expect(Object.keys(stored).sort()).toEqual(['codeVerifier', 'startedAt', 'state'])
+    expect(Object.keys(stored).sort()).toEqual(['codeVerifier', 'loadId', 'startedAt', 'state'])
+    expect(stored.loadId).toMatch(/^[A-Za-z0-9_-]{11}$/)
     expect(Date.now() - stored.startedAt).toBeLessThan(1000)
     expect(stored.state).toMatch(/^[A-Za-z0-9_-]{22}$/)
     expect(stored.codeVerifier).toMatch(/^[A-Za-z0-9_-]{43}$/)
@@ -148,25 +149,57 @@ describe('cert-auth', () => {
 
   describe('a certificate login this tab started that never answered', () => {
     const NOW = 1_800_000_000_000
-    const store = (startedAt?: number) =>
-      sessionStorage.setItem(certAuthStorageKey(PID), JSON.stringify({ state: 's', codeVerifier: 'v', startedAt }))
+    const key = certAuthStorageKey(PID)
+    const store = (startedAt?: number, loadId = 'an earlier page load') =>
+      sessionStorage.setItem(key, JSON.stringify({ state: 's', codeVerifier: 'v', startedAt, loadId }))
+    const stored = () => JSON.parse(sessionStorage.getItem(key)!)
 
-    it('means the gateway page did not load when it started moments ago, and is told once', () => {
-      expect(takeUnansweredCertAuth(PID, { now: NOW })).toBe(false)
+    it('is none while this page load is the one that left for the gateway, and the flow is kept', async () => {
+      expect(unansweredCertAuth(PID, { now: NOW })).toBe(false)
+      await startCertAuth({
+        gatewayUrl: 'https://cert.test',
+        processId: PID,
+        returnUrl: 'https://app.test',
+        language: 'en',
+      })
+      const flow = sessionStorage.getItem(key)
+      expect(unansweredCertAuth(PID)).toBe(false)
+      expect(sessionStorage.getItem(key)).toBe(flow)
+    })
+
+    it('means the gateway page did not load on a new page load moments later, told once, keeping the flow', () => {
       // a dropped port shows the browser's error page only after the TCP connect timeout (~2 min)
       store(NOW - 10 * 60_000)
-      expect(takeUnansweredCertAuth(PID, { now: NOW })).toBe(true)
-      expect(sessionStorage.getItem(certAuthStorageKey(PID))).toBeNull()
-      expect(takeUnansweredCertAuth(PID, { now: NOW })).toBe(false)
+      expect(unansweredCertAuth(PID, { now: NOW })).toBe(true)
+      expect(stored()).toMatchObject({ state: 's', codeVerifier: 'v', hinted: true })
+      expect(unansweredCertAuth(PID, { now: NOW })).toBe(false)
+
+      // the gateway's late answer still signs in
+      const { history, location } = fakeWindow('#certCode=c&state=s')
+      expect(readCertReturn(PID, { history, location })).toEqual({ kind: 'code', certCode: 'c', codeVerifier: 'v' })
+    })
+
+    it('counts a page restored from the back/forward cache, which keeps this page load, told once', async () => {
+      await startCertAuth({
+        gatewayUrl: 'https://cert.test',
+        processId: PID,
+        returnUrl: 'https://app.test',
+        language: 'en',
+      })
+      expect(unansweredCertAuth(PID, { restored: true })).toBe(true)
+      expect(stored().hinted).toBe(true)
+      expect(unansweredCertAuth(PID, { restored: true })).toBe(false)
+      expect(stored().codeVerifier).toMatch(/^[A-Za-z0-9_-]{43}$/)
     })
 
     it.each([
       ['it started long ago', NOW - 16 * 60_000],
       ['it has no start time', undefined],
-    ])('is no failure when %s, and is forgotten', (_, startedAt) => {
+    ])('is no failure when %s, and the flow is kept', (_, startedAt) => {
       store(startedAt)
-      expect(takeUnansweredCertAuth(PID, { now: NOW })).toBe(false)
-      expect(sessionStorage.getItem(certAuthStorageKey(PID))).toBeNull()
+      const flow = sessionStorage.getItem(key)
+      expect(unansweredCertAuth(PID, { now: NOW })).toBe(false)
+      expect(sessionStorage.getItem(key)).toBe(flow)
     })
   })
 

@@ -46,7 +46,7 @@ import {
   RETRYABLE_CERT_ERRORS,
   startCertAuth,
   STICKY_CERT_ERRORS,
-  takeUnansweredCertAuth,
+  unansweredCertAuth,
   type CertReturn,
 } from './cert-auth'
 
@@ -239,14 +239,14 @@ export const CertAuthStart = ({
   const start = useStartCertAuth(navigate)
   const [accepted, setAccepted] = useState(false)
   // a login this tab started moments ago that never came back with an answer
-  const [pending, setPending] = useState(() => showPending && !!election && takeUnansweredCertAuth(election.id))
+  const [pending, setPending] = useState(() => showPending && !!election && unansweredCertAuth(election.id))
 
   // the page can come back from the back/forward cache after a navigation to the gateway
   useEffect(() => {
     const reset = (event: PageTransitionEvent) => {
       // restored from the back/forward cache, e.g. going back from the browser's error page for a
       // gateway that didn't load: tell the voter, once
-      if (event.persisted) setPending(showPending && !!election && takeUnansweredCertAuth(election.id))
+      if (event.persisted) setPending(showPending && !!election && unansweredCertAuth(election.id, { restored: true }))
     }
     window.addEventListener('pageshow', reset)
     return () => window.removeEventListener('pageshow', reset)

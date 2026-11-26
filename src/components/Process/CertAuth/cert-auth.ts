@@ -1,7 +1,8 @@
 // Certificate voter authentication: the browser side of the certificate gateway flow.
 //
 // The voting page sends the voter to the gateway with a random `state` and the S256 challenge of
-// a random PKCE `codeVerifier`, both kept in this tab's sessionStorage with when it started. The gateway sends the voter
+// a random PKCE `codeVerifier`, both kept in this tab's sessionStorage with when it started and from
+// which page load. The gateway sends the voter
 // back to the voting page with `#certCode=…&state=…` (or `#certError=…&ref=…&state=…`) in the fragment.
 // The page accepts the code only when `state` matches the stored one, and redeems it at step 0 with
 // the verifier. Nothing else is stored: no DNI, name or certificate data ever reaches the browser.
@@ -46,7 +47,8 @@ export const RETRYABLE_CERT_ERRORS = [
 /** The gateway pages' languages. */
 const GATEWAY_LANGS = ['es', 'ca', 'en']
 
-type StoredFlow = { state: string; codeVerifier: string; startedAt: number }
+// `loadId`: the page load that left for the gateway. `hinted`: the "page didn't load" hint was shown.
+type StoredFlow = { state: string; codeVerifier: string; startedAt: number; loadId: string; hinted?: boolean }
 
 /** What the voting page found in its fragment on load. */
 export type CertReturn =
@@ -67,6 +69,9 @@ const base64Url = (bytes: Uint8Array) =>
     .replace(/=+$/, '')
 
 const randomBase64Url = (size: number) => base64Url(crypto.getRandomValues(new Uint8Array(size)))
+
+/** This document's load: a flow stored by another one means the voter left for the gateway since. */
+const PAGE_LOAD_ID = randomBase64Url(8)
 
 /**
  * A fresh host label for each attempt: 26 lowercase base32 characters (130 random bits). Browsers
@@ -98,7 +103,12 @@ export const startCertAuth = async ({
   language: string
   storage?: Pick<Storage, 'setItem'>
 }): Promise<string> => {
-  const flow: StoredFlow = { state: randomBase64Url(16), codeVerifier: randomBase64Url(32), startedAt: Date.now() }
+  const flow: StoredFlow = {
+    state: randomBase64Url(16),
+    codeVerifier: randomBase64Url(32),
+    startedAt: Date.now(),
+    loadId: PAGE_LOAD_ID,
+  }
   storage.setItem(certAuthStorageKey(processId), JSON.stringify(flow))
   const url = new URL('/v1/auth', gatewayUrl)
   url.hostname = `${randomHostLabel()}.${url.hostname}`
@@ -161,25 +171,28 @@ const CERT_PAGE_LOAD_WINDOW_MS = 15 * 60_000
  * with no fragment to read, the gateway page most likely didn't load (a network that blocks its
  * port). That includes going back from the browser's error page: the gateway redirects at once and
  * shows no page of its own, so a voter who went back almost always left one that failed to load.
- * Forgets the login either way, so it is told at most once.
+ * Only a new page load counts, or one restored from the back/forward cache (`restored`), which keeps
+ * this one's id: the same page reopening its dialog while the gateway connects has not left. Marks
+ * the flow as hinted so it is told at most once, but keeps it: a late answer still signs in.
  */
-export const takeUnansweredCertAuth = (
+export const unansweredCertAuth = (
   processId: string,
   {
     storage = window.sessionStorage,
     now = Date.now(),
-  }: { storage?: Pick<Storage, 'getItem' | 'removeItem'>; now?: number } = {}
+    restored = false,
+  }: { storage?: Pick<Storage, 'getItem' | 'setItem'>; now?: number; restored?: boolean } = {}
 ) => {
   const key = certAuthStorageKey(processId)
-  const raw = storage.getItem(key)
-  if (raw === null) return false
-  storage.removeItem(key)
-  let startedAt = NaN
+  let flow: StoredFlow | null = null
   try {
-    startedAt = Number(JSON.parse(raw)?.startedAt ?? NaN)
+    flow = JSON.parse(storage.getItem(key) ?? 'null')
   } catch {
-    // unreadable: as stale as a missing start time
+    // unreadable: no login to tell about
   }
-  const elapsed = now - startedAt
-  return elapsed >= 0 && elapsed <= CERT_PAGE_LOAD_WINDOW_MS
+  if (!flow || flow.hinted || (!restored && flow.loadId === PAGE_LOAD_ID)) return false
+  const elapsed = now - Number(flow.startedAt ?? NaN)
+  if (!(elapsed >= 0 && elapsed <= CERT_PAGE_LOAD_WINDOW_MS)) return false
+  storage.setItem(key, JSON.stringify({ ...flow, hinted: true }))
+  return true
 }
