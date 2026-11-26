@@ -12,6 +12,7 @@ const mutateAsync = vi.hoisted(() => vi.fn())
 const readHistory = vi.hoisted(() => vi.fn())
 const waitForCensusPayment = vi.hoisted(() => vi.fn())
 const access = vi.hoisted(() => ({ canTopUp: true }))
+const wallet = vi.hoisted(() => ({ balanceCents: 1234 as number | undefined }))
 const providerOptions = vi.hoisted(() => ({ current: undefined as any }))
 
 vi.mock('@stripe/react-stripe-js/checkout', async () => {
@@ -42,7 +43,7 @@ vi.mock('~queries/census-checkout', async (importOriginal) => ({
 
 vi.mock('~queries/wallet', async (importOriginal) => ({
   ...(await importOriginal<typeof import('~queries/wallet')>()),
-  useWallet: () => ({ data: { balanceCents: 1234, currency: 'eur', history: [] } }),
+  useWallet: () => ({ data: { balanceCents: wallet.balanceCents, currency: 'eur', history: [] } }),
   useWalletAccess: () => ({ canView: true, canTopUp: access.canTopUp }),
 }))
 
@@ -103,6 +104,7 @@ describe('CensusCheckout', () => {
     checkoutState.current = readyCheckout()
     stripePromise.current = Promise.resolve({})
     access.canTopUp = true
+    wallet.balanceCents = 1234
     sessionStorage.clear()
   })
 
@@ -530,7 +532,7 @@ describe('CensusCheckout', () => {
     expect(screen.queryByText(/stays in your wallet/)).not.toBeInTheDocument()
   })
 
-  it('shows the surplus the top-up leaves in the wallet, when it is above the shortfall', async () => {
+  it('shows the surplus the top-up leaves in the wallet, when it is above the live shortfall', async () => {
     const user = userEvent.setup()
     mutateAsync.mockResolvedValue({
       clientSecret: 'cs_test',
@@ -538,11 +540,63 @@ describe('CensusCheckout', () => {
       amountCents: 300,
       currency: 'eur',
     })
+    // Due 500 with 300 in the wallet: 200 is short now, so 100 of the 300 top-up stays
+    wallet.balanceCents = 300
     renderCheckout({ shortfallCents: 200 })
 
     await user.click(buyButton())
 
     expect(await screen.findByText('€1 of the top-up stays in your wallet afterwards.')).toBeInTheDocument()
+  })
+
+  it('shows the surplus from the live shortfall, when the link says there is none', async () => {
+    const user = userEvent.setup()
+    mutateAsync.mockResolvedValue({
+      clientSecret: 'cs_test',
+      sessionId: 'cs_session',
+      amountCents: 300,
+      currency: 'eur',
+    })
+    // The link's shortfall is stale at zero: the wallet is 200 short now, so 100 of the top-up stays
+    wallet.balanceCents = 300
+    renderCheckout({ shortfallCents: 0 })
+
+    await user.click(buyButton())
+
+    expect(await screen.findByText('€1 of the top-up stays in your wallet afterwards.')).toBeInTheDocument()
+  })
+
+  it('shows no surplus when the wallet covers the price now, whatever the link says', async () => {
+    const user = userEvent.setup()
+    mutateAsync.mockResolvedValue({
+      clientSecret: 'cs_test',
+      sessionId: 'cs_session',
+      amountCents: 300,
+      currency: 'eur',
+    })
+    renderCheckout({ shortfallCents: 0 })
+
+    await user.click(buyButton())
+
+    await screen.findByText(/Your card pays a wallet top-up/)
+    expect(screen.queryByText(/stays in your wallet/)).not.toBeInTheDocument()
+  })
+
+  it('shows no surplus when the wallet balance is not known', async () => {
+    const user = userEvent.setup()
+    mutateAsync.mockResolvedValue({
+      clientSecret: 'cs_test',
+      sessionId: 'cs_session',
+      amountCents: 300,
+      currency: 'eur',
+    })
+    wallet.balanceCents = undefined
+    renderCheckout({ shortfallCents: 200 })
+
+    await user.click(buyButton())
+
+    await screen.findByText(/Your card pays a wallet top-up/)
+    expect(screen.queryByText(/stays in your wallet/)).not.toBeInTheDocument()
   })
 
   it('explains the top-up without a price when the page has none', async () => {
@@ -649,6 +703,29 @@ describe('CensusCheckout', () => {
 
       await screen.findByText(/was added to your wallet, but the wallet does not cover/)
       expect(onBought).not.toHaveBeenCalled()
+    })
+
+    it('is called when the wait resolves bought after the view was left', async () => {
+      const user = userEvent.setup()
+      const onBought = vi.fn()
+      let finishWait: (outcome: unknown) => void = () => undefined
+      mutateAsync.mockResolvedValue({
+        clientSecret: 'cs_test',
+        sessionId: 'cs_session',
+        amountCents: 300,
+        currency: 'eur',
+      })
+      waitForCensusPayment.mockReturnValue(new Promise((resolve) => (finishWait = resolve)))
+      const { unmount } = renderCheckout({ onBought })
+
+      await user.click(buyButton())
+      await user.click(await screen.findByRole('button', { name: 'Pay €2.42' }))
+      await waitFor(() => expect(waitForCensusPayment).toHaveBeenCalledTimes(1))
+      // The recovery debited the room while the page was left: the wait is aborted, its result still counts
+      unmount()
+      finishWait({ status: 'bought', amountCents: 300, currency: 'eur' })
+
+      await waitFor(() => expect(onBought).toHaveBeenCalledTimes(1))
     })
   })
 })

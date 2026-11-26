@@ -468,4 +468,48 @@ describe('MemberManager refused add', () => {
 
     expect(takeMemberDraft(ORG)).toMatchObject({ organization: ORG, processId })
   })
+
+  it('reopens empty after a restored draft was added', async () => {
+    const user = userEvent.setup()
+    addMutate.mockImplementation((_payload, options) => options.onSuccess())
+    saveMemberDraft({ organization: ORG, processId, values, passwordHash: S3CRET_HASH })
+    render(<MemberManager restoreDraft control={<button type='button'>Open</button>} />)
+
+    await user.click(await screen.findByRole('button', { name: 'Save changes' }))
+    await screen.findByText('Member added successfully!')
+    await waitFor(() => expect(screen.queryByRole('button', { name: 'Cancel' })).not.toBeInTheDocument())
+    await user.click(screen.getByRole('button', { name: 'Open' }))
+
+    expect(await screen.findByLabelText('Name')).toHaveValue('')
+  })
+
+  it('reopens empty after a bought draft was sent once', async () => {
+    const user = userEvent.setup()
+    addMutate.mockImplementation((_payload, options) => options.onSuccess())
+    saveMemberDraft({ organization: ORG, processId, values, passwordHash: S3CRET_HASH })
+    markMemberDraftBought(processId)
+    render(<MemberManager restoreDraft control={<button type='button'>Open</button>} />)
+
+    await screen.findByText('Member added successfully!')
+    await waitFor(() => expect(screen.queryByRole('button', { name: 'Cancel' })).not.toBeInTheDocument())
+    await user.click(screen.getByRole('button', { name: 'Open' }))
+
+    expect(await screen.findByLabelText('Name')).toHaveValue('')
+    expect(addMutate).toHaveBeenCalledTimes(1)
+  })
+
+  it('still sends the kept password after a character is typed and deleted again', async () => {
+    const user = userEvent.setup()
+    saveMemberDraft({ organization: ORG, processId, values, passwordHash: S3CRET_HASH })
+    render(<MemberManager restoreDraft />)
+
+    const password = await screen.findByLabelText('Password')
+    await user.type(password, 'x')
+    await user.clear(password)
+    expect(screen.getByText(/a password is set/i)).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Save changes' }))
+
+    await waitFor(() => expect(addMutate).toHaveBeenCalledTimes(1))
+    expect(addMutate.mock.calls[0][0]).toEqual([expect.objectContaining({ password: S3CRET_HASH })])
+  })
 })

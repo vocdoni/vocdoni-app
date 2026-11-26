@@ -108,11 +108,14 @@ The request and response types are in `@vocdoni/api-types` (`ProcessQuote`, `Pro
   a growth quote; `useBuyRoomAction` gives admins an "Add voter places" action to
   `/admin/process/:id/census/checkout`. The backend debits the room at once when the wallet covers it (empty
   `clientSecret`). On a shortfall the checkout is a wallet top-up of at least €1 (`amountCents` is the top-up, not the
-  places): the card step says so and shows any surplus that stays in the wallet afterwards. A refusal with
+  places): the card step says so and shows any surplus that stays in the wallet afterwards, computed from the live
+  balance (`due` minus the balance) and never from the link's `shortfall`, which can be stale. A refusal with
   `shortfallCents` 0 says the wallet pays, with no card. After a card payment the wait looks for a new `payment` of the
   process; a new `topup` with no `payment` within 5 s triggers one more call to the endpoint (guarded by `recoveryRef`,
   once per mount). An empty `clientSecret` means the wallet bought the room, and an error keeps waiting for the ledger.
-  A `clientSecret` gives the "credited, still short" outcome and never a second card form. The sessionStorage snapshot
+  A `clientSecret` (`short`) does not end the wait: this payment's own debit may still land, so a later `payment` gives
+  `paid`, and only at the deadline is the "credited, still short" outcome shown. A `bought` recovery counts even after
+  the view was left, and never a second card form. The sessionStorage snapshot
   holds `knownTopUpIds` next to `knownIds`; a snapshot without it, or a return without `censusSize`, means no recovery.
 - **Refused member kept** (`src/components/Memberbase/Members/memberDraft.ts`): when the add-member form is refused for
   voter places and the user picks "Add voter places", the typed member is kept in memory only (never in storage or

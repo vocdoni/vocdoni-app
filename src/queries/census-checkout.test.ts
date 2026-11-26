@@ -331,9 +331,14 @@ describe('waitForCensusPayment', () => {
       expect(recover).toHaveBeenCalledTimes(1)
     })
 
-    it('returns a short recovery as it is', async () => {
+    it('keeps waiting after a short recovery, and resolves paid when this payment lands', async () => {
       const clock = fakeClock()
-      const readHistory = vi.fn().mockResolvedValue([topUp])
+      let reads = 0
+      // Another top-up leaves the wallet short for this room; this payment's own debit lands later
+      const readHistory = vi.fn(async () => {
+        reads++
+        return reads < 5 ? [topUp] : [payment, topUp]
+      })
       const recover = vi.fn().mockResolvedValue({ status: 'short' })
 
       const outcome = await waitForCensusPayment(readHistory, processId, [], {
@@ -342,16 +347,53 @@ describe('waitForCensusPayment', () => {
         recover,
       })
 
-      expect(outcome).toEqual({ status: 'short' })
+      expect(outcome).toEqual({ status: 'paid', entry: expect.objectContaining({ id: 'p-new' }) })
+      expect(recover).toHaveBeenCalledTimes(1)
     })
 
-    it('resolves to undefined when aborted during the recovery', async () => {
+    it('resolves short at the deadline when nothing else is paid, and recovers only once', async () => {
+      const clock = fakeClock()
+      const readHistory = vi.fn().mockResolvedValue([topUp])
+      const recover = vi.fn().mockResolvedValue({ status: 'short' })
+
+      const outcome = await waitForCensusPayment(readHistory, processId, [], {
+        ...clock,
+        timeoutMs: 60_000,
+        knownTopUpIds: [],
+        recover,
+      })
+
+      expect(outcome).toEqual({ status: 'short' })
+      expect(recover).toHaveBeenCalledTimes(1)
+    })
+
+    it('returns a bought recovery even when the wait was aborted during it', async () => {
       const clock = fakeClock()
       const controller = new AbortController()
       const readHistory = vi.fn().mockResolvedValue([topUp])
       const recover = vi.fn(async () => {
         controller.abort()
         return { status: 'bought', amountCents: 300, currency: 'eur' } as const
+      })
+
+      const outcome = await waitForCensusPayment(readHistory, processId, [], {
+        ...clock,
+        signal: controller.signal,
+        knownTopUpIds: [],
+        recover,
+      })
+
+      expect(outcome).toEqual({ status: 'bought', amountCents: 300, currency: 'eur' })
+      expect(recover).toHaveBeenCalledTimes(1)
+    })
+
+    it('resolves to undefined when aborted during a recovery that did not buy the room', async () => {
+      const clock = fakeClock()
+      const controller = new AbortController()
+      const readHistory = vi.fn().mockResolvedValue([topUp])
+      const recover = vi.fn(async () => {
+        controller.abort()
+        return { status: 'short' } as const
       })
 
       const outcome = await waitForCensusPayment(readHistory, processId, [], {

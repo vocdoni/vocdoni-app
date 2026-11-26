@@ -216,7 +216,7 @@ export const MemberManager = ({
 
   const phoneWillBeRemoved = hadPhone && phoneEdited && !methods.watch('phone')
   const passwordWillBeRemoved = hadPassword && passwordEdited && !methods.watch('password')?.trim()
-  const hasKeptPassword = !!keptPasswordHash && !passwordEdited
+  const hasKeptPassword = !!keptPasswordHash && !methods.watch('password')?.trim()
 
   const onSubmit = async (data: Partial<Member>) => {
     const { id, memberNumber, name, surname, email, phone, nationalId, birthDate, weight, password } = data
@@ -240,7 +240,8 @@ export const MemberManager = ({
         duration: 3000,
         isClosable: true,
       })
-      methods.reset()
+      // The defaults, not the reopened draft: the next open of the form must start empty
+      methods.reset(defaultValues)
       setPhoneEdited(false)
       setPasswordEdited(false)
       setKeptPasswordHash(undefined)
@@ -292,8 +293,8 @@ export const MemberManager = ({
         handleError(error instanceof Error ? error : new Error(String(error)))
         return
       }
-    } else if (!isEdit && keptPasswordHash && !passwordEdited) {
-      // A reopened draft is sent again with the password it was refused with
+    } else if (!isEdit && keptPasswordHash) {
+      // A reopened draft is sent again with the password it was refused with, unless one is typed
       sentPasswordHash = keptPasswordHash
       memberPayload.password = keptPasswordHash
     } else if (isEdit && hadPassword && passwordEdited) {

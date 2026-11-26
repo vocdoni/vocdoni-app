@@ -96,6 +96,8 @@ export const waitForCensusPayment = async (
   // When a top-up that is not in the snapshot was first read, and whether the room was already bought again
   let firstSeen: number | undefined
   let attempted = false
+  // The recovery found the wallet still short: this payment's own debit may still land, so the wait goes on
+  let short = false
   while (!signal?.aborted) {
     try {
       const history = await readHistory()
@@ -112,8 +114,10 @@ export const waitForCensusPayment = async (
         if (firstSeen !== undefined && now() - firstSeen >= graceMs) {
           attempted = true
           const result = await recover().catch(() => undefined)
+          // A room bought during the recovery is returned even when the wait was aborted: the wallet was debited
+          if (result?.status === 'bought') return result
           if (signal?.aborted) return undefined
-          if (result) return result
+          short = result?.status === 'short'
         }
       }
     } catch (error) {
@@ -122,7 +126,7 @@ export const waitForCensusPayment = async (
     }
 
     if (signal?.aborted) return undefined
-    if (now() + delay > deadline) return { status: 'timeout' }
+    if (now() + delay > deadline) return short ? { status: 'short' } : { status: 'timeout' }
     await sleep(delay, signal)
     delay = Math.min(delay * backoff, maxIntervalMs)
   }

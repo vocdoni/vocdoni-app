@@ -215,10 +215,15 @@ export const CensusCheckout = ({
       recover,
     })
       .then((outcome) => {
+        // A room bought during the recovery counts even when the view has moved on: the wallet was debited
+        if (outcome?.status === 'bought') {
+          clearStoredPending()
+          markBought(outcome.amountCents, outcome.currency)
+          return
+        }
         if (controller.signal.aborted) return
         clearStoredPending()
         if (outcome?.status === 'paid') markBought(Math.abs(outcome.entry.amountCents))
-        else if (outcome?.status === 'bought') markBought(outcome.amountCents, outcome.currency)
         else if (outcome?.status === 'short') setStep({ name: 'timeout', confirmed: !step.redirected, credited: true })
         else setStep({ name: 'timeout', confirmed: !step.redirected })
       })
@@ -299,6 +304,7 @@ export const CensusCheckout = ({
             amountCents={step.amountCents}
             currencyCode={step.currency}
             room={{ censusSize: step.censusSize, dueCents, shortfallCents }}
+            balanceCents={balanceCents}
             stripePromise={stripePromise}
             snapshotPayments={snapshotPayments}
             onPaid={(snapshot) => {
@@ -456,6 +462,8 @@ type CheckoutStepProps = {
   amountCents: number
   currencyCode: string
   room: Room
+  // The wallet balance now: the link's shortfall can be stale
+  balanceCents?: number
   stripePromise: ReturnType<typeof useStripePromise>
   snapshotPayments: () => Promise<LedgerSnapshot | null>
   onPaid: (snapshot: LedgerSnapshot | null) => void
@@ -467,6 +475,7 @@ const CheckoutStep = ({
   amountCents,
   currencyCode,
   room,
+  balanceCents,
   stripePromise,
   snapshotPayments,
   onPaid,
@@ -492,6 +501,7 @@ const CheckoutStep = ({
         amountCents={amountCents}
         currencyCode={currencyCode}
         room={room}
+        balanceCents={balanceCents}
         snapshotPayments={snapshotPayments}
         onPaid={onPaid}
       />
@@ -501,7 +511,7 @@ const CheckoutStep = ({
 
 type CheckoutFormFieldsProps = Pick<
   CheckoutStepProps,
-  'processId' | 'amountCents' | 'currencyCode' | 'room' | 'snapshotPayments' | 'onPaid'
+  'processId' | 'amountCents' | 'currencyCode' | 'room' | 'balanceCents' | 'snapshotPayments' | 'onPaid'
 >
 
 const CheckoutFormFields = ({
@@ -509,6 +519,7 @@ const CheckoutFormFields = ({
   amountCents,
   currencyCode,
   room,
+  balanceCents,
   snapshotPayments,
   onPaid,
 }: CheckoutFormFieldsProps) => {
@@ -528,6 +539,9 @@ const CheckoutFormFields = ({
   const { checkout } = checkoutState
   // The amount Stripe charges, VAT included, when it says so
   const payAmount = checkout.total?.total.amount ?? currency(amountCents, currencyCode)
+  // What the wallet lacks now, from the live balance: the link's shortfall can be stale or zero
+  const shortfallNowCents =
+    room.dueCents !== undefined && balanceCents !== undefined ? Math.max(room.dueCents - balanceCents, 0) : undefined
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -576,11 +590,11 @@ const CheckoutFormFields = ({
                 amount: currency(amountCents, currencyCode),
               })}
         </Text>
-        {room.shortfallCents !== undefined && amountCents > room.shortfallCents && (
+        {shortfallNowCents !== undefined && shortfallNowCents > 0 && amountCents > shortfallNowCents && (
           <Text textStyle='body-sm' color='fg.muted'>
             {t('census.checkout.topup_surplus', {
               defaultValue: '{{surplus}} of the top-up stays in your wallet afterwards.',
-              surplus: currency(amountCents - room.shortfallCents, currencyCode),
+              surplus: currency(amountCents - shortfallNowCents, currencyCode),
             })}
           </Text>
         )}
