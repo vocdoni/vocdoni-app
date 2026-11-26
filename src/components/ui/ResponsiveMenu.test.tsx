@@ -1,5 +1,5 @@
 import userEvent from '@testing-library/user-event'
-import { render, screen } from '~src/test-utils'
+import { render, screen, waitFor } from '~src/test-utils'
 import { useIsMobile } from '~components/ui/useIsMobile'
 import { ResponsiveMenu } from './ResponsiveMenu'
 
@@ -136,7 +136,7 @@ describe('ResponsiveMenu', () => {
       await userEvent.click(await screen.findByRole('button', { name: 'Edit' }))
 
       expect(onEdit).toHaveBeenCalledTimes(1)
-      await vi.waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
     })
 
     it('closes from the Cancel button without selecting', async () => {
@@ -146,7 +146,7 @@ describe('ResponsiveMenu', () => {
       await userEvent.click(await screen.findByRole('button', { name: 'Cancel' }))
 
       expect(onEdit).not.toHaveBeenCalled()
-      await vi.waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
     })
   })
 })
