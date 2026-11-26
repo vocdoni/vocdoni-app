@@ -95,7 +95,7 @@ if [ "$EVENT" = pull_request ]; then
   if [ -n "$SEQUENCER_REF$SAAS_REF$SDK_REF" ]; then
     echo "The refs come from this PR's sticky \`/integration\` comment, re-resolved on this push."
   elif [ "$STICKY" = true ]; then
-    echo "No ref is pinned: this PR's sticky \`/integration\` comment re-runs it on every push, against the :main images and npm packages."
+    echo "No ref is pinned: this PR has a sticky \`/integration\` comment with no refs, so it ran against the :main images and npm packages."
   else
     echo "No ref is pinned: this PR targets stage or main, so it ran against the :main images and npm packages."
   fi
@@ -137,7 +137,7 @@ fi
       echo "These refs are re-resolved on every push to this PR until \`/integration reset\`."
     elif [ "$STICKY" = true ]; then
       echo
-      echo "Pushes to this PR re-run the suite against the \`:main\` images and npm packages until \`/integration reset\`."
+      echo "Pushes to this PR also run the suite, against the \`:main\` images and npm packages. \`/integration reset\` turns that off, except on a PR into stage or main."
     else
       echo
       echo "One-shot run: pushes to this PR keep running as they did before this comment."

@@ -73,7 +73,7 @@ describe('integration-report.sh', () => {
         '- integrator-sdk: npm (lockfile)',
         `- Run: ${RUN_URL}`,
         '',
-        'Pushes to this PR re-run the suite against the `:main` images and npm packages until `/integration reset`.',
+        'Pushes to this PR also run the suite, against the `:main` images and npm packages. `/integration reset` turns that off, except on a PR into stage or main.',
         '',
       ].join('\n')
     )
@@ -187,7 +187,7 @@ describe('integration-report.sh', () => {
   it('says a push run with a bare sticky comment ran unpinned', () => {
     const out = report({ EVENT: 'pull_request', STICKY: 'true' })
     expect(out).toContain(
-      "No ref is pinned: this PR's sticky `/integration` comment re-runs it on every push, against the :main images and npm packages."
+      'No ref is pinned: this PR has a sticky `/integration` comment with no refs, so it ran against the :main images and npm packages.'
     )
     expect(out).not.toContain('this PR targets stage or main')
   })
