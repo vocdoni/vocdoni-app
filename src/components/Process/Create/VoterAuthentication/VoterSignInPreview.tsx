@@ -65,24 +65,37 @@ const FakeButton = ({ children }: { children: string }) => (
   </Box>
 )
 
-const SignInScreen = ({ credentials, codeMethod }: { credentials: readonly string[]; codeMethod: CodeMethod }) => {
+const SignInScreen = ({
+  credentials,
+  codeMethod,
+  certAuth,
+}: {
+  credentials: readonly string[]
+  codeMethod: CodeMethod
+  certAuth?: boolean
+}) => {
   const { t } = useTranslation()
   const hasCode = codeMethod !== 'none'
 
   return (
     <Stack gap='3'>
+      {/* The certificate replaces what voters type; the contact is asked after the return. */}
+      {certAuth && (
+        <FakeButton>{t('csp.cert.start', { defaultValue: 'Sign in with a digital certificate' })}</FakeButton>
+      )}
       {/* The password comes last, as the real sign-in form asks for it. */}
-      {[
-        ...credentials.filter((field) => field !== PASSWORD_CREDENTIAL),
-        ...credentials.filter((field) => field === PASSWORD_CREDENTIAL),
-      ].map((field) => (
-        <Box key={field}>
-          <Text textStyle='body-sm' fontWeight='medium' mb='1.5'>
-            {getAuthFieldLabel(t, field)} *
-          </Text>
-          <FakeInput>{getSampleValue(t, field)}</FakeInput>
-        </Box>
-      ))}
+      {!certAuth &&
+        [
+          ...credentials.filter((field) => field !== PASSWORD_CREDENTIAL),
+          ...credentials.filter((field) => field === PASSWORD_CREDENTIAL),
+        ].map((field) => (
+          <Box key={field}>
+            <Text textStyle='body-sm' fontWeight='medium' mb='1.5'>
+              {getAuthFieldLabel(t, field)} *
+            </Text>
+            <FakeInput>{getSampleValue(t, field)}</FakeInput>
+          </Box>
+        ))}
       {hasCode && (
         <Box>
           <Text textStyle='body-sm' fontWeight='medium' mb='1.5'>
@@ -121,7 +134,12 @@ const SignInScreen = ({ credentials, codeMethod }: { credentials: readonly strin
           </Trans>
         </Text>
       </HStack>
-      <FakeButton>{hasCode ? t('csp.receive_code', 'Receive Code') : t('csp.authenticate', 'Authenticate')}</FakeButton>
+      {/* An auth-only certificate census signs the voter in on the way back: no button after it. */}
+      {(hasCode || !certAuth) && (
+        <FakeButton>
+          {hasCode ? t('csp.receive_code', 'Receive Code') : t('csp.authenticate', 'Authenticate')}
+        </FakeButton>
+      )}
     </Stack>
   )
 }
@@ -173,9 +191,11 @@ const EmptyScreen = () => (
 export const VoterSignInPreview = ({
   credentials,
   codeMethod,
+  certAuth,
 }: {
   credentials: readonly string[]
   codeMethod: CodeMethod
+  certAuth?: boolean
 }) => {
   const { t } = useTranslation()
   const [screen, setScreen] = useState<Screen>('signIn')
@@ -184,7 +204,7 @@ export const VoterSignInPreview = ({
 
   // Any edit shows the first step again: with the second step on screen, a
   // change to what voters type would otherwise look like it did nothing.
-  const configKey = `${credentials.join()}|${codeMethod}`
+  const configKey = `${credentials.join()}|${codeMethod}|${!!certAuth}`
   useEffect(() => setScreen('signIn'), [configKey])
 
   return (
@@ -227,7 +247,7 @@ export const VoterSignInPreview = ({
         {!hasConfig ? (
           <EmptyScreen />
         ) : visibleScreen === 'signIn' ? (
-          <SignInScreen credentials={credentials} codeMethod={codeMethod} />
+          <SignInScreen credentials={credentials} codeMethod={codeMethod} certAuth={certAuth} />
         ) : (
           <CodeScreen />
         )}

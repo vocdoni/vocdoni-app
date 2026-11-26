@@ -42,6 +42,9 @@ export type AppEnv = {
   SHOW_ORG_LOGO?: boolean
   // When true, the anonymous voting option is not offered in the process wizard.
   DISABLE_ANONYMOUS_VOTING?: boolean
+  // The certificate gateway, port included (e.g. https://cert.vocdoni.io:15140). Unset hides the
+  // "digital certificate" voter sign-in option.
+  CERT_GATEWAY_URL?: string
 }
 
 type AppEnvObject = AppEnv
@@ -167,6 +170,26 @@ const resolvePrimaryColor = (value: string | undefined): string | undefined => {
   return normalized
 }
 
+// CERT_GATEWAY_URL must be an https origin (the gateway answers on /v1/auth); anything else is
+// logged and dropped, which hides the certificate sign-in option.
+const resolveCertGatewayUrl = (value: string | undefined): string | undefined => {
+  if (!value) {
+    return undefined
+  }
+
+  try {
+    const url = new URL(value)
+    if (url.protocol !== 'https:' || url.pathname !== '/' || url.search || url.hash) {
+      console.warn('CERT_GATEWAY_URL must be an https origin like https://cert.vocdoni.io:15140. Ignoring.')
+      return undefined
+    }
+    return url.origin
+  } catch (error: any) {
+    console.warn(`Invalid CERT_GATEWAY_URL. Ignoring. ${error.message}`)
+    return undefined
+  }
+}
+
 // HOME_PROCESS_ID turns the app root into the voting page of a single process
 // (see src/pages/home-process/). Only the id is validated for emptiness here —
 // whether it resolves to an existing process is answered by the SaaS API at
@@ -240,5 +263,6 @@ export const buildAppEnv = (env: EnvSource = {}): AppEnvObject => {
     PRIMARY_COLOR: resolvePrimaryColor(env.PRIMARY_COLOR),
     SHOW_ORG_LOGO: env.SHOW_ORG_LOGO === 'true',
     DISABLE_ANONYMOUS_VOTING: env.DISABLE_ANONYMOUS_VOTING === 'true',
+    CERT_GATEWAY_URL: resolveCertGatewayUrl(env.CERT_GATEWAY_URL),
   }
 }

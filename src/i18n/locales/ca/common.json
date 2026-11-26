@@ -200,6 +200,54 @@
   },
   "csp": {
     "authenticate": "Identifica't",
+    "cert": {
+      "contact_organization": "Si continues tenint problemes, contacta amb {{organization}}.",
+      "contact_organization_unnamed": "Si continues tenint problemes, contacta amb l'organització que gestiona aquest procés de votació.",
+      "copy_failed": "No s'ha pogut copiar. Copia l'adreça des de la barra d'adreces del navegador.",
+      "copy_link": "Copia l'enllaç",
+      "errors": {
+        "backend_unavailable": "El servei de votació no ha respost. Torna-ho a provar d'aquí a uns minuts.",
+        "check_unavailable": "Ara mateix no podem comprovar el teu certificat. Torna-ho a provar d'aquí a uns minuts.",
+        "code_refused": "El teu accés amb certificat ha caducat. Torna a accedir.",
+        "code_refused_contact": "El teu accés amb certificat ha caducat, o el correu electrònic o el telèfon no coincideixen. Torna a accedir.",
+        "expired": "Aquest certificat ha caducat. Demana'n un de nou al seu emissor.",
+        "generic": "No t'hem pogut identificar amb el teu certificat.",
+        "identity_invalid": "No hem pogut llegir la identitat d'aquest certificat. Fes servir un altre certificat si en tens.",
+        "identity_unsupported_document": "Aquest certificat no té DNI ni NIE. Necessites un certificat emès amb el teu DNI o NIE.",
+        "invalid_chain": "No hem pogut verificar aquest certificat. Fes servir un altre certificat si en tens.",
+        "mismatch": "El teu accés amb certificat no s'ha completat en aquesta pestanya. Torna a accedir.",
+        "no_certificate": "No s'ha seleccionat cap certificat.",
+        "not_in_census": "El DNI/NIE d'aquest certificat no és al cens d'aquest procés de votació.",
+        "not_yet_valid": "Aquest certificat encara no està actiu. Si l'has obtingut avui, torna-ho a provar més tard. Si no, revisa la data i l'hora del dispositiu.",
+        "process_unavailable": "Ara mateix no es pot accedir a aquest procés de votació amb certificat.",
+        "rate_limited": "Massa intents. Torna-ho a provar més tard.",
+        "revocation_unknown": "No hem pogut confirmar amb el seu emissor que aquest certificat continuï sent vàlid. Fes servir un altre certificat si en tens.",
+        "revoked": "Aquest certificat ha estat revocat.",
+        "test_certificate": "Aquest és un certificat de proves. Fes servir el teu certificat real.",
+        "unsupported_certificate": "Aquest certificat no s'accepta. Fes servir un certificat personal de FNMT, idCAT, ACCV, DIGITEL, Bewor o Sectigo.",
+        "unsupported_profile": "Aquest certificat és per a una empresa, un representant o un empleat. Fes servir el certificat emès a nom teu com a persona física.",
+        "unsupported_purpose": "Aquest certificat no es pot fer servir per iniciar sessió. Fes servir el certificat amb què t'identifiques.",
+        "weak_algorithm": "Aquest certificat és massa antic per fer-lo servir aquí. Demana'n un de nou al seu emissor.",
+        "zero_weight": "No tens prou poder de vot per accedir a la votació."
+      },
+      "in_app": {
+        "explanation": "Has obert aquest enllaç dins d'una app. El seu visor integrat no pot fer servir el teu certificat digital, però el teu navegador sí.",
+        "open": "Obre-ho al navegador",
+        "steps": "Copia l'enllaç i obre'l al teu navegador. Moltes apps també tenen una opció al menú per obrir la pàgina al navegador."
+      },
+      "link_copied": "Enllaç copiat",
+      "not_a_certificate": "idCAT Mòbil i Cl@ve no són certificats: necessites un certificat digital instal·lat en aquest dispositiu.",
+      "not_loaded": "No s'ha carregat la pàgina del certificat? Prova-ho des d'una altra xarxa, com les dades mòbils, o copia l'enllaç i obre'l en un altre dispositiu.",
+      "other_device": "Tens el certificat en un altre dispositiu? Copia l'enllaç i obre'l allà.",
+      "picker_help": "El navegador et demanarà que triïs un certificat: tria el que porta el teu nom. Acceptem certificats de FNMT, idCAT, ACCV, DIGITEL, Bewor i Sectigo.",
+      "reference": "Referència de suport: {{reference}}",
+      "restart_browser": "Si el navegador no et torna a demanar que triïs un certificat, tanca totes les finestres del navegador i torna a obrir l'enllaç de la votació.",
+      "retry": "Torna-ho a provar",
+      "signing_in": "T'estem identificant…",
+      "start": "Accedeix amb certificat digital",
+      "title": "Certificat digital",
+      "unavailable": "Aquí no està disponible l'accés amb certificat digital."
+    },
     "contact_match_help": "Ha de coincidir amb el registrat al sistema",
     "fields": {
       "birthDate": "Data de naixement",
@@ -1861,6 +1909,15 @@
       "configure": "Configura l'autenticació dels votants",
       "edit": "Edita l'autenticació dels votants"
     },
+    "cert": {
+      "description": "Els votants s'identifiquen amb el seu certificat personal (FNMT, idCAT…), que acredita el seu DNI/NIE.",
+      "label": "Certificat digital",
+      "missing_label": "un DNI/NIE vàlid",
+      "missing_members_one": "{{count}} membre no pot iniciar sessió: li falta {{fields}}.",
+      "missing_members_many": "{{count}} membres no poden iniciar sessió: els falta {{fields}}.",
+      "missing_members_other": "{{count}} membres no poden iniciar sessió: els falta {{fields}}.",
+      "not_a_certificate": "Els votants necessiten un certificat ja instal·lat: idCAT Mòbil i Cl@ve no són certificats."
+    },
     "code": {
       "description": "Abans de votar, enviem un codi de 6 xifres al correu electrònic o al telèfon del votant. Així demostra que és seu i ningú no pot votar amb les dades d'una altra persona.",
       "email_description": "S'envia al correu electrònic de la teva base de membres.",
@@ -1905,6 +1962,8 @@
     },
     "protection": {
       "basic_risk": "Qualsevol que conegui aquestes dades podria votar en lloc d'un membre.",
+      "cert": "Un certificat personal acredita el votant: caldria el certificat d'un membre per votar en el seu lloc.",
+      "cert_code": "Caldria el certificat personal d'un membre i accés al seu correu o telèfon per votar en el seu lloc.",
       "good_code_risk": "Qualsevol que pugui obrir el correu o el telèfon d'un membre podria votar en el seu lloc.",
       "good_details_risk": "Caldria conèixer diverses dades, almenys una de privada, per votar en lloc d'un membre.",
       "label": "Protecció",
@@ -1921,6 +1980,7 @@
       "surname": "Puig Serra"
     },
     "save": {
+      "anyway": "Desa igualment",
       "failed": "No s'ha desat la configuració d'accés",
       "submit": "Desa",
       "unchecked": "S'ha desat, però no hem pogut comprovar la teva base de membres"
@@ -1946,6 +2006,9 @@
       "valid_count_other": "Els {{count}} membres poden iniciar sessió."
     },
     "summary": {
+      "cert_missing_members_one": "{{count}} membre no pot iniciar sessió.",
+      "cert_missing_members_many": "{{count}} membres no poden iniciar sessió.",
+      "cert_missing_members_other": "{{count}} membres no poden iniciar sessió.",
       "code_choice": "Codi d'un sol ús per correu o SMS",
       "code_email": "Codi d'un sol ús per correu",
       "code_none": "Sense codi d'un sol ús",

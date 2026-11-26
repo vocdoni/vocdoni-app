@@ -29,6 +29,14 @@ export type CensusCheckIssues = {
  */
 export type CensusCheckResult = { valid: true } | { valid: false; issues: CensusCheckIssues }
 
+/**
+ * A certificate census leaves out members with a missing or invalid DNI/NIE (or contact) and still
+ * works, as long as someone is left to vote: only members that can't be told apart, or nobody
+ * passing the check, make it unusable.
+ */
+export const certCensusSavable = (issues: CensusCheckIssues | null) =>
+  !!issues && !issues.duplicates.length && issues.memberIds.length > 0
+
 /** `rejected`: the backend refused the census itself (e.g. its group is gone), so it cannot be saved. */
 export type CensusCheckStatus = 'idle' | 'checking' | 'valid' | 'invalid' | 'rejected' | 'unavailable'
 
@@ -57,9 +65,15 @@ const readIssues = (error: unknown): CensusCheckIssues | null => {
 /**
  * Order-insensitive identity of a census spec: the check's cache key. Anonymity
  * and weighting are left out: the backend's member check does not depend on them.
+ * The certificate does: it changes which members the backend accepts.
  */
 const censusSpecSignature = (spec: CensusSpec) =>
-  JSON.stringify([spec.groupId ?? null, [...(spec.authFields ?? [])].sort(), [...(spec.twoFaFields ?? [])].sort()])
+  JSON.stringify([
+    spec.groupId ?? null,
+    [...(spec.authFields ?? [])].sort(),
+    [...(spec.twoFaFields ?? [])].sort(),
+    !!spec.certAuth,
+  ])
 
 const hasAuthFields = (spec: CensusSpec) => !!spec.authFields?.length || !!spec.twoFaFields?.length
 
@@ -96,7 +110,13 @@ const fieldParts = (spec: CensusSpec) => [
       spec: { ...spec, authFields: [field], twoFaFields: undefined },
     })),
   ...(spec.twoFaFields?.length
-    ? [{ field: 'contact', spec: { ...spec, authFields: undefined, twoFaFields: spec.twoFaFields } }]
+    ? [
+        {
+          field: 'contact',
+          // certAuth needs authFields ['nationalId'], so the contact part is checked without it
+          spec: { ...spec, authFields: undefined, twoFaFields: spec.twoFaFields, certAuth: undefined },
+        },
+      ]
     : []),
 ]
 
