@@ -6,6 +6,7 @@ import {
   generateAccentTokens,
   generateBrandSemanticTokens,
   generatePaletteScale,
+  minContrast,
   normalizeHexColor,
   type PaletteScale,
 } from './palette'
@@ -113,7 +114,7 @@ describe('generateBrandSemanticTokens', () => {
       const tokens = generateBrandSemanticTokens(scale, BACKGROUNDS)
       for (const slot of [tokens.focusRing, tokens.border]) {
         expect(contrastRatio(scale[stepOf(slot._light)], BACKGROUNDS.light)).toBeGreaterThanOrEqual(3)
-        expect(contrastRatio(scale[stepOf(slot._dark)], BACKGROUNDS.dark)).toBeGreaterThanOrEqual(3)
+        expect(minContrast(scale[stepOf(slot._dark)], BACKGROUNDS.dark)).toBeGreaterThanOrEqual(3)
       }
     }
   )
@@ -126,7 +127,7 @@ describe('generateBrandSemanticTokens', () => {
       const scale = generatePaletteScale(base)
       const tokens = generateBrandSemanticTokens(scale, BACKGROUNDS)
       expect(contrastRatio(scale[stepOf(tokens.fg._light)], BACKGROUNDS.light), 'light').toBeGreaterThanOrEqual(4.5)
-      expect(contrastRatio(scale[stepOf(tokens.fg._dark)], BACKGROUNDS.dark), 'dark').toBeGreaterThanOrEqual(4.5)
+      expect(minContrast(scale[stepOf(tokens.fg._dark)], BACKGROUNDS.dark), 'dark').toBeGreaterThanOrEqual(4.5)
     }
   )
 
@@ -145,7 +146,7 @@ describe('generateBrandSemanticTokens', () => {
     const scale = generatePaletteScale(base)
     const tokens = generateBrandSemanticTokens(scale, BACKGROUNDS)
     expect(tokens.fg._dark).toBe('{colors.brand.300}')
-    expect(contrastRatio(scale[stepOf(tokens.fg._dark)], BACKGROUNDS.dark)).toBeGreaterThanOrEqual(4.5)
+    expect(minContrast(scale[stepOf(tokens.fg._dark)], BACKGROUNDS.dark)).toBeGreaterThanOrEqual(4.5)
   })
 
   it('uses the exact color for solid surfaces when it reads on both backgrounds', () => {
@@ -157,7 +158,7 @@ describe('generateBrandSemanticTokens', () => {
     const tokens = generateBrandSemanticTokens(scale, BACKGROUNDS)
     expect(tokens.solid._light).toBe('{colors.brand.500}')
     expect(stepOf(tokens.solid._dark)).toBeLessThan(500)
-    expect(contrastRatio(scale[stepOf(tokens.solid._dark)], BACKGROUNDS.dark)).toBeGreaterThanOrEqual(3)
+    expect(minContrast(scale[stepOf(tokens.solid._dark)], BACKGROUNDS.dark)).toBeGreaterThanOrEqual(3)
   })
 
   it.each(['#ffe600', '#ffffff'])('steps a pale brand (%s) down in light mode so buttons stay visible', (base) => {
@@ -199,5 +200,23 @@ describe('generateAccentTokens', () => {
   it.each(['#1a73e8', '#ffd600', '#0b1a3a', '#cccccc'])('follows the brand in both modes for %s', (base) => {
     const tokens = generateAccentTokens(generatePaletteScale(base), BACKGROUNDS)
     expect(tokens.fg).toEqual({ _light: '{colors.brand.fg}', _dark: '{colors.brand.fg}' })
+  })
+})
+
+describe('dark layers', () => {
+  const stepOf = (ref: string) => Number(/\{colors\.brand\.(\d+)\}/.exec(ref)?.[1]) as keyof PaletteScale
+
+  // The dark page is #0a0a0a, but cards, dialogs and menus sit lighter on it, and a brand colour has to read on each.
+  it.each(['#1a55cc', '#000000'])('keeps the dark solid and brand text readable on every dark layer for %s', (base) => {
+    const scale = generatePaletteScale(base)
+    const tokens = generateBrandSemanticTokens(scale, BACKGROUNDS)
+    for (const layer of BACKGROUNDS.dark) {
+      expect(contrastRatio(scale[stepOf(tokens.solid._dark)], layer), `solid on ${layer}`).toBeGreaterThanOrEqual(3)
+      expect(contrastRatio(scale[stepOf(tokens.fg._dark)], layer), `fg on ${layer}`).toBeGreaterThanOrEqual(4.5)
+    }
+  })
+
+  it('reads the stock black brand against the lightest dark layer as white, not as its grey step', () => {
+    expect(generateAccentTokens(generatePaletteScale('#000000'), BACKGROUNDS).fg._dark).toBe('{colors.white}')
   })
 })

@@ -43,8 +43,17 @@ export const colors = {
   },
 }
 
-// The page backgrounds a generated brand palette must stay readable against —
-// the two sides of the `bg` semantic token (see semantic.ts). Defined here, next
-// to the `gray` scale it reads from, so the palette generator, the theme and the
-// tests all measure contrast against the background the app actually paints.
-export const PAGE_BACKGROUNDS = { light: '#ffffff', dark: colors.gray[950].value }
+// The dark surfaces a generated brand palette must stay readable on: the page, then the cards, dialogs and menus
+// raised above it (see semantic.ts). The lightest one is the hardest to read on, so a colour that clears every
+// layer clears all of them. Defined here, next to the greys it reads from, so the palette generator, the theme and
+// the tests all measure contrast against the surfaces the app actually paints.
+export const DARK_LAYERS = [
+  colors.gray[950].value,
+  colors.carbon[925].value,
+  colors.gray[900].value,
+  colors.carbon[875].value,
+  colors.carbon[850].value,
+]
+
+// The page backgrounds a generated brand palette must stay readable against: the light page, and every dark layer.
+export const PAGE_BACKGROUNDS = { light: '#ffffff', dark: DARK_LAYERS }

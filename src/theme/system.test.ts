@@ -1,7 +1,7 @@
 import { defaultConfig } from '@chakra-ui/react'
 import { describe, expect, it } from 'vitest'
 import { PAGE_BACKGROUNDS } from './colors'
-import { contrastRatio, PALETTE_SLOTS } from './palette'
+import { contrastRatio, minContrast, PALETTE_SLOTS } from './palette'
 import { dragHandle } from './recipes/dragHandle'
 import { VideoPreview } from './recipes/videoPreview'
 import { recipes, slotRecipes } from './recipes'
@@ -351,7 +351,7 @@ describe('PRIMARY_COLOR-driven system', () => {
     const resolve = (ref: string) => system.tokens.getByName(ref.replace(/^\{|\}$/g, ''))?.value as string
     expect(ring).toEqual({ _light: '{colors.gray.800}', _dark: '{colors.gray.400}' })
     expect(contrastRatio(resolve(ring!._light), PAGE_BACKGROUNDS.light)).toBeGreaterThanOrEqual(3)
-    expect(contrastRatio(resolve(ring!._dark), PAGE_BACKGROUNDS.dark)).toBeGreaterThanOrEqual(3)
+    expect(minContrast(resolve(ring!._dark), PAGE_BACKGROUNDS.dark)).toBeGreaterThanOrEqual(3)
   })
 
   it("keeps chakra's other gray semantic slots when overriding the focus ring", () => {

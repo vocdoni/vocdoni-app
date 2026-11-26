@@ -127,12 +127,16 @@ const MIN_SURFACE_CONTRAST = 3
 const LIGHT_SOLID_STEPS: Array<keyof PaletteScale> = [500, 600, 700, 800, 900, 950]
 const DARK_SOLID_STEPS: Array<keyof PaletteScale> = [500, 400, 300, 200, 100, 50]
 
+// The lowest ratio against any of the surfaces: a step that clears it reads on every one of them.
+export const minContrast = (hex: string, surfaces: readonly string[]) =>
+  Math.min(...surfaces.map((surface) => contrastRatio(hex, surface)))
+
 const pickReadableStep = (
   scale: PaletteScale,
   candidates: Array<keyof PaletteScale>,
-  background: string,
+  surfaces: readonly string[],
   min = MIN_SURFACE_CONTRAST
-) => candidates.find((step) => contrastRatio(scale[step], background) >= min) ?? candidates[candidates.length - 1]
+) => candidates.find((step) => minContrast(scale[step], surfaces) >= min) ?? candidates[candidates.length - 1]
 
 // WCAG AA minimum for normal-size text (4.5:1). Labels on a filled surface are
 // text, so they are held to this bar rather than the 3:1 non-text one.
@@ -173,7 +177,7 @@ export const PALETTE_SLOTS = [
 
 export type PaletteSemanticTokens = Record<(typeof PALETTE_SLOTS)[number], PaletteSemanticSlot>
 
-type Backgrounds = { light: string; dark: string }
+type Backgrounds = { light: string; dark: readonly string[] }
 
 /**
  * Semantic slots for a generated scale on chakra's mapping (fg 700/300, muted 200/800, subtle
@@ -181,9 +185,9 @@ type Backgrounds = { light: string; dark: string }
  * mode's page background; `contrast`, `focusRing` and `border` follow the step `solid` lands on.
  */
 export const generateBrandSemanticTokens = (scale: PaletteScale, backgrounds: Backgrounds): PaletteSemanticTokens => {
-  const lightSolid = pickReadableStep(scale, LIGHT_SOLID_STEPS, backgrounds.light)
+  const lightSolid = pickReadableStep(scale, LIGHT_SOLID_STEPS, [backgrounds.light])
   const darkSolid = pickReadableStep(scale, DARK_SOLID_STEPS, backgrounds.dark)
-  const lightFg = pickReadableStep(scale, LIGHT_FG_STEPS, backgrounds.light, MIN_TEXT_CONTRAST)
+  const lightFg = pickReadableStep(scale, LIGHT_FG_STEPS, [backgrounds.light], MIN_TEXT_CONTRAST)
   const darkFg = pickReadableStep(scale, DARK_FG_STEPS, backgrounds.dark, MIN_TEXT_CONTRAST)
   const ref = (step: keyof PaletteScale) => `{colors.brand.${step}}`
 
@@ -212,7 +216,7 @@ const isNeutral = (hex: string) => {
  * shows white.
  */
 export const generateAccentTokens = (scale: PaletteScale, backgrounds: Backgrounds): AccentTokens => {
-  const whiteOnDark = isNeutral(scale[500]) && contrastRatio(scale[500], backgrounds.dark) < MIN_SURFACE_CONTRAST
+  const whiteOnDark = isNeutral(scale[500]) && minContrast(scale[500], backgrounds.dark) < MIN_SURFACE_CONTRAST
   return {
     fg: { _light: '{colors.brand.fg}', _dark: whiteOnDark ? '{colors.white}' : '{colors.brand.fg}' },
   }
