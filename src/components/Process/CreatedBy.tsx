@@ -7,8 +7,9 @@ export const CreatedBy = (props: FlexProps) => {
 
   return (
     <Flex gap='2' alignItems='center' {...props}>
+      {/* The name is written beside it, so the logo is decorative. */}
       <AvatarRoot size='xs'>
-        {organization?.logo?.default ? <AvatarImage src={organization.logo.default} /> : null}
+        {organization?.logo?.default ? <AvatarImage src={organization.logo.default} alt='' /> : null}
         <AvatarFallback name={organization?.name?.default} />
       </AvatarRoot>
       <LongOrganizationName size='sm' fontWeight='bold' color='fg.muted' />

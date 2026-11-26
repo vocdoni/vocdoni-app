@@ -41,7 +41,7 @@ describe('stress theme', () => {
         'colors.fg.faint',
         'colors.border.strong',
         'colors.accent.solid',
-        'colors.accent.solid.hover',
+        'colors.accent.solidHover',
         'colors.accent.contrast',
         'colors.accent.subtle',
       ])
@@ -62,6 +62,18 @@ describe('stress theme', () => {
         expect(new Set(groupValues).size, `${group} values repeat (${mode})`).toBe(groupValues.length)
       }
     }
+  })
+
+  // A hover is a fill and an edge is a line, so the stress palette gives them the lightness of those roles, not the
+  // surface's (the light values run solid 40, line 55, surface 90).
+  it('gives the accent fill hover the solid role and its edge the line role', () => {
+    const lightness = (hex: string) => {
+      const [r, g, b] = rgb(hex).map((channel) => channel / 255)
+      return ((Math.max(r, g, b) + Math.min(r, g, b)) / 2) * 100
+    }
+    expect(lightness(modeValues('colors.accent.solidHover')[0])).toBeLessThan(70)
+    expect(lightness(modeValues('colors.accent.solidEdge')[0])).toBeLessThan(75)
+    expect(lightness(modeValues('colors.accent.solid')[0])).toBeLessThan(70)
   })
 
   it('gives every shadow role its own coloured shadow', () => {

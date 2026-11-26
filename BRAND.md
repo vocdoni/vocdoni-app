@@ -14,8 +14,9 @@ the app differs. How screens are built is in [`DESIGN.md`](DESIGN.md); the token
   and are never translated: Vocdoni Petitions, Vocdoni Passport, Vocdoni SDK, Vocdoni Global, Vocdoni Association, the
   VOC token, the DAVINCI protocol.
 - The app is white-labelled. A deployment can set its own accent (`PRIMARY_COLOR`) and show the organization's logo in
-  process pages (`SHOW_ORG_LOGO`), and `d/<name>` branches are client deployments. Never write copy or styles that
-  assume the Vocdoni look: the organizer's organization, not Vocdoni, is often the face the voter sees.
+  process pages (`SHOW_ORG_LOGO`), and `d/<name>` branches are client deployments. A vote with the branding add-on
+  shows its organization's logo, and its colour in place of the deployment's accent (`PRIMARY_COLOR`). Never write copy
+  or styles that assume the Vocdoni look: the organizer's organization, not Vocdoni, is often the face the voter sees.
 
 ## Who we talk to
 
@@ -79,7 +80,8 @@ the distinction, and copy must never blur them.
   mark alone, for tight spaces. Its geometry matches vocdoni.io's `components/Logo.tsx`; never edit the paths.
 - One colour only, from the theme: never the accent, never two colours, never a dark-mode `invert` filter or a PNG.
   The PDF report is the only exception (react-pdf cannot render the component), and uses the PNGs in `public/assets/`.
-- With `SHOW_ORG_LOGO` the organization's logo replaces Vocdoni's in process pages; the footer keeps Vocdoni's.
+- A vote with the branding add-on shows the organization's logo in its process pages, and `SHOW_ORG_LOGO` does the same
+  for every vote (logo only, never the colour). The footer keeps Vocdoni's logo either way.
 - Partner and client logos are shown as the organization uploaded them, on the light tile in dark mode.
 
 ## Colour and type

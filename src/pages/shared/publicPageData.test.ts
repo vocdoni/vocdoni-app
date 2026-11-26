@@ -11,6 +11,7 @@ vi.mock('~src/app-env-server', () => ({
     LANGUAGES: { en: 'English', ca: 'Catalan' },
     APP_URL: process.env.APP_URL,
     SAAS_URL: 'https://saas-api.example.test',
+    SHOW_ORG_LOGO: process.env.SHOW_ORG_LOGO === 'true',
   }),
 }))
 
@@ -31,6 +32,25 @@ describe('public page data loaders', () => {
 
   afterEach(() => {
     delete process.env.APP_URL
+    delete process.env.SHOW_ORG_LOGO
+  })
+
+  it('hands the deployment SHOW_ORG_LOGO to the process brand', async () => {
+    createVocdoniApiClient.mockReturnValue({
+      organizations: {
+        get: vi.fn().mockResolvedValue({
+          address: '0xorg',
+          name: { default: 'Acme' },
+          logo: { default: 'https://cdn.example/acme.png' },
+        }),
+      },
+      elections: { get: vi.fn().mockResolvedValue({ id: 'abc', orgAddress: 'org', questions: [] }), list: vi.fn() },
+    })
+    const pageContext = { routeParams: { lang: 'en', id: 'abc' }, headers: { host: 'app.example.org' } } as any
+
+    expect((await loadProcessPublicPageData(pageContext))?.brand).toEqual({ branded: false, name: 'Acme' })
+    process.env.SHOW_ORG_LOGO = 'true'
+    expect((await loadProcessPublicPageData(pageContext))?.brand.logo).toBe('https://cdn.example/acme.png')
   })
 
   it('builds the organization client with the language the request asked for', async () => {

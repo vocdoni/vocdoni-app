@@ -311,6 +311,7 @@ export const electionComponents: ComponentsPartialDefinition = {
                 style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}
               />
               <Box
+                data-choice-mark=''
                 boxSize='icon.lg'
                 borderWidth={selected ? '[0]' : 'mark'}
                 borderColor='ballot.choice.ring'

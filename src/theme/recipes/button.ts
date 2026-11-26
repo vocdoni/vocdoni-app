@@ -1,4 +1,5 @@
 import { defaultConfig, defineRecipe, defineStyle, type SystemStyleObject } from '@chakra-ui/react'
+import { solidEdge } from './solidEdge'
 
 // Chakra's own variants and sizes, spread into the app ones built on them, so both stay in step.
 type StyleMap = Record<string, SystemStyleObject>
@@ -43,19 +44,21 @@ const focusRing = defineStyle({
   outlineOffset: '[1px]',
 })
 
-// The app's primary: palette fill, no edge. On hover it darkens: the brand palette pins Fil's hover (slot
-// `solid.hover`), any other palette mixes its fill 12% towards black.
+// The app's primary: the palette's fill, with a hairline inside its edge only when that fill is too pale for the page
+// (`solidEdge`). On hover it darkens: the brand palette has its own hover (slot `solidHover`), any other palette
+// mixes its fill 12% towards black.
 const solidHover =
   '[var(--chakra-colors-color-palette-solid-hover, color-mix(in oklab, {colors.colorPalette.solid} 88%, black))]'
 const solid = defineStyle({
   bg: 'colorPalette.solid',
   color: 'colorPalette.contrast',
   borderColor: 'transparent',
+  boxShadow: solidEdge,
   _hover: { bg: solidHover },
   _expanded: { bg: solidHover },
   // Grey only for a truly disabled button: Chakra sets `disabled` on a loading one too, which keeps its fill.
   _disabled: {
-    '&:not([data-loading])': { bg: 'bg.emphasized', color: 'fg.subtle', opacity: '[1]' },
+    '&:not([data-loading])': { bg: 'bg.emphasized', color: 'fg.subtle', opacity: '[1]', boxShadow: '[none]' },
     '&[data-loading]': { opacity: '[1]', cursor: '[progress]' },
   },
 })

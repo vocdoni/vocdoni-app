@@ -226,7 +226,8 @@ The list endpoint pages by `page` and `limit` and, as the API, carries no per-qu
 
 ## Known limits
 
-- **Mock data, no backend.** Screens show what the mock returns: one admin user, one organization
+- **Mock data, no backend.** Screens show what the mock returns: one admin user, two organizations (the second, a cooperative with the branding add-on's logo and colour, only behind
+  the vote-branded and vote-brand-off routes)
   on the professional plan, four votes (draft, ongoing, ended with results, question by question),
   the Fil boards' votes (below), ten members, two groups, a team of three. Screens or states that need other data (empty states, errors, other
   plans, a vote in progress) are not covered. Writes answer `200 {}` and change nothing.

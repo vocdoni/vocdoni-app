@@ -27,6 +27,26 @@ describe('QuestionChoice recipe', () => {
     expect(checked.bg).toBe('accent.subtle')
   })
 
+  // A colour too pale for the page keeps its shape with the control line: outside the chosen option's 2px ring, and
+  // inside the chosen disc and the checked box.
+  it('edges the chosen option, its disc and its box when the colour needs it', () => {
+    const edge = 'var(--chakra-colors-color-palette-solid-edge, transparent)'
+    expect(card['&[data-state="checked"]'].boxShadow).toBe(
+      `[0 0 0 {borderWidths.hairline} {colors.colorPalette.solid}, 0 0 0 {borderWidths.thick} ${edge}]`
+    )
+    expect(QuestionChoice.base.wrapper['&[data-state="checked"] [data-choice-mark]'].boxShadow).toBe(
+      `[inset 0 0 0 {borderWidths.hairline} ${edge}]`
+    )
+    const box = card['& [data-choice-control][data-control-type="checkbox"]']['&[data-state="checked"]']
+    expect(box.boxShadow).toBe(`[inset 0 0 0 {borderWidths.hairline} ${edge}]`)
+  })
+
+  // The checked fill replaces the 1.5px outline, so the box keeps its size and its edge sits on the outside.
+  it('drops the outline of a checked checkbox option, so the box does not shrink', () => {
+    const box = card['& [data-choice-control][data-control-type="checkbox"]']['&[data-state="checked"]']
+    expect(box.borderWidth).toBe('[0]')
+  })
+
   it('pads the option vertically, so a wrapped label or description does not touch the border', () => {
     expect(card).toMatchObject({ minH: '16', py: '3' })
   })

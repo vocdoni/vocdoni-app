@@ -74,8 +74,8 @@ const roleOf = (path: string[]): Role => {
   if (has('fg', 'color', 'placeholder', 'emphasis', 'logo', 'schedule') || (path[0] === 'ballot' && has('error'))) {
     return 'text'
   }
-  if (has('border', 'focusRing', 'rule', 'ring', 'track')) return 'line'
-  if (has('solid', 'icon', 'chart', 'meter', 'balance', 'dragover', 'inverted')) return 'solid'
+  if (has('border', 'focusRing', 'rule', 'ring', 'track', 'solidEdge')) return 'line'
+  if (has('solid', 'solidHover', 'icon', 'chart', 'meter', 'balance', 'dragover', 'inverted')) return 'solid'
   return 'surface'
 }
 
@@ -166,7 +166,7 @@ export const stressSystem = withEscapeHatch(
 )
 
 export const system = stressSystem
-export const getAppSystem = (_primaryColor?: string) => stressSystem
+export const getAppSystem = (_primaryColor?: string, _deploymentColor?: string) => stressSystem
 
 // Stock values the harness looks for on screen: a leak is a stock value the stress theme replaced. Palette steps
 // stay stock in the stress theme, so a step on screen was read directly rather than through a semantic token.

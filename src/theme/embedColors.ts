@@ -1,10 +1,10 @@
 import { PAGE_BACKGROUNDS } from './colors'
 import {
+  contrastColor,
   generateBrandSemanticTokens,
   generatePaletteScale,
   normalizeHexColor,
-  SOLID_HOVER_TINT,
-  tintHex,
+  solidHoverColor,
   type PaletteScale,
 } from './palette'
 
@@ -21,14 +21,15 @@ export const EMBED_DARK = {
   primaryHover: '#2d6deb',
 }
 
-// The booker's brand in dark, as the app's buttons paint it: the `solid` the palette gives a configured PRIMARY_COLOR,
-// its label (the palette's contrast colour) and its hover. Without one the palette is Fil's blue, which is the default.
+// The booker's brand in dark: the dark line step the app's palette gives a configured PRIMARY_COLOR (the focus ring's),
+// so it still reads on the dark dialog when the brand is as dark as black, with the label and hover the palette gives
+// that fill. Without one the palette is Fil's blue, which is the default.
 export const embedBrandColors = (primaryColor?: string) => {
   const brand = normalizeHexColor(primaryColor)
   if (!brand) return { brand: EMBED_DARK.primary, text: EMBED_DARK.primaryText, emphasis: EMBED_DARK.primaryHover }
   const scale = generatePaletteScale(brand)
-  const tokens = generateBrandSemanticTokens(scale, PAGE_BACKGROUNDS)
-  // The token is a reference to a scale step, `{colors.brand.<step>}`: the step the buttons fill with.
-  const step = Number(/brand\.(\d+)/.exec(tokens.solid._dark)?.[1]) as keyof PaletteScale
-  return { brand: scale[step], text: tokens.contrast._dark, emphasis: tintHex(scale[step], SOLID_HOVER_TINT) }
+  // The token is a reference to a scale step, `{colors.brand.<step>}`.
+  const step = Number(/brand\.(\d+)/.exec(generateBrandSemanticTokens(scale, PAGE_BACKGROUNDS).focusRing._dark)?.[1])
+  const fill = scale[step as keyof PaletteScale]
+  return { brand: fill, text: contrastColor(fill), emphasis: solidHoverColor(fill) }
 }
