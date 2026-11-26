@@ -133,6 +133,86 @@ export const textStyles = defineTextStyles({
       letterSpacing: 'heading.line',
     },
   },
+  // The voter page (docs/ui-guidelines.md, "Voter page"). Every role is set in the voter's tracking on the running
+  // line height unless it says otherwise; a role with no weight is regular, or takes the weight its recipe sets.
+  // A question's title, the same at every width.
+  'ballot-title': {
+    value: {
+      fontSize: 'ballot.question',
+      lineHeight: 'question',
+      fontWeight: 'semibold',
+      letterSpacing: 'heading.question',
+    },
+  },
+  // The line over a title ("Pregunta 1 de 4", "Últim pas").
+  'ballot-kicker': { value: { fontSize: 'md', lineHeight: 'moderate', fontWeight: 'medium', letterSpacing: 'voter' } },
+  // The line under the title on the welcome screen ("La junta et convoca a votar...").
+  'ballot-lead': { value: { fontSize: 'ballot.lead', lineHeight: 'moderate', letterSpacing: 'voter' } },
+  // The page's running text: a question's help, a field's value, an agenda row; the voter shell's root.
+  'ballot-body': { value: { fontSize: 'lg', lineHeight: 'moderate', letterSpacing: 'voter' } },
+  // A hint under the options, a notice, a receipt row, the count line, a consent line.
+  'ballot-hint': { value: { fontSize: 'item', lineHeight: 'moderate', letterSpacing: 'voter' } },
+  // A field's label.
+  'ballot-label': { value: { fontSize: 'item', lineHeight: 'moderate', fontWeight: 'medium', letterSpacing: 'voter' } },
+  // A voter button's label; the button recipe sets its weight (600, 550 for the secondary).
+  'ballot-button': { value: { fontSize: 'ballot.option', lineHeight: 'moderate', letterSpacing: 'voter' } },
+  // The vote's title over the strip (15px) and atop the rail from `lg` (17px).
+  'ballot-rail-title': {
+    value: {
+      fontSize: { base: 'item', lg: 'ballot.option' },
+      lineHeight: 'short',
+      fontWeight: 'semibold',
+      letterSpacing: 'heading.item',
+    },
+  },
+  // A quiet line in the vote's head: 13px, 14px from `lg`.
+  'ballot-rail-meta': { value: { fontSize: { base: 'sm', lg: 'md' }, lineHeight: 'moderate', letterSpacing: 'voter' } },
+  // The strip's label over the progress line ("Pregunta 2 de 4").
+  'ballot-progress': {
+    value: { fontSize: 'sm', lineHeight: 'moderate', fontWeight: 'medium', letterSpacing: 'voter' },
+  },
+  // A status line: live, paused, cancelled, closed (Status size `ballot`).
+  'ballot-status': {
+    value: { fontSize: 'ballot.status', lineHeight: 'moderate', fontWeight: 'medium', letterSpacing: 'voter' },
+  },
+  // A review row's value: 16px, 17px from `lg`.
+  'ballot-row-value': {
+    value: {
+      fontSize: { base: 'lg', lg: 'ballot.option' },
+      lineHeight: 'moderate',
+      fontWeight: 'medium-plus',
+      letterSpacing: 'voter',
+    },
+  },
+  // A phase while the vote is sent (ui/PhaseList); the current one turns semibold in its recipe.
+  'ballot-phase': { value: { fontSize: 'ballot.option', lineHeight: 'moderate', letterSpacing: 'voter' } },
+  // The open question's title in its card on a question-by-question vote.
+  'ballot-open-title': {
+    value: { fontSize: 'vote', lineHeight: 'open-question', fontWeight: 'semibold', letterSpacing: 'heading.open' },
+  },
+  // The line over a bar ("172 de 312 han votat"), and the points left.
+  'ballot-caption': {
+    value: { fontSize: 'item', lineHeight: 'moderate', fontWeight: 'medium-plus', letterSpacing: 'voter' },
+  },
+  // A question's title over its results.
+  'ballot-result-title': {
+    value: { fontSize: 'ballot.option', lineHeight: 'short', fontWeight: 'semibold', letterSpacing: 'heading.item' },
+  },
+  // Figures, in the mono family: a one-time code's digit, a points value, a rank, a step's number, a receipt code
+  // (all in the voter's tracking), and an agenda number or a share (`ballot-code`, no tracking).
+  'ballot-code-digit': {
+    value: { fontFamily: 'figure', fontSize: 'ballot.code', lineHeight: 'moderate', letterSpacing: 'voter' },
+  },
+  'ballot-rank': { value: { fontFamily: 'figure', fontSize: 'item', lineHeight: 'moderate', letterSpacing: 'voter' } },
+  'ballot-figure': { value: { fontFamily: 'figure', fontSize: 'xs', lineHeight: 'moderate', letterSpacing: 'voter' } },
+  'ballot-receipt': { value: { fontFamily: 'figure', fontSize: 'sm', lineHeight: 'moderate', letterSpacing: 'voter' } },
+  'ballot-code': { value: { fontFamily: 'figure', fontSize: 'sm', lineHeight: 'moderate', letterSpacing: 'none' } },
+  // The voter's top bar: the organisation's name, its links ("Surt") and the language tag (on a 22px line).
+  'topbar-name': {
+    value: { fontSize: 'item', lineHeight: 'moderate', fontWeight: 'medium-plus', letterSpacing: 'heading.row' },
+  },
+  'topbar-link': { value: { fontSize: 'md', lineHeight: 'moderate', fontWeight: 'medium', letterSpacing: 'voter' } },
+  'topbar-lang': { value: { fontSize: 'sm', lineHeight: 'row.touch', fontWeight: 'medium', letterSpacing: 'voter' } },
 })
 
 // Heading sizes of user-written content by Markdown level, shared by the editor and the rendered Markdown.

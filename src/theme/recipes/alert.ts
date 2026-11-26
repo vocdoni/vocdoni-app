@@ -35,6 +35,24 @@ export const Alert = defineSlotRecipe({
         indicator: { display: { base: 'none', lg: 'inline-flex' }, boxSize: 'icon.chevron', mt: '0.5' },
         description: { textStyle: { base: 'body', lg: 'control' } },
       },
+      // The voter page's notice (a vote paused mid-ballot, an identification that failed): a band tinted by the
+      // status, in ink at every width, with the hairline inside its edge, 12px corners and 15px text whose lead
+      // sentence is semibold; no icon. Its ink is a compound variant below, after the status colours.
+      ballot: {
+        root: {
+          px: '4',
+          py: '3.5',
+          gap: '2.5',
+          alignItems: 'flex-start',
+          borderRadius: 'xl',
+          textStyle: 'ballot-hint',
+          boxShadow: 'inner',
+          '& b, & strong': { fontWeight: 'semibold' },
+        },
+        indicator: { display: 'none' },
+        title: { textStyle: 'ballot-hint', fontWeight: 'semibold' },
+        description: { textStyle: 'ballot-hint' },
+      },
     },
   },
   // After chakra's `variant`, so the look holds whichever variant is asked for.
@@ -68,6 +86,7 @@ export const Alert = defineSlotRecipe({
         },
       },
     },
+    { layout: 'ballot', css: { root: { color: 'fg' } } },
   ],
   defaultVariants: {
     layout: 'inline',

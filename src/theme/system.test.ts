@@ -7,6 +7,10 @@ import { dragHandle } from './recipes/dragHandle'
 import { ConfirmModal } from './recipes/confirmModal'
 import { VideoPreview } from './recipes/videoPreview'
 import { recipes, slotRecipes } from './recipes'
+import { StepProgress, StepRail } from './recipes/steps'
+import { AgendaList, PhaseList, ReceiptCodes } from './recipes/voterLists'
+import { RankBadge, SuccessDisc } from './recipes/voterMarks'
+import { VoterShell } from './recipes/voterShell'
 import semanticTokens from './semantic'
 import { createAppSystem, getAppSystem, system } from './system'
 
@@ -113,6 +117,15 @@ const ALL_RECIPES: Record<string, unknown> = {
   dragHandle,
   dashboardContents,
   confirmModal: ConfirmModal,
+  // The voter page's pieces, each imported by its own ui/ component.
+  voterShell: VoterShell,
+  stepRail: StepRail,
+  stepProgress: StepProgress,
+  rankBadge: RankBadge,
+  successDisc: SuccessDisc,
+  phaseList: PhaseList,
+  receiptCodes: ReceiptCodes,
+  agendaList: AgendaList,
   VideoPreview,
 }
 
@@ -593,6 +606,58 @@ describe('layout tokens', () => {
     expect(value('durations.fast')).toBe('150ms')
     expect(value('durations.moderate')).toBe('200ms')
     expect(value('durations.slow')).toBe('300ms')
+  })
+})
+
+// The voter page (docs/ui-guidelines.md, "Voter page"): the measures of boards V4Voter* and M4Voter*.
+describe('voter tokens', () => {
+  const value = (name: string) => system.tokens.getByName(name)?.value
+  const base = (name: string) => system.tokens.getByName(name)?.extensions?.conditions
+
+  it('sizes the voter controls, marks and columns as the boards', () => {
+    expect(value('sizes.control.ballot')).toBe('52px')
+    expect(value('sizes.mark.ballot')).toBe('22px')
+    expect(value('sizes.bar.thin')).toBe('3px')
+    expect(value('sizes.ballot.column')).toBe('600px')
+    expect(value('sizes.ballot.column.narrow')).toBe('440px')
+    expect(value('sizes.ballot.column.code')).toBe('480px')
+    expect(value('sizes.ballot.column.sending')).toBe('520px')
+    expect(value('sizes.ballot.column.results')).toBe('640px')
+    expect(value('sizes.ballot.rail')).toBe('280px')
+    expect(value('sizes.ballot.logo')).toBe('30px')
+    expect(value('sizes.ballot.symbol')).toBe('22px')
+    expect(value('sizes.ballot.credit')).toBe('38px')
+    expect(value('sizes.wordmark.credit')).toBe('13px')
+  })
+
+  it('draws a one-time code box 56 by 64, 48 by 58 below md', () => {
+    expect(value('sizes.ballot.code.width')).toBe('var(--chakra-sizes-14)')
+    expect(value('sizes.ballot.code.height')).toBe('var(--chakra-sizes-16)')
+    expect(value('sizes.ballot.code.width.touch')).toBe('var(--chakra-sizes-12)')
+    expect(value('sizes.ballot.code.height.touch')).toBe('58px')
+    expect(system.token('sizes.14')).toBe('3.5rem')
+    expect(system.token('sizes.16')).toBe('4rem')
+    expect(system.token('sizes.12')).toBe('3rem')
+  })
+
+  it('keeps the wordmark width under its own name now that it has a child', () => {
+    expect(value('sizes.wordmark')).toBe('125px')
+    expect(system.css({ w: 'wordmark' })).toEqual({ width: 'var(--chakra-sizes-wordmark)' })
+  })
+
+  it('spaces the voter page as the boards', () => {
+    expect(value('spacing.step')).toBe('9px')
+    expect(value('spacing.ballot.gutter')).toBe('72px')
+    expect(value('spacing.ballot.dock')).toBe('150px')
+    expect(value('spacing.ballot.options')).toBe('22px')
+  })
+
+  it('rings a mark still to come in the track grey and a failed field in 2px of the error colour', () => {
+    expect(base('colors.border.pending')).toEqual({ base: '{colors.bg.track}' })
+    expect(base('shadows.shadow.mark')).toEqual({ base: 'inset 0 0 0 {borderWidths.mark} {colors.border.pending}' })
+    expect(base('shadows.shadow.invalid')).toEqual({
+      base: 'inset 0 0 0 {borderWidths.thick} {colors.status.error.fg}',
+    })
   })
 })
 

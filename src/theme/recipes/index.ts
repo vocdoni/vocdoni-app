@@ -35,6 +35,7 @@ import { Menu } from './menu'
 import { NativeSelect } from './nativeSelect'
 import { OrganizationDescription, OrganizationImage, OrganizationName } from './organization'
 import { Pagination, PaginationButton } from './pagination'
+import { PinInput } from './pinInput'
 import { Popover } from './popover'
 import { Progress } from './progress'
 import { PublishReview } from './publishReview'
@@ -99,6 +100,7 @@ export const slotRecipes: Record<string, SlotRecipeDefinition> = {
   list: listSlotRecipe,
   menu: Menu,
   nativeSelect: NativeSelect,
+  pinInput: PinInput,
   popover: Popover,
   progress: Progress,
   publishReview: PublishReview,

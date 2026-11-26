@@ -33,10 +33,14 @@ const fontSizes = defineTokens.fontSizes({
   vote: { value: '1.375rem' },
   // The title of a bottom sheet and of a dialog on a tablet (dialog-title below lg).
   sheet: { value: '1.0625rem' },
-  // The voter's ballot: an option's label and a question's title.
+  // The voter page (docs/ui-guidelines.md, "Voter page"): an option's and a button's label, a question's title, the
+  // greeting and a points value (`lead`), a one-time code's digit and a status line.
   ballot: {
     option: { value: '1.0625rem' },
     question: { value: '2rem' },
+    lead: { value: '1.125rem' },
+    code: { value: '1.625rem' },
+    status: { value: '0.84375rem' },
   },
   // The headline sentence of a vote's turnout card from `lg` (`turnout-headline`).
   headline: { value: '2.125rem' },
@@ -63,6 +67,8 @@ const lineHeights = defineTokens.lineHeights({
     label: { value: '1.0625rem' },
   },
   question: { value: 1.08 },
+  // The open question's title in its card on a question-by-question voter page (`ballot-open-title`).
+  'open-question': { value: 1.25 },
   tall: { value: 1.6 },
   // The headline sentence of a vote's turnout card (`turnout-headline`).
   headline: { value: 1.12 },
@@ -86,6 +92,8 @@ const letterSpacings = defineTokens.letterSpacings({
     question: { value: '-0.038em' },
     // The line under a vote's turnout headline (`turnout-line`).
     line: { value: '-0.02em' },
+    // The open question's title in its card on a question-by-question vote (22px).
+    open: { value: '-0.02em' },
   },
   voter: { value: '-0.008em' },
   quote: {
@@ -163,6 +171,15 @@ const spacing = defineTokens.spacing({
   },
   // Room a phone page keeps under its content for the bottom action bar (recipe `questionDock`).
   dock: { value: '110px' },
+  // Above and below a row of the voter's numbered agenda (ui/StepRail).
+  step: { value: '9px' },
+  // The voter page: between the agenda rail and the column from `lg`, what a phone page keeps clear under its content
+  // for the action bar (ui/ActionBar), and above a question's options below `lg`.
+  ballot: {
+    gutter: { value: '72px' },
+    dock: { value: '150px' },
+    options: { value: '22px' },
+  },
 })
 
 // `0` and `auto` are likewise missing from Chakra's sizes.
@@ -229,12 +246,44 @@ const sizes = defineTokens.sizes({
       DEFAULT: { value: '{sizes.9}' },
       touch: { value: '38px' },
     },
+    // The voter's radio, checkbox and phase disc.
+    ballot: { value: '22px' },
   },
   // The share column of a result bar ("69%"), right-aligned.
   results: {
     share: { value: '38px' },
     // The longest a question's turnout and result bars grow on a tablet.
     detail: { value: '520px' },
+  },
+  // A bar drawn as a line: the voter's step progress on the strip's bottom rule (Progress `line`).
+  bar: {
+    thin: { value: '3px' },
+  },
+  // The voter page: its column from `lg` (600px beside the agenda rail, narrower or wider on the centred screens), the
+  // rail, the organisation's logo and the Vocdoni symbol in the top bar, the credit's row inside the phone's action
+  // bar, and a one-time code's box (56 by 64; 48 by 58 below `md`).
+  ballot: {
+    column: {
+      DEFAULT: { value: '600px' },
+      narrow: { value: '440px' },
+      code: { value: '480px' },
+      sending: { value: '520px' },
+      results: { value: '640px' },
+    },
+    rail: { value: '280px' },
+    logo: { value: '30px' },
+    symbol: { value: '22px' },
+    credit: { value: '38px' },
+    code: {
+      width: {
+        DEFAULT: { value: '{sizes.14}' },
+        touch: { value: '{sizes.12}' },
+      },
+      height: {
+        DEFAULT: { value: '{sizes.16}' },
+        touch: { value: '58px' },
+      },
+    },
   },
   // Empty-state cards (no organizations, no results) and the leading column of a table that holds row actions.
   card: {
@@ -263,6 +312,8 @@ const sizes = defineTokens.sizes({
     touch: { value: '44px' },
     // A row of a menu or a bottom sheet on a phone.
     row: { value: '52px' },
+    // The voter's buttons and fields, at every width.
+    ballot: { value: '52px' },
     // Minimum height of a textarea.
     area: { value: '76px' },
   },
@@ -277,8 +328,11 @@ const sizes = defineTokens.sizes({
   turnout: {
     max: { value: '420px' },
   },
-  // Width of the Vocdoni wordmark image.
-  wordmark: { value: '125px' },
+  // Width of the Vocdoni wordmark image; `credit` is its height in the voter page's "made with Vocdoni" line.
+  wordmark: {
+    DEFAULT: { value: '125px' },
+    credit: { value: '13px' },
+  },
   'user-profile': { value: '280px' },
   // The publish dialog (recipes/publishReview): its width from md up, and the height a step keeps between steps
   // so the dialog does not jump.

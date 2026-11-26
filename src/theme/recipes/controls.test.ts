@@ -137,6 +137,16 @@ describe('input and textarea', () => {
     expect(styles).not.toContain('color-palette-solid')
   })
 
+  it('draws a 1px border where forced colours drop the ring, and 2px when invalid', () => {
+    for (const recipe of [input, textarea]) {
+      const forced = layer(recipe({ variant: 'outline' }))['@media (forced-colors: active)'] as Record<string, unknown>
+      expect(forced).toMatchObject({ borderWidth: 'var(--chakra-border-widths-hairline)' })
+      expect(forced['&:is([data-invalid], [aria-invalid=true], [data-state=invalid])']).toEqual({
+        borderWidth: 'var(--chakra-border-widths-thick)',
+      })
+    }
+  })
+
   it('keeps the inline variant flat', () => {
     expect(layer(input({ variant: 'inline' })).boxShadow).toBe('none')
   })
