@@ -10,18 +10,24 @@ const listItem = {
     p: '4',
     gap: '2',
   },
+  // The base pads with `px`, `pt`/`pb` and `py`: override those same keys, since a `p` is emitted before them.
   header: {
-    p: '0',
+    px: '0',
+    pt: '0',
+    pb: '0',
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
     gap: '2',
   },
   body: {
-    p: '0',
+    px: '0',
+    py: '0',
     gap: '1',
     fontSize: 'sm',
     color: 'fg.muted',
+    // The base draws a hairline above every body after the first; a list item has its own ring instead.
+    _notFirst: { borderTopWidth: '[0]' },
   },
 } satisfies Partial<Record<string, SystemStyleObject>>
 
@@ -99,7 +105,7 @@ export const Card = defineSlotRecipe({
       },
       // One entry of a list shown as cards, the small-screen form of a table.
       // `size` only pads the root-padded variants; this one pads itself, so the body takes no top rule.
-      'list-item': { ...listItem, body: { ...listItem.body, borderTopWidth: '[0]' } },
+      'list-item': listItem,
       // A page whose whole content is one card, such as the sign-in forms.
       standalone: {
         root: {
