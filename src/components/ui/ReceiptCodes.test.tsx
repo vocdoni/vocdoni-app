@@ -1,5 +1,4 @@
-import userEvent from '@testing-library/user-event'
-import { render, screen } from '~src/test-utils'
+import { fireEvent, render, screen, waitFor } from '~src/test-utils'
 import { ReceiptCodes, shortVoteId } from './ReceiptCodes'
 
 const items = [
@@ -20,14 +19,26 @@ describe('ReceiptCodes', () => {
 
     expect(screen.getByText('Comptes anuals de 2025')).toBeInTheDocument()
     expect(screen.getByText('a3f1…9c2e')).toHaveAttribute('title', items[0].voteId)
-    expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
 
-  it('makes each code a named button when it can be copied', async () => {
-    const onCopy = vi.fn()
-    render(<ReceiptCodes items={items} onCopy={onCopy} copyLabel={(item) => `Copia el codi: ${item.title}`} />)
+  it('copies the full code when a code has no address to check it', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined)
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true })
+    render(<ReceiptCodes items={items} />)
 
-    await userEvent.click(screen.getByRole('button', { name: 'Copia el codi: Dues vocalies' }))
-    expect(onCopy).toHaveBeenCalledWith(items[1])
+    fireEvent.click(screen.getByRole('button', { name: 'a3f1…9c2e: copy the full code of Comptes anuals de 2025' }))
+
+    await waitFor(() => expect(writeText).toHaveBeenCalledWith(items[0].voteId))
+  })
+
+  it('makes each code a link to its verification in a new tab when it has an address', () => {
+    const linked = items.map((item) => ({ ...item, href: `https://explorer.example/verify/${item.voteId}` }))
+    render(<ReceiptCodes items={linked} />)
+
+    const link = screen.getByRole('link', { name: '77b0…41da' })
+    expect(link).toHaveAttribute('href', 'https://explorer.example/verify/77b0aa11bb22cc3341da')
+    expect(link).toHaveAttribute('target', '_blank')
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer')
+    expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
 })

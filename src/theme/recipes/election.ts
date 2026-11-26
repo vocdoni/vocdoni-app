@@ -25,6 +25,15 @@ export const ElectionVideo = defineRecipe({
   },
 })
 
+// The organiser's header image on the voter page: the card's 12px corners, cut the picture.
+export const ElectionHeader = defineRecipe({
+  base: {
+    w: 'full',
+    borderRadius: 'xl',
+    overflow: 'hidden',
+  },
+})
+
 export const ElectionTitle = defineRecipe({
   // Typography lives in the variants: a variant with a `textStyle` must not also get these from the base.
   base: {
@@ -277,6 +286,13 @@ const voterWrapper = {
     ...cardWrapper['& [data-choice-control][data-control-type="checkbox"]'],
     boxSize: 'mark.ballot',
     borderRadius: 'sm',
+    // The ring is an inset shadow of the mark width, not a border: a 1.5px border paints 1px at DPR 1. A chosen
+    // box keeps the brand edge it already draws.
+    borderWidth: '[0]',
+    boxShadow: 'mark.field',
+    // Forced colours drop box shadows, so the ring falls back to its border width there.
+    _highContrast: { borderWidth: 'mark' },
+    '& svg': { boxSize: '3.5' },
   },
   '& [data-choice-mark]': {
     display: 'flex',
@@ -284,13 +300,16 @@ const voterWrapper = {
     justifyContent: 'center',
     boxSize: 'mark.ballot',
     borderRadius: 'full',
-    borderWidth: 'mark',
-    borderColor: 'ballot.choice.ring',
+    borderWidth: '[0]',
+    boxShadow: 'mark.field',
+    _highContrast: { borderWidth: 'mark' },
     color: 'accent.contrast',
     '& svg': { boxSize: '3.5' },
   },
-  '&[data-state="checked"] [data-choice-mark]': { borderWidth: '[0]', bg: 'colorPalette.solid' },
+  '&[data-state="checked"] [data-choice-mark]': { bg: 'colorPalette.solid', boxShadow: solidEdge },
   '&[data-disabled="true"]': { opacity: 'opaque', cursor: 'unavailable' },
+  // A paused vote keeps every option readable: the SDK's own half opacity on the control and label is undone.
+  '&[data-disabled="true"] :is([data-part="control"], [data-part="label"], [data-choice-mark])': { opacity: 'opaque' },
   '&[data-disabled="true"]:not([data-state="checked"])': { color: 'fg.subtle' },
   '&[data-quiet]:not([data-state="checked"])': { color: 'fg.subtle' },
 } satisfies SystemStyleObject

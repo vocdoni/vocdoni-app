@@ -1,16 +1,13 @@
-import { hashMemberPassword as hashMemberPasswordWithSdk } from '@vocdoni/api-client'
+import { hashMemberPassword } from '@vocdoni/api-client'
 
+/**
+ * Mirrors the trim and NFC normalization that the SDK's hashMemberPassword applies before hashing. The SDK does not
+ * export its normaliser, so keep this in step with it: a password accepted here must hash the same way.
+ */
 const normalizeMemberPassword = (password: string): string => password.trim().normalize('NFC')
 
 /**
- * Hashes a member password for the SaaS API, so the plaintext never leaves the browser. Delegates to the SDK,
- * which voters also use through the packaged CspAuth: both sides derive the same value.
- */
-export const hashMemberPassword = (orgAddress: string, password: string): Promise<string> =>
-  hashMemberPasswordWithSdk(orgAddress, password)
-
-/**
- * Hashes the `password` of every row (see hashMemberPassword). A row whose password is empty after
+ * Hashes the `password` of every row (see the SDK's hashMemberPassword). A row whose password is empty after
  * trimming has no password, so the key is dropped rather than sent.
  */
 export const hashMemberPasswords = async (

@@ -25,6 +25,12 @@ const STRESS_EXCEPTIONS = [
     kinds: ['grey'],
   },
   {
+    // Ark's pin input hidden input (aria-hidden, clipped to 1px, it carries the joined code for the form) keeps the
+    // browser's own field colour, and Ark gives it no part that a recipe could style.
+    selector: '[data-scope="pin-input"][data-part="root"] > input[aria-hidden="true"]',
+    kinds: ['grey'],
+  },
+  {
     // WhatsApp's contact button keeps the brand's own look, black on its green, like the palette spec leaves out its
     // steps: no theme token is meant to reach it.
     selector: 'a[href^="https://wa.me/"]',

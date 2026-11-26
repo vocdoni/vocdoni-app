@@ -53,8 +53,6 @@ type StoredFlow = { state: string; codeVerifier: string; startedAt: number; load
 /** What the voting page found in its fragment on load. */
 export type CertReturn =
   | { kind: 'code'; certCode: string; codeVerifier: string }
-  // step 0 took the code (2FA census): it is spent, so only the code step or a new certificate login is left
-  | { kind: 'redeemed' }
   // `ref`: the gateway's diagnostic id (32 hex digits), shown as the support reference
   | { kind: 'error'; code: string; ref?: string }
   // a fragment whose state is not the one this tab stored (or none was): nothing is called

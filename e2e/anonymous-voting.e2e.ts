@@ -4,6 +4,7 @@ import {
   castVote,
   createAndPublishTwoFactorProcess,
   importMembers,
+  openPublicCount,
   signUpWithOrganization,
 } from './helpers/flows'
 import { expect, prepareContext, test } from './helpers/fixtures'
@@ -50,10 +51,6 @@ test.describe('voting on an anonymous census', () => {
       await voter.goto(`/processes/${processId}`)
       await expect(voter.getByRole('heading', { name: `E2E anon ${seed}` }).first()).toBeVisible()
 
-      // The public page states which kind of ballot this is — the promise the
-      // voter is being asked to trust.
-      await expect(voter.getByText(/no vote can be traced back to a voter/i)).toBeVisible()
-
       const requestedAt = new Date()
       await authenticateVoterWithOtp(voter, member)
 
@@ -65,13 +62,11 @@ test.describe('voting on an anonymous census', () => {
         since: requestedAt,
       })
 
-      await expect(voter.getByTestId('process-vote-count')).toContainText('0')
-
       await castVote(voter, 0)
 
-      // The receipt is a one-time thing on an anonymous census, and the modal
-      // says so — this is the only moment the voter can save it.
-      await expect(voter.getByTestId('vote-success-modal')).toContainText(/cannot show it to you again/i)
+      // The receipt is a one-time thing on an anonymous census, and the receipt
+      // screen says so: this is the only moment the voter can save it.
+      await expect(voter.getByTestId('vote-receipt')).toContainText(/cannot show it to you again/i)
 
       // The envelope carried a valid blind signature and the chain accepted it:
       // read the count back in a session that never authenticated.
@@ -80,7 +75,7 @@ test.describe('voting on an anonymous census', () => {
       try {
         const observer = await observerContext.newPage()
         await observer.goto(`/processes/${processId}`)
-        await expect(observer.getByTestId('process-vote-count')).toContainText('1', { timeout: 120_000 })
+        await expect(await openPublicCount(observer)).toContainText(/^1\b/, { timeout: 120_000 })
       } finally {
         await observerContext.close()
       }

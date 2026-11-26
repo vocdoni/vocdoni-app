@@ -105,7 +105,8 @@ So:
 
 - Show the real product: real states (a census, a vote in progress, verified results), not abstract illustration.
   Drawn product screens must match what the app actually displays.
-- Drawn illustrations paint with the `illustration.*` tokens, never raw colours. The raster empty-state artwork is the
-  one documented exception: `EmptyState` gives it a dark-mode `invert` filter (see the UI guide's allowed exceptions).
+- Drawn illustrations paint with the semantic tokens in `src/theme/illustration.ts` (today `logo.fg`), never raw colours.
+  The raster empty-state artwork is the one documented exception: `EmptyState` gives it a dark-mode `invert` filter (see
+  the UI guide's allowed exceptions).
 - The localized Open Graph cards in `public/assets/og/` are rendered by `pnpm og:generate` from locale copy; never
   edit the PNGs by hand.

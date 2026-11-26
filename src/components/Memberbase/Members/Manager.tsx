@@ -10,6 +10,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react'
 import { useQueryClient } from '@tanstack/react-query'
+import { hashMemberPassword } from '@vocdoni/api-client'
 import { useOrganization } from '@vocdoni/react-components'
 import { cloneElement, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
@@ -20,7 +21,7 @@ import { useToast } from '~components/Toast'
 import { PanelDrawer } from '~components/ui/Drawer'
 import { QueryKeys } from '~src/queries/keys'
 import { Member, useAddMembers, useEditMember } from '~src/queries/members'
-import { hashMemberPassword, isValidMemberPassword } from '~utils/member-password'
+import { isValidMemberPassword } from '~utils/member-password'
 import { useTable } from '../TableProvider'
 
 type MemberFormData = Record<string, string>

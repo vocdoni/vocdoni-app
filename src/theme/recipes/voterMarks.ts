@@ -14,7 +14,7 @@ export const RankBadge = defineRecipe({
     borderRadius: 'md',
     textStyle: 'ballot-rank',
     ...figureMark,
-    fontWeight: 'medium',
+    fontWeight: 'normal',
     color: 'fg.subtle',
     boxShadow: 'shadow.mark',
     // Forced colours drop the ring's box shadow, so an empty rank box would vanish; its border keeps the shape.
@@ -22,7 +22,7 @@ export const RankBadge = defineRecipe({
   },
   variants: {
     set: {
-      true: { bg: 'accent.solid', color: 'accent.contrast', boxShadow: 'shadow.edge.inner' },
+      true: { fontWeight: 'medium', bg: 'accent.solid', color: 'accent.contrast', boxShadow: 'shadow.edge.inner' },
       false: {},
     },
   },

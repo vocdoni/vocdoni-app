@@ -75,6 +75,8 @@ type PublicProcessPageData =
       /** When the server fetched the data (ms epoch), so the client can date it when the HTML comes from the SSR cache. */
       fetchedAt: number
       meta: PublicMeta
+      /** The instant of this read (ms): the voter page picks its time-dependent screen with it until hydration ends. */
+      now?: number
     }
   | {
       era: 'archive'
@@ -517,6 +519,7 @@ export const loadProcessPageData = async ({
     brand: resolveProcessBrand(election, organization, language, env),
     fetchedAt,
     meta: buildProcessMeta({ election, organization, canonicalUrl, language, alternates }),
+    now: Date.now(),
   }
 }
 

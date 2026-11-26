@@ -2,8 +2,8 @@ import { defineSlotRecipe } from '@chakra-ui/react'
 import { pinInputAnatomy } from '@chakra-ui/react/anatomy'
 
 // Merged into Chakra's pin input recipe, whose sizes, variants and defaults stay as they are: every pin input the app
-// already draws (CSP/Step1 at `lg`, Auth/Verify at the default) keeps its look. The voter's one-time code takes
-// `variant='field'` and `size='ballot'`.
+// already draws (the CSP code step in react-components/csp.tsx at `lg`, Auth/Verify at the default) keeps its look.
+// The voter's one-time code takes `variant='field'` and `size='ballot'`.
 export const PinInput = defineSlotRecipe({
   slots: pinInputAnatomy.keys(),
   variants: {

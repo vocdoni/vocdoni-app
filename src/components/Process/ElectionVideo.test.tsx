@@ -1,12 +1,5 @@
-import { mockUseElection, render, screen } from '~src/test-utils'
-import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
+import { render, screen } from '~src/test-utils'
 import { ElectionVideo } from './ElectionVideo'
-
-vi.mock('@vocdoni/react-components', async (importOriginal) => {
-  const actual = (await importOriginal()) as typeof import('@vocdoni/react-components')
-  const { getReactProvidersMock } = await import('~src/test-utils-react-providers-mock')
-  return { ...actual, ...getReactProvidersMock() }
-})
 
 const playerLoaded = vi.fn()
 
@@ -26,9 +19,7 @@ describe('ElectionVideo', () => {
     playerLoaded.mockClear()
   })
 
-  it('renders nothing, and never loads the player, when the election has no stream', () => {
-    setReactProvidersMock({ useElection: () => mockUseElection({ election: { id: 'p1' } }) })
-
+  it('renders nothing, and never loads the player, without a stream', () => {
     render(<ElectionVideo />)
 
     expect(screen.queryByTestId('player')).toBeNull()
@@ -36,34 +27,19 @@ describe('ElectionVideo', () => {
   })
 
   it('plays the stream once the lazy player has loaded', async () => {
-    setReactProvidersMock({
-      useElection: () => mockUseElection({ election: { id: 'p1', streamUri: 'https://example.test/live.m3u8' } }),
-    })
-
-    render(<ElectionVideo />)
+    render(<ElectionVideo streamUri='https://example.test/live.m3u8' />)
 
     expect(await screen.findByTestId('player')).toHaveTextContent('https://example.test/live.m3u8')
   })
 
   it('titles the player after the election', async () => {
-    setReactProvidersMock({
-      useElection: () =>
-        mockUseElection({
-          election: { id: 'p1', streamUri: 'https://example.test/live', title: { default: 'Board election' } },
-        }),
-    })
-
-    render(<ElectionVideo />)
+    render(<ElectionVideo streamUri='https://example.test/live' title='Board election' />)
 
     expect(await screen.findByTestId('player')).toHaveAttribute('title', 'Board election')
   })
 
   it('falls back to a generic title when the election has none', async () => {
-    setReactProvidersMock({
-      useElection: () => mockUseElection({ election: { id: 'p1', streamUri: 'https://example.test/live' } }),
-    })
-
-    render(<ElectionVideo />)
+    render(<ElectionVideo streamUri='https://example.test/live' />)
 
     expect(await screen.findByTestId('player')).toHaveAttribute('title', 'Video')
   })

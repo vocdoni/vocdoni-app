@@ -70,8 +70,11 @@ describe('preferred public-language redirect', () => {
 
   it('passes the language-prefixed pathname to the public process page layout', async () => {
     currentData = {
+      // An archive vote: the SaaS voter page brings its own shell and no longer renders PublicLayout.
+      era: 'archive',
       id: '0xprocess',
-      election: {},
+      legacyElection: {},
+      legacyOrganization: {},
       organization: { address: '0xabc' },
       meta: {
         language: 'en',
@@ -96,6 +99,28 @@ describe('preferred public-language redirect', () => {
         showDashboardButton: false,
       })
     )
+  })
+
+  it('redirects a SaaS vote by preference without the public layout, which the voter page replaces', async () => {
+    currentData = {
+      era: 'saas',
+      id: '0xprocess',
+      election: {},
+      organization: { address: '0xabc' },
+      brand: { branded: false, name: '' },
+      meta: { language: 'en', alternates: [] },
+    }
+    currentPageContext = { urlPathname: '/en/processes/0xprocess' }
+
+    const { default: ProcessPage } = await import('./@lang/processes/@id/+Page')
+
+    const { getByText } = render(<ProcessPage />)
+
+    expect(usePreferredPublicLanguageRedirect).toHaveBeenCalledWith({
+      pathname: '/en/processes/0xprocess',
+    })
+    expect(getByText('process-page')).toBeInTheDocument()
+    expect(publicLayout).not.toHaveBeenCalled()
   })
 
   it('passes the language-prefixed pathname to the public organization page layout', async () => {

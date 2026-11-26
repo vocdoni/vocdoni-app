@@ -5,8 +5,10 @@ import {
   createAndPublishTwoFactorProcess,
   importMembers,
   openIdentifyModal,
+  openPublicCount,
   signUpWithOrganization,
   submitPasswordLogin,
+  voterScreen,
 } from './helpers/flows'
 import { expect, prepareContext, test } from './helpers/fixtures'
 
@@ -57,18 +59,18 @@ test.describe('voting with a member password census', () => {
       await voter.goto(`/processes/${processId}`)
       await expect(voter.getByRole('heading', { name: title }).first()).toBeVisible()
 
-      const dialog = await openIdentifyModal(voter)
-      await expect(dialog.locator('input[name="password"]')).toHaveAttribute('type', 'password')
+      const screen = await openIdentifyModal(voter)
+      await expect(screen.locator('input[name="password"]')).toHaveAttribute('type', 'password')
 
       // A wrong password gets the same password-aware answer as someone outside the census.
-      await submitPasswordLogin(dialog, member.memberNumber, wrongPassword)
+      await submitPasswordLogin(screen, member.memberNumber, wrongPassword)
       await expect(
-        dialog.getByText(/couldn.t verify your identity\. Check your credentials and your password/i).first()
+        screen.getByText(/couldn.t verify your identity\. Check your credentials and your password/i).first()
       ).toBeVisible({ timeout: 30_000 })
 
       // The right one logs in straight away: no 2FA on this census.
-      await submitPasswordLogin(dialog, member.memberNumber, member.password)
-      await expect(dialog).toBeHidden({ timeout: 60_000 })
+      await submitPasswordLogin(screen, member.memberNumber, member.password)
+      await expect(voterScreen(voter, 'welcome')).toBeVisible({ timeout: 60_000 })
 
       await castVote(voter, 0)
 
@@ -77,7 +79,7 @@ test.describe('voting with a member password census', () => {
       try {
         const observer = await observerContext.newPage()
         await observer.goto(`/processes/${processId}`)
-        await expect(observer.getByTestId('process-vote-count')).toContainText('1', { timeout: 120_000 })
+        await expect(await openPublicCount(observer)).toContainText(/^1\b/, { timeout: 120_000 })
       } finally {
         await observerContext.close()
       }

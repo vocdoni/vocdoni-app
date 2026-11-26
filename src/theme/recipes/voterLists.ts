@@ -43,8 +43,8 @@ export const PhaseList = defineSlotRecipe({
 })
 
 // A receipt's codes on the voter page (ui/ReceiptCodes, board V4VoterWide 10): one row per question under the light
-// rule, 10px and 18px in, its title at 15px and its shortened vote id in mono. A code the voter can copy is a button
-// with a 44px hit area.
+// rule, 10px and 18px in, its title at 15px and its shortened vote id in mono. A code without a verification page is
+// a copy button with its icon; one with a page is a link in the link colour. Both have a 44px hit area.
 export const ReceiptCodes = defineSlotRecipe({
   slots: ['root', 'row', 'title', 'code'],
   base: {
@@ -65,7 +65,7 @@ export const ReceiptCodes = defineSlotRecipe({
       flexShrink: 0,
       textStyle: 'ballot-receipt',
       color: 'fg.muted',
-      '&:is(button)': {
+      '&:is(button), &:is(a)': {
         ...touchTarget,
         cursor: 'button',
         borderRadius: 'xs',
@@ -73,11 +73,48 @@ export const ReceiptCodes = defineSlotRecipe({
         focusRingColor: 'colorPalette.focusRing',
         _hover: { color: 'fg' },
       },
+      '&:is(button)': {
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '1',
+        '& svg': { boxSize: '3.5' },
+      },
+      '&:is(a)': {
+        color: 'link.fg',
+        _hover: { color: 'link.fg.hover' },
+      },
     },
   },
 })
 
-// The ruled list of questions on the welcome screen ("Ordre del dia") and of the next one when none is open ("La
+// A row of the review card (ReviewScreen): a label over its answer, the change action on the right and a hairline
+// above it, none on the card's first row. The vote-weight row is `shaded`: the board's light fill under the card's
+// top corners (V4VoterWideMore 5).
+export const ReviewRow = defineSlotRecipe({
+  slots: ['root', 'label', 'value', 'action'],
+  base: {
+    root: {
+      display: 'grid',
+      gridTemplateColumns: '1fr auto',
+      columnGap: '4',
+      rowGap: '0.5',
+      alignItems: 'center',
+      px: '4.5',
+      py: '3.5',
+      borderTopWidth: 'hairline',
+      borderColor: 'border',
+    },
+    label: { textStyle: 'body', color: 'fg.subtle', gridColumn: '1' },
+    value: { textStyle: 'ballot-row-value', gridColumn: '1' },
+    action: { textStyle: 'ballot-caption', gridColumn: '2', gridRow: '1 / span 2' },
+  },
+  variants: {
+    first: { true: { root: { borderTopWidth: '[0]' } } },
+    shaded: { true: { root: { bg: 'bg.subtle', borderTopRadius: 'xl' } } },
+  },
+})
+
+// The ruled list of questions on the welcome screen ("Preguntes a votar") and of the next one when none is open ("La
 // següent"): a 12px label, then rows under a rule, 11px above and below, each a 14px mono number 14px before the
 // title, with an optional quiet note under it; a rule closes the list.
 export const AgendaList = defineSlotRecipe({

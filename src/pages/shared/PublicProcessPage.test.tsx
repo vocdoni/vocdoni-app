@@ -7,7 +7,7 @@ import PublicProcessSummaryPage from './PublicProcessSummaryPage'
 
 // The page as Vike renders it: real AppProviders, Theme and PublicLayout; the process views, the vike hooks and the
 // providers that need a backend or a wallet are stubbed (as in Providers.test.tsx).
-const page = vi.hoisted(() => ({ data: undefined as unknown }))
+const page = vi.hoisted(() => ({ data: undefined as unknown, viewProps: vi.fn() }))
 
 vi.mock('vike-react/useData', () => ({ useData: () => page.data }))
 vi.mock('vike-react/usePageContext', async () => {
@@ -16,7 +16,12 @@ vi.mock('vike-react/usePageContext', async () => {
   return { usePageContext: () => pageContext }
 })
 vi.mock('~src/pages/shared/publicPageRedirect', () => ({ usePreferredPublicLanguageRedirect: () => {} }))
-vi.mock('~elements/processes/PublicPage', () => ({ default: () => <div>process-view</div> }))
+vi.mock('~elements/processes/PublicPage', () => ({
+  default: (props: Record<string, unknown>) => {
+    page.viewProps(props)
+    return <div>process-view</div>
+  },
+}))
 vi.mock('~elements/processes/PublicSummary', () => ({ default: () => <div>process-view</div> }))
 vi.mock('wagmi', () => ({ WagmiProvider: ({ children }: { children: ReactNode }) => <>{children}</> }))
 vi.mock('~src/constants/wagmi', () => ({ wagmiConfig: {} }))
@@ -49,13 +54,50 @@ const saasData = (brand: PublicProcessPageData['brand']) =>
 // Chakra writes the system's CSS variables into <style> tags in the document head (removed on unmount).
 const pageCss = () => [...document.head.querySelectorAll('style')].map((style) => style.textContent).join('\n')
 
-describe.each([
-  ['voting page', PublicProcessPage],
-  ['summary page', PublicProcessSummaryPage],
-])('%s brand', (_name, Page) => {
+describe('voting page', () => {
+  it('paints a branded vote in the organisation colour and hands the brand to the voter page', async () => {
+    const brand = { branded: true, name: 'Acme', logo: LOGO, color: '#f5d90a' }
+    page.data = saasData(brand)
+    render(<PublicProcessPage />)
+
+    expect(await screen.findByText('process-view')).toBeInTheDocument()
+    expect(page.viewProps).toHaveBeenLastCalledWith(expect.objectContaining({ id: 'p1', brand }))
+    expect(pageCss()).toMatch(/--chakra-colors-brand-500:\s*#f5d90a/)
+  }, 30000)
+
+  it('keeps Fil blue on a vote without the add-on, and no longer wraps the voter page in the public layout', async () => {
+    page.data = saasData({ branded: false, name: 'Acme' })
+    render(<PublicProcessPage />)
+
+    expect(await screen.findByText('process-view')).toBeInTheDocument()
+    expect(pageCss()).toMatch(/--chakra-colors-brand-500:\s*#1d62e9/)
+    expect(pageCss()).not.toMatch(/#f5d90a/)
+    expect(document.querySelector('header')).toBeNull()
+    expect(document.querySelector('footer')).toBeNull()
+  }, 30000)
+
+  it('keeps an archive vote in the public layout', async () => {
+    page.data = {
+      era: 'archive',
+      id: 'p1',
+      legacyElection: {},
+      legacyOrganization: {},
+      brand: { branded: false, name: 'Acme' },
+      meta: { language: 'en', alternates: [] },
+    } as unknown as PublicProcessPageData
+    render(<PublicProcessPage />)
+
+    expect(await screen.findByText('process-view')).toBeInTheDocument()
+    expect(page.viewProps).toHaveBeenLastCalledWith(expect.objectContaining({ id: 'p1', legacyElection: {} }))
+    expect(document.querySelector('header')).not.toBeNull()
+    expect(document.querySelector('footer')).not.toBeNull()
+  }, 30000)
+})
+
+describe('summary page brand', () => {
   it('paints a branded vote with the organisation logo and colour', async () => {
     page.data = saasData({ branded: true, name: 'Acme', logo: LOGO, color: '#f5d90a' })
-    render(<Page />)
+    render(<PublicProcessSummaryPage />)
 
     expect(await screen.findByText('process-view')).toBeInTheDocument()
     expect(screen.getByAltText('Acme logo')).toHaveAttribute('src', LOGO)
@@ -64,7 +106,7 @@ describe.each([
 
   it('keeps the Vocdoni mark and Fil blue on a vote without the add-on', async () => {
     page.data = saasData({ branded: false, name: 'Acme' })
-    render(<Page />)
+    render(<PublicProcessSummaryPage />)
 
     expect(await screen.findByText('process-view')).toBeInTheDocument()
     expect(screen.queryByAltText('Acme logo')).toBeNull()
@@ -76,7 +118,7 @@ describe.each([
   // The logo is in the markup the server sends, not swapped in after hydration.
   it('server-renders the organisation logo', () => {
     page.data = saasData({ branded: true, name: 'Acme', logo: LOGO, color: '#f5d90a' })
-    const html = renderToString(<Page />)
+    const html = renderToString(<PublicProcessSummaryPage />)
 
     expect(html).toContain(LOGO)
     expect(html).toContain('Acme logo')

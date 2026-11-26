@@ -18,8 +18,7 @@ export type SaasOrganizationData = {
 }
 
 /**
- * The `.account`-nested display fields the org display components (Header,
- * Process/View, CreatedBy, LegalNotice) read. Mirrors the old on-chain `Account`
+ * The `.account`-nested display fields the org display components read. Mirrors the old on-chain `Account`
  * metadata shape so those components keep working while the public/SSR org path
  * still supplies it from the vochain side.
  */
