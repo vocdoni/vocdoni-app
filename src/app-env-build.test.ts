@@ -42,6 +42,18 @@ describe('buildAppEnv', () => {
     expect(buildAppEnv({ DISABLE_ANONYMOUS_VOTING: '1' }).DISABLE_ANONYMOUS_VOTING).toBe(false)
   })
 
+  it('resolves CERT_GATEWAY_URL to an https origin, dropping anything else', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    expect(buildAppEnv({}).CERT_GATEWAY_URL).toBeUndefined()
+    expect(buildAppEnv({ CERT_GATEWAY_URL: 'https://cert.vocdoni.io:15140/' }).CERT_GATEWAY_URL).toBe(
+      'https://cert.vocdoni.io:15140'
+    )
+    expect(buildAppEnv({ CERT_GATEWAY_URL: 'http://cert.vocdoni.io:15140' }).CERT_GATEWAY_URL).toBeUndefined()
+    expect(buildAppEnv({ CERT_GATEWAY_URL: 'https://cert.vocdoni.io/v1' }).CERT_GATEWAY_URL).toBeUndefined()
+    expect(buildAppEnv({ CERT_GATEWAY_URL: 'not a url' }).CERT_GATEWAY_URL).toBeUndefined()
+    warn.mockRestore()
+  })
+
   it('resolves HOME_PROCESS_ID, treating blank values as unset', () => {
     expect(buildAppEnv({}).HOME_PROCESS_ID).toBeUndefined()
     expect(buildAppEnv({ HOME_PROCESS_ID: '   ' }).HOME_PROCESS_ID).toBeUndefined()

@@ -11,11 +11,17 @@ export type ProtectionLevel = 'unset' | 'basic' | 'good' | 'strong'
  * configuration. The one rule behind every place that grades it (the modal,
  * the sidebar summary), so the grade can never disagree with itself.
  *
- * - strong: a one-time code *and* something the voter has to know.
+ * - strong: a one-time code *and* something the voter has to know, or a
+ *   personal certificate, which proves the voter on its own.
  * - good: a one-time code alone, or several details including a private one.
  * - basic: details only, and few or public ones.
  */
-export const getProtectionLevel = (credentials: readonly string[], codeMethod: CodeMethod): ProtectionLevel => {
+export const getProtectionLevel = (
+  credentials: readonly string[],
+  codeMethod: CodeMethod,
+  certAuth = false
+): ProtectionLevel => {
+  if (certAuth) return 'strong'
   const hasCode = codeMethod !== 'none'
   const count = credentials.length
 
@@ -57,7 +63,22 @@ export const getProtectionLevelTitle = (t: TFunction, level: ProtectionLevel) =>
 // The risk said in plain words: what someone would need to vote in a member's
 // place. Facts only, no advice on which details to pick: that is the admin's
 // call, made with knowledge of their own member list.
-const getProtectionLevelDescription = (t: TFunction, level: ProtectionLevel, codeMethod: CodeMethod) => {
+const getProtectionLevelDescription = (
+  t: TFunction,
+  level: ProtectionLevel,
+  codeMethod: CodeMethod,
+  certAuth: boolean
+) => {
+  if (certAuth)
+    return codeMethod === 'none'
+      ? t('voter_auth.protection.cert', {
+          defaultValue:
+            "A personal certificate proves the voter: someone would need a member's certificate to vote in their place.",
+        })
+      : t('voter_auth.protection.cert_code', {
+          defaultValue:
+            "Someone would need a member's personal certificate and their email or phone to vote in their place.",
+        })
   switch (level) {
     case 'strong':
       return t('voter_auth.protection.strong', {
@@ -84,12 +105,14 @@ const getProtectionLevelDescription = (t: TFunction, level: ProtectionLevel, cod
 export const ProtectionMeter = ({
   credentials,
   codeMethod,
+  certAuth = false,
 }: {
   credentials: readonly string[]
   codeMethod: CodeMethod
+  certAuth?: boolean
 }) => {
   const { t } = useTranslation()
-  const level = getProtectionLevel(credentials, codeMethod)
+  const level = getProtectionLevel(credentials, codeMethod, certAuth)
   const palette = protectionLevelPalettes[level]
 
   return (
@@ -112,7 +135,7 @@ export const ProtectionMeter = ({
         </Text>
       </HStack>
       <Text textStyle='body-sm' color='fg.muted' mt='1'>
-        {getProtectionLevelDescription(t, level, codeMethod)}
+        {getProtectionLevelDescription(t, level, codeMethod, certAuth)}
       </Text>
     </Box>
   )

@@ -32,6 +32,21 @@ describe('VoterSignInPreview', () => {
     expect(preview().queryByRole('button', { name: 'Second step' })).not.toBeInTheDocument()
   })
 
+  it('shows the certificate button instead of the national ID for a certificate census', () => {
+    render(<VoterSignInPreview credentials={['nationalId']} codeMethod='email' certAuth />)
+
+    expect(preview().getByText('Sign in with a digital certificate')).toBeInTheDocument()
+    expect(preview().queryByText('National ID *')).not.toBeInTheDocument()
+    expect(preview().getByText('Email *')).toBeInTheDocument()
+  })
+
+  it('shows no button after the certificate when no code is sent', () => {
+    render(<VoterSignInPreview credentials={['nationalId']} codeMethod='none' certAuth />)
+
+    expect(preview().getByText('Sign in with a digital certificate')).toBeInTheDocument()
+    expect(preview().queryByText('Authenticate')).not.toBeInTheDocument()
+  })
+
   it('switches to the code screen', async () => {
     const user = userEvent.setup()
     render(<VoterSignInPreview credentials={[]} codeMethod='sms' />)
@@ -51,6 +66,17 @@ describe('VoterSignInPreview', () => {
     rerender(<VoterSignInPreview credentials={['memberNumber', 'name']} codeMethod='email' />)
 
     expect(preview().getByText('First Name *')).toBeInTheDocument()
+    expect(preview().queryByText('Enter the verification code')).not.toBeInTheDocument()
+  })
+
+  it('shows the certificate button again when the certificate is ticked on the second step', async () => {
+    const user = userEvent.setup()
+    const { rerender } = render(<VoterSignInPreview credentials={['nationalId']} codeMethod='email' />)
+
+    await user.click(preview().getByRole('button', { name: 'Second step' }))
+    rerender(<VoterSignInPreview credentials={['nationalId']} codeMethod='email' certAuth />)
+
+    expect(preview().getByText('Sign in with a digital certificate')).toBeInTheDocument()
     expect(preview().queryByText('Enter the verification code')).not.toBeInTheDocument()
   })
 

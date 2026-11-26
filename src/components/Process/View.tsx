@@ -37,6 +37,7 @@ import { sameAddress } from '~utils/address'
 import { BallotBoxAnimated } from '../Layout/BallotBoxAnimated'
 import { ManageProcessLink } from './ManageProcessLink'
 import ProcessAside, { VoteButton } from './Aside'
+import { CertAuthReturn } from './CertAuth/CertAuth'
 import { CreatedBy } from './CreatedBy'
 import { CrispNicknameObserver } from './CrispNickname'
 import { ElectionVideo } from './ElectionVideo'
@@ -195,6 +196,8 @@ export const ProcessView = () => {
     // the sidebar one must resume the same step.
     <CspAuthSession>
       <CrispNicknameObserver />
+      {/* once per page: the certificate gateway's answer after the redirect back */}
+      <CertAuthReturn />
       <PageSection
         size='wide'
         display='grid'

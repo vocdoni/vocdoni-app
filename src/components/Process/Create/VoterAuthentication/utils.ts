@@ -16,7 +16,11 @@ export type VoterAuthField = OrgMemberAuthField
 export type VoterAuthFormData = {
   credentials: VoterAuthField[]
   codeMethod: CodeMethod
+  certAuth: boolean
 }
+
+/** The only credential of a certificate census: the certificate proves it. */
+export const CERT_AUTH_CREDENTIALS: VoterAuthField[] = ['nationalId']
 
 /**
  * A product choice, not an API limit: past three details, voters mistype more
@@ -54,14 +58,17 @@ export const getCodeTwoFaFields = (method: CodeMethod): OrgMemberTwoFaField[] =>
 export const fromCensus = (census?: Census | null): VoterAuthFormData => ({
   credentials: (census?.credentials ?? []) as VoterAuthField[],
   codeMethod: census?.use2FA ? (census.use2FAMethod ?? 'email') : 'none',
+  certAuth: !!census?.certAuth,
 })
 
-export const toCensus = ({ credentials, codeMethod }: VoterAuthFormData): Census => ({
-  credentials: [...credentials],
+export const toCensus = ({ credentials, codeMethod, certAuth }: VoterAuthFormData): Census => ({
+  credentials: certAuth ? [...CERT_AUTH_CREDENTIALS] : [...credentials],
   use2FA: codeMethod !== 'none',
   // The stored shape always carries a method; it only means something while
   // `use2FA` is on.
   use2FAMethod: codeMethod === 'none' ? 'email' : codeMethod,
+  // Only stored when on, so a census without it keeps its shape.
+  ...(certAuth && { certAuth: true }),
 })
 
 export const hasAuthConfig = ({
@@ -78,6 +85,6 @@ export const hasAuthConfig = ({
  * code method is irrelevant while no code is sent.
  */
 export const censusConfigSignature = (census: Census) => {
-  const { credentials, codeMethod } = fromCensus(census)
-  return JSON.stringify([[...credentials].sort(), codeMethod])
+  const { credentials, codeMethod, certAuth } = fromCensus(census)
+  return JSON.stringify([[...credentials].sort(), codeMethod, certAuth])
 }
