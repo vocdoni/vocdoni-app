@@ -811,7 +811,7 @@ const main = async () => {
     }
 
     for (const { route, width, mode, states } of jobs) {
-      if (cleaning) return // interrupted: the signal handler is stopping everything
+      if (interrupted) return // the signal handler is stopping everything
       const t0 = Date.now()
       const base = { route: route.slug, viewport: width, mode }
       let visited
@@ -883,7 +883,7 @@ const main = async () => {
       await visited.context.close()
     }
 
-    if (cleaning) return
+    if (interrupted) return
     const reloads = app
       ? app
           .log()
