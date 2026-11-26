@@ -127,10 +127,15 @@ export const summarize = (leaks) => {
 const readStressSpec = async () => {
   // Loaded here, not at import: the unit tests import this module under jsdom, where esbuild (vite's) refuses to load.
   const { createServer } = await import('vite')
+  const { default: tsconfigPaths } = await import('vite-tsconfig-paths')
+  // configFile: false keeps vite.config.ts (the vike plugin, and its .env merge) out of the snapshot's process;
+  // the theme's `~` imports only need the tsconfig paths.
   const server = await createServer({
+    configFile: false,
     root: ROOT,
     appType: 'custom',
     logLevel: 'error',
+    plugins: [tsconfigPaths()],
     server: { middlewareMode: true, hmr: false, watch: null },
     optimizeDeps: { noDiscovery: true, include: [] },
   })
