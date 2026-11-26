@@ -12,6 +12,17 @@ const ElectionResults = electionComponents.ElectionResults!
 
 const withStatus = (status: string | null) => setReactProvidersMock({ useElection: () => mockUseElection({ status }) })
 
+// The library passes the questions in the election's order, so the first question here is `q1`.
+const withResults = (status: string, finalResults: boolean) =>
+  setReactProvidersMock({
+    useElection: () =>
+      mockUseElection({
+        status,
+        election: { questions: [{ id: 'q1' }] },
+        results: { questions: [{ questionId: 'q1', finalResults }] },
+      }),
+  })
+
 const question = (votes: [string, string][]) => ({
   title: 'Question',
   choices: votes.map(([count, percent], index) => ({ title: `Choice ${index + 1}`, votes: count, percent })),
@@ -82,8 +93,24 @@ describe('electionComponents.ElectionResults', () => {
       expect(rows()).toHaveLength(0)
     })
 
-    it('highlights the leading choice, without a tick, and dims the others once the vote has ended', () => {
-      withStatus('ENDED')
+    it('keeps every bar in full ink at the end of the vote until the tally is final', () => {
+      withResults('ENDED', false)
+      render(
+        <ElectionResults
+          questions={[
+            question([
+              ['7', '70%'],
+              ['3', '30%'],
+            ]),
+          ]}
+        />
+      )
+
+      expect(rows()).toHaveLength(0)
+    })
+
+    it('highlights the leading choice, without a tick, and dims the others once the tally is final', () => {
+      withResults('ENDED', true)
       render(
         <ElectionResults
           questions={[

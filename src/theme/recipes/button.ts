@@ -236,6 +236,8 @@ const floating = defineStyle({
   // Ink, not accent: Fil keeps blue for the one primary action of a screen.
   bg: 'bg.inverted',
   color: 'fg.inverted',
+  // `solid` paints its hover fill while open; the chat keeps the ink.
+  _expanded: { bg: 'bg.inverted' },
   w: 'control.floating',
   h: 'control.floating',
   borderRadius: 'full',

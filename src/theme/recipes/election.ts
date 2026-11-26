@@ -256,7 +256,9 @@ export const QuestionChoice = defineSlotRecipe({
       },
       card: {
         wrapper: {
+          // The minimum height keeps a one-line option as tall as before; the padding gives a wrapped one room.
           minH: '16',
+          py: '3',
           px: '4.5',
           borderRadius: 'xl',
           borderWidth: 'hairline',
@@ -388,6 +390,18 @@ export const QuestionsConfirmation = defineSlotRecipe({
     },
     title: {
       fontWeight: 'semibold',
+    },
+    // The same success disc as `Voted`, at the size of a card's title line.
+    check: {
+      boxSize: '5',
+      mt: '0.5',
+      flexShrink: '0',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 'full',
+      bg: 'status.success.mark',
+      color: 'status.success.contrast',
     },
   },
 })

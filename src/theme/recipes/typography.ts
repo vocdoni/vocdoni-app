@@ -55,6 +55,7 @@ export const link = defineRecipe({
         color: 'accent.fg',
         _hover: {
           color: 'accent.fg.hover',
+          textDecoration: 'none',
         },
       },
       unstyled: {

@@ -52,6 +52,12 @@ describe('button', () => {
     expect(outline.boxShadow).toBe('var(--chakra-shadows-shadow-control)')
   })
 
+  it('keeps the support launcher in ink while its chat is open', () => {
+    const floating = layer(button({ variant: 'floating' })) as Record<string, any>
+    const expanded = Object.entries(floating).find(([key]) => key.includes('expanded'))?.[1]
+    expect(expanded?.background).toBe('var(--chakra-colors-bg-inverted)')
+  })
+
   it('hovers the secondary and the discreet look one step below the selected fill', () => {
     for (const variant of ['outline', 'ghost'] as const) {
       const styles = JSON.stringify(layer(button({ variant })))

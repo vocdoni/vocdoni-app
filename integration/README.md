@@ -3,12 +3,14 @@
 A disposable, self-contained Vocdoni backend for local development and for the
 end-to-end suite in [`e2e/`](../e2e/README.md):
 
-| Service   | What it is                            | Published on            |
-| --------- | ------------------------------------- | ----------------------- |
-| `mongo`   | saas-backend's database               | —                       |
-| `vocone`  | single-node Vochain (`voconed`)       | —                       |
-| `api`     | `ghcr.io/vocdoni/saas-backend:main`   | `localhost:8080`        |
-| `mailhog` | SMTP sink with a readable HTTP inbox  | `localhost:8025`        |
+| Service          | What it is                                     | Published on     |
+| ---------------- | ---------------------------------------------- | ---------------- |
+| `mongo`          | saas-backend's database                        | —                |
+| `postgres`       | vocone's indexer database (`vocone_pg`)        | —                |
+| `vocone-migrate` | one-shot: brings the indexer schema up to date | —                |
+| `vocone`         | single-node Vochain (`voconed`)                | —                |
+| `api`            | `ghcr.io/vocdoni/saas-backend:main`            | `localhost:8080` |
+| `mailhog`        | SMTP sink with a readable HTTP inbox           | `localhost:8025` |
 
 The app under test is **not** part of the stack — it runs on the host
 (`pnpm serve:ssr`), so the suite exercises the same server bundle we ship.
@@ -27,6 +29,11 @@ the inbox. `run` is one-shot and stops the containers when it finishes, *unless*
 the suite failed (the logs and inbox are the evidence you need) or
 `INTEGRATION_KEEP_STACK` is set. `down` is the explicit full clean.
 
+**After pulling the Postgres indexer change**, run `scripts/integration-stack.sh down`
+once. A `vocone_run` volume from before it pairs with the new, empty `vocone_pg`
+indexer and shows missing blocks. The two volumes must be reset together, so
+`down` (which drops both) is the only safe reset.
+
 Ports are overridable with `INTEGRATION_HOST_PORT`, `INTEGRATION_MAILHOG_PORT`
 and `INTEGRATION_APP_PORT`. Re-running `up` against a stack that is already
 running just reuses it.
@@ -37,7 +44,7 @@ To point the app at it:
 SAAS_URL=http://localhost:8080 pnpm build && pnpm serve:ssr
 ```
 
-The stack runs the `:main` images of `vochain-sequencer` and `saas-backend` and the
+The stack runs the `:main` images of `vocdoni-sequencer` and `saas-backend` and the
 npm `@vocdoni/*` packages from the lockfile. To run against unmerged upstream
 commits instead, see [Pinning upstream commits](#pinning-upstream-commits).
 
@@ -96,8 +103,9 @@ are refused before anything starts.
   filters by org metadata.
 
 Switching modes on a running stack: `up` reconciles it. Default mode removes an
-orphaned `stripe-listen`. Mongo keeps its data in an anonymous volume: `run` keeps
-it, and `down` (`down -v`) drops it.
+orphaned `stripe-listen`. Mongo keeps its data in an anonymous volume, and vocone
+keeps its chain data in `vocone_run` and its indexer in `vocone_pg`: `run` keeps
+them all, and `down` (`down -v`) drops them.
 
 ## Pinning upstream commits
 
@@ -105,7 +113,7 @@ Comment on a pull request to run the suite against upstream built from source.
 Each key is optional:
 
 ```text
-/integration vochain-sequencer=<ref> saas-backend=<ref> integrator-sdk=<ref>
+/integration vocdoni-sequencer=<ref> saas-backend=<ref> integrator-sdk=<ref>
 ```
 
 - A bare `/integration` is an ordinary run: `:main` images and the npm packages
@@ -115,8 +123,11 @@ Each key is optional:
   the recommended form. `saas-backend=#760` still works. GitHub autolinks `#760` to
   this repo's issue, and copying a rendered comment pastes links the parser rejects.
   A branch or tag named only 1-6 digits cannot be pinned by name.
-- `vochain-sequencer` and `saas-backend` are built into Docker images and the stack
+- `vocdoni-sequencer` and `saas-backend` are built into Docker images and the stack
   runs those instead of `:main`.
+- A `vocdoni-sequencer` pin must include commit `62b1ae30` (the `migrate` subcommand)
+  or be later. An older build ignores `migrate` and runs a node forever, so
+  `vocone-migrate` times out after 120s and `up` fails.
 - `integrator-sdk` is built and packed. Its `@vocdoni/*` packages are installed in
   place of the npm versions, transitive copies included, through pnpm overrides.
   The overrides are added to `pnpm-workspace.yaml` for that run only, so nothing
@@ -154,7 +165,7 @@ Each key is optional:
 
 ### Actions tab
 
-The "Run workflow" form takes `vochain_sequencer_ref`, `saas_backend_ref` (same forms
+The "Run workflow" form takes `vocdoni_sequencer_ref`, `saas_backend_ref` (same forms
 as above) and `integrator_sdk_ref`: the SDK commit, branch, tag or `#PR` to build
 and install. Leave `integrator_sdk_ref` empty for the npm packages from the
 lockfile. The branch picked in "Use workflow from" is the app under test.
@@ -162,17 +173,17 @@ lockfile. The branch picked in "Use workflow from" is the app under test.
 Locally, build an image and point the stack at it:
 
 ```bash
-out="$(scripts/integration-build-image.sh vochain-sequencer <ref>)"
+out="$(scripts/integration-build-image.sh vocdoni-sequencer <ref>)"
 image="$(sed -n 's/^image=//p' <<<"$out")"
-[ -n "$image" ] && VOCHAIN_SEQUENCER_IMAGE="$image" pnpm test:e2e:stack
+[ -n "$image" ] && VOCDONI_SEQUENCER_IMAGE="$image" pnpm test:e2e:stack
 ```
 
 Use `SAAS_BACKEND_IMAGE` and `saas-backend` the same way. `up` prints the two
 images it is using, so a run shows what it tested.
 
-Both vochain-sequencer and saas-backend are private, so building them locally
+Both vocdoni-sequencer and saas-backend are private, so building them locally
 fetches over SSH and needs your own GitHub SSH access. CI uses the read-only
-`VOCHAIN_SEQUENCER_DEPLOY_KEY` and `SAAS_BACKEND_DEPLOY_KEY` deploy keys.
+`VOCDONI_SEQUENCER_DEPLOY_KEY` and `SAAS_BACKEND_DEPLOY_KEY` deploy keys.
 
 Locally, pack the SDK and install it in place of the npm packages:
 
@@ -206,14 +217,14 @@ what lets `VOCDONI_SMTPSERVER=127.0.0.1` work with no credentials at all.
 
 `docker-compose.ci.yml` is **vendored from integrator-sdk's**
 `integration/docker-compose.ci.yml`. Both track the moving `:main` tags of
-`saas-backend` and `vochain-sequencer`, so when upstream changes its startup
+`saas-backend` and `vocdoni-sequencer`, so when upstream changes its startup
 contract, re-sync from there rather than rediscovering the fix — the comments in
 that file encode real failure modes (notably the sizing of vocone's healthcheck
 window; **do not tighten it**).
 
 The CI workflow prints the resolved image digests on every run, so a job that
 goes red with no change in this repo can be reproduced locally. Locally, the
-`VOCHAIN_SEQUENCER_IMAGE` and `SAAS_BACKEND_IMAGE` environment variables override the
+`VOCDONI_SEQUENCER_IMAGE` and `SAAS_BACKEND_IMAGE` environment variables override the
 `:main` images (see [Pinning upstream commits](#pinning-upstream-commits)).
 
 PRs into `stage` or `main` also run against `saas-backend:main`, the only tag

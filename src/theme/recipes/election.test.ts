@@ -1,4 +1,4 @@
-import { ElectionResults, QuestionChoice, QuestionsTypeBadge, Voted } from './election'
+import { ElectionResults, QuestionChoice, QuestionsConfirmation, QuestionsTypeBadge, Voted } from './election'
 import { link } from './typography'
 
 describe('ElectionResults recipe', () => {
@@ -27,6 +27,10 @@ describe('QuestionChoice recipe', () => {
     expect(checked.bg).toBe('accent.subtle')
   })
 
+  it('pads the option vertically, so a wrapped label or description does not touch the border', () => {
+    expect(card).toMatchObject({ minH: '16', py: '3' })
+  })
+
   it('keeps the keyboard focus visible on the whole option', () => {
     expect(card['&:has(input:focus-visible)'].outlineStyle).toBe('solid')
   })
@@ -36,5 +40,15 @@ describe('QuestionsTypeBadge recipe', () => {
   it('is a ringed tag, not a filled pill', () => {
     expect(QuestionsTypeBadge.base.box.borderColor).toBe('border.emphasized')
     expect(QuestionsTypeBadge.base.box.bg).toBeUndefined()
+  })
+})
+
+describe('QuestionsConfirmation recipe', () => {
+  it('draws the confirmed answer as the success mark disc', () => {
+    expect(QuestionsConfirmation.base.check).toMatchObject({
+      borderRadius: 'full',
+      bg: 'status.success.mark',
+      color: 'status.success.contrast',
+    })
   })
 })

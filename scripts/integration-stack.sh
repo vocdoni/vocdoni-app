@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Manages the disposable mongo + vocone + saas-backend + MailHog stack that the
-# Playwright end-to-end suite in e2e/ runs against. Used identically by a
-# developer's laptop and by .github/workflows/integration.yml.
+# Manages the disposable mongo + vocone (with its Postgres indexer) + saas-backend +
+# MailHog stack that the Playwright end-to-end suite in e2e/ runs against. Used
+# identically by a developer's laptop and by .github/workflows/integration.yml.
 #
 # Adapted from integrator-sdk's scripts/integration-stack.sh. The notable
 # difference: there is no integrator-key bootstrap here. This suite registers its
@@ -204,8 +204,12 @@ cmd_up() {
     derive_stripe_webhook_secret
   fi
 
+  if [ -n "${VOCHAIN_SEQUENCER_IMAGE:-}" ] && [ -z "${VOCDONI_SEQUENCER_IMAGE:-}" ]; then
+    echo "WARNING: VOCHAIN_SEQUENCER_IMAGE was renamed to VOCDONI_SEQUENCER_IMAGE; using its value for now. Rename it in your environment." >&2
+    export VOCDONI_SEQUENCER_IMAGE="$VOCHAIN_SEQUENCER_IMAGE"
+  fi
   echo "== starting stack" >&2
-  echo "== images: ${VOCHAIN_SEQUENCER_IMAGE:-ghcr.io/vocdoni/vochain-sequencer:main} ${SAAS_BACKEND_IMAGE:-ghcr.io/vocdoni/saas-backend:main}" >&2
+  echo "== images: ${VOCDONI_SEQUENCER_IMAGE:-ghcr.io/vocdoni/vocdoni-sequencer:main} ${SAAS_BACKEND_IMAGE:-ghcr.io/vocdoni/saas-backend:main}" >&2
   if [ -n "$STRIPE_MODE" ]; then
     echo "== billing: Stripe test sandbox" >&2
   fi
@@ -257,7 +261,7 @@ cmd_logs() {
     exit 1
   fi
   mkdir -p "$dir"
-  local services=(api vocone mongo mailhog)
+  local services=(api vocone vocone-migrate postgres mongo mailhog)
   if [ -n "$STRIPE_MODE" ]; then
     services+=(stripe-listen)
   fi
@@ -295,14 +299,15 @@ cmd_run() {
   fi
 
   # `run` is the one-shot command, so it cleans up after itself rather than
-  # leaving four containers running on a laptop. Two deliberate exceptions:
+  # leaving its containers running on a laptop. Two deliberate exceptions:
   #
   #  - On failure the stack stays UP. The inbox and the container logs are the
   #    evidence you need to diagnose a failed run, and tearing them down would
   #    destroy exactly that.
-  #  - It stops with `compose down`, NOT `down -v`. Keeping the volume preserves
-  #    vocone's chain data across local runs. `scripts/integration-stack.sh down`
-  #    is the explicit full clean, and is what CI uses.
+  #  - It stops with `compose down`, NOT `down -v`. Keeping the volumes preserves
+  #    vocone's chain data and indexer (`vocone_run`, `vocone_pg`) across local
+  #    runs. `scripts/integration-stack.sh down` is the explicit full clean, and is
+  #    what CI uses.
   if [ -n "${INTEGRATION_KEEP_STACK:-}" ]; then
     echo "== INTEGRATION_KEEP_STACK set — leaving the stack up. Inbox: $INTEGRATION_MAILHOG_URL" >&2
   elif [ "$status" -ne 0 ]; then
