@@ -74,7 +74,7 @@ const NotIntegratorNotice = () => {
 
       <ConfirmDialog
         layout='inline'
-        destructive={false}
+        tone='primary'
         title={t('integrators.create_account.title', { defaultValue: 'Create a free integrator account?' })}
         description={t('integrators.create_account.description', {
           defaultValue:

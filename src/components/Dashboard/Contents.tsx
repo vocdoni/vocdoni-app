@@ -1,10 +1,12 @@
-import { Box, BoxProps, Card, Heading as CHeading, Flex, FlexProps, HeadingProps } from '@chakra-ui/react'
+import { Box, BoxProps, Card, chakra, Heading as CHeading, HeadingProps } from '@chakra-ui/react'
+import { DashboardContents as dashboardContentsRecipe } from '~theme/recipes/dashboard'
 
 export const DashboardBox = (props: Card.RootProps) => (
   <Card.Root variant='section' size='sm' justifyContent='space-between' gap='4' {...props} />
 )
 
-export const DashboardContents = (props: FlexProps) => <Flex flexDirection='column' w='full' p='6' {...props} />
+// A page's column, with the dashboard's page gutters; style props passed to it override the recipe's.
+export const DashboardContents = chakra('div', dashboardContentsRecipe)
 
 // A block, not the card's flex column: its content runs inline text and selects together.
 export const DashboardSection = (props: Card.RootProps) => (

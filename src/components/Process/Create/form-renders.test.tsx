@@ -94,10 +94,6 @@ vi.mock('./VoterAuthentication/VoterAuthDialogContext', async (importOriginal) =
   VoterAuthDialogProvider: ({ children }: { children: React.ReactNode }) => children,
 }))
 
-vi.mock('~elements/dashboard/processes/drafts', () => ({
-  useDeleteDraft: () => ({}),
-}))
-
 vi.mock('~src/providers/ApiClientProvider', async (importOriginal) => ({
   ...(await importOriginal<typeof import('~src/providers/ApiClientProvider')>()),
   useApiClient: () => ({ client: mockApiClient }),

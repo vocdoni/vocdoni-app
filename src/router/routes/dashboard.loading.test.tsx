@@ -62,14 +62,12 @@ vi.mock('~elements/dashboard/profile', () => {
   // Never resolves: the cold-load test only checks when the download starts.
   return new Promise(() => undefined)
 })
+// The votes list is one page; its filter routes render nothing of their own
 vi.mock('~elements/dashboard/processes', async () => {
-  const { Outlet } = await import('react-router')
-  return { default: () => <Outlet /> }
-})
-vi.mock('~elements/dashboard/processes/all', async () => {
   await pages.allProcesses.promise
   return { default: () => <div>All votes page</div> }
 })
+vi.mock('~components/Process/Dashboard/VoteSummary', () => ({ VoteSummary: () => null }))
 vi.mock('~elements/dashboard/processes/view', async () => {
   const { useLoaderData } = await import('react-router')
   return {
@@ -142,7 +140,11 @@ describe('admin app loading states', () => {
   it('opens a process a list already fetched from the cache, without fetching it again', async () => {
     mockSession(true)
     const queryClient = createTestQueryClient()
-    queryClient.setQueryData(QueryKeys.election.process('0xabc'), { id: '0xabc', title: 'From the list' })
+    queryClient.setQueryData(QueryKeys.election.process('0xabc'), {
+      id: '0xabc',
+      title: 'From the list',
+      published: true,
+    })
 
     await renderAdmin('/admin/process/0xabc', queryClient)
 
@@ -152,11 +154,11 @@ describe('admin app loading states', () => {
 
   it('refreshes in the background a process the list fetched a while ago', async () => {
     mockSession(true)
-    getElection.mockResolvedValue({ id: '0xold', title: 'Refreshed' })
+    getElection.mockResolvedValue({ id: '0xold', title: 'Refreshed', published: true })
     const queryClient = createTestQueryClient()
     queryClient.setQueryData(
       QueryKeys.election.process('0xold'),
-      { id: '0xold', title: 'From the list' },
+      { id: '0xold', title: 'From the list', published: true },
       { updatedAt: Date.now() - 60_000 }
     )
 
@@ -164,7 +166,11 @@ describe('admin app loading states', () => {
 
     expect(await screen.findByText('Process From the list')).toBeInTheDocument()
     await waitFor(() =>
-      expect(queryClient.getQueryData(QueryKeys.election.process('0xold'))).toEqual({ id: '0xold', title: 'Refreshed' })
+      expect(queryClient.getQueryData(QueryKeys.election.process('0xold'))).toEqual({
+        id: '0xold',
+        title: 'Refreshed',
+        published: true,
+      })
     )
     expect(getElection).toHaveBeenCalledTimes(1)
   })
@@ -182,7 +188,7 @@ describe('admin app loading states', () => {
 
   it('fetches a process the cache does not hold, once, and keeps it for the view', async () => {
     mockSession(true)
-    getElection.mockResolvedValue({ id: '0xdef', title: 'Fetched' })
+    getElection.mockResolvedValue({ id: '0xdef', title: 'Fetched', published: true })
     const queryClient = createTestQueryClient()
 
     await renderAdmin('/admin/process/0xdef', queryClient)
@@ -190,6 +196,10 @@ describe('admin app loading states', () => {
     expect(await screen.findByText('Process Fetched')).toBeInTheDocument()
     expect(getElection).toHaveBeenCalledTimes(1)
     expect(getElection).toHaveBeenCalledWith('0xdef')
-    expect(queryClient.getQueryData(QueryKeys.election.process('0xdef'))).toEqual({ id: '0xdef', title: 'Fetched' })
+    expect(queryClient.getQueryData(QueryKeys.election.process('0xdef'))).toEqual({
+      id: '0xdef',
+      title: 'Fetched',
+      published: true,
+    })
   })
 })

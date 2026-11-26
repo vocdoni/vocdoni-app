@@ -9,7 +9,12 @@ describe('Fil container recipes', () => {
   it('draws status as a dot and a word, with no fill', () => {
     const status = system.sva(system.getSlotRecipe('status'))
     const live = status({ size: 'sm', tone: 'success' })
-    expect(layer(live.root)).toMatchObject({ color: 'var(--chakra-colors-status-success-fg)', lineHeight: '1.25rem' })
+    // The running line on a touch screen, the 20px line of the guide's state label from `lg`.
+    expect(layer(live.root)).toMatchObject({
+      color: 'var(--chakra-colors-status-success-fg)',
+      lineHeight: 'var(--chakra-line-heights-moderate)',
+    })
+    expect(text(live.root)).toContain('"lineHeight":"1.25rem"')
     expect(layer(live.indicator)).toMatchObject({
       width: 'var(--chakra-sizes-dot)',
       height: 'var(--chakra-sizes-dot)',

@@ -2,10 +2,14 @@ import { defineRecipe, RecipeDefinition, SlotRecipeDefinition } from '@chakra-ui
 import { Alert } from './alert'
 import { Avatar } from './avatar'
 import { Badge, Code } from './badge'
+import { BallotPaper } from './ballotPaper'
 import { Button } from './button'
 import { Card } from './card'
+import { ChromeBar } from './chrome'
 import { checkbox } from './checkbox'
+import { CensusRuler } from './censusRuler'
 import { Dialog } from './dialog'
+import { DataList } from './dataList'
 import { Drawer } from './drawer'
 import {
   ElectionDescription,
@@ -24,6 +28,7 @@ import {
 } from './election'
 import { EmptyState } from './emptyState'
 import { Field } from './field'
+import { Footnote } from './footnote'
 import { input, switchRecipe, textarea } from './form'
 import { listSlotRecipe } from './list'
 import { Menu } from './menu'
@@ -33,8 +38,10 @@ import { Pagination, PaginationButton } from './pagination'
 import { Popover } from './popover'
 import { Progress } from './progress'
 import { PublishReview } from './publishReview'
+import { QuestionDock } from './questionDock'
 import { RadioCard } from './radioCard'
 import { RadioGroup } from './radioGroup'
+import { DashedRule } from './rule'
 import { SegmentGroup } from './segmentGroup'
 import { Stat } from './stat'
 import { Status } from './status'
@@ -42,6 +49,7 @@ import { StepMark } from './stepMark'
 import { Table } from './table'
 import { Tabs } from './tabs'
 import { Tag } from './tag'
+import { TimelineMark, TimelineThread } from './timeline'
 import { Toast } from './toast'
 import { Tooltip } from './tooltip'
 import { heading, link, text } from './typography'
@@ -69,13 +77,21 @@ export const recipes: Record<string, RecipeDefinition> = {
   OrganizationName,
   PaginationButton,
   stepMark: StepMark,
+  chromeBar: ChromeBar,
+  dashedRule: DashedRule,
+  footnote: Footnote,
+  timelineMark: TimelineMark,
+  timelineThread: TimelineThread,
 }
 
 export const slotRecipes: Record<string, SlotRecipeDefinition> = {
   alert: Alert,
   avatar: Avatar,
+  ballotPaper: BallotPaper,
   card: Card,
+  censusRuler: CensusRuler,
   checkbox,
+  dataList: DataList,
   dialog: Dialog,
   drawer: Drawer,
   emptyState: EmptyState,
@@ -86,6 +102,7 @@ export const slotRecipes: Record<string, SlotRecipeDefinition> = {
   popover: Popover,
   progress: Progress,
   publishReview: PublishReview,
+  questionDock: QuestionDock,
   radioCard: RadioCard,
   radioGroup: RadioGroup,
   segmentGroup: SegmentGroup,

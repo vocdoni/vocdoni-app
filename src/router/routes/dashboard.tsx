@@ -2,7 +2,7 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { Fragment } from 'react'
 import { useApiClient } from '~src/providers/ApiClientProvider'
-import { generatePath, Params, redirect, replace, ShouldRevalidateFunctionArgs } from 'react-router'
+import { createSearchParams, generatePath, Params, redirect, replace, ShouldRevalidateFunctionArgs } from 'react-router'
 import { PageSkeleton } from '~components/ui/PageSkeleton'
 import Error from '~elements/Error'
 import LayoutDashboard from '~elements/LayoutDashboard'
@@ -18,10 +18,9 @@ import { SuspenseLoader } from '../SuspenseLoader'
 // elements/pages, loaded through route `lazy` (see lazyPage)
 const DashboardCreateOrg = () => import('~elements/dashboard/organization/create')
 const DashboardProcesses = () => import('~elements/dashboard/processes')
-const AllProcesses = () => import('~elements/dashboard/processes/all')
-const EndedProcesses = () => import('~elements/dashboard/processes/ended')
-const Drafts = () => import('~elements/dashboard/processes/drafts')
 const DashboardProcessView = () => import('~elements/dashboard/processes/view')
+const VoteSummary = () => import('~components/Process/Dashboard/VoteSummary').then((m) => ({ default: m.VoteSummary }))
+const VoteBallot = () => import('~components/Process/Dashboard/VoteBallot').then((m) => ({ default: m.VoteBallot }))
 const ProcessCreate = () => import('~elements/dashboard/processes/create')
 const OrganizationEdit = () => import('~components/Organization/Dashboard/Organization')
 const WalletPanel = () => import('~components/Wallet/Wallet')
@@ -118,9 +117,11 @@ export const useDashboardRoutes = () => {
                         // fetched renders at once instead of waiting for a request.
                         loader: async ({ params }: { params: Params<string> }) => {
                           const id = params.id!
-                          const election = await queryClient.ensureQueryData({
-                            queryKey: QueryKeys.election.process(id),
-                            queryFn: () => client.elections.get(id),
+                          const queryKey = QueryKeys.election.process(id)
+                          const queryFn = () => client.elections.get(id)
+                          let election = await queryClient.ensureQueryData({
+                            queryKey,
+                            queryFn,
                             // The navigation waits for this: fail at once, like the direct call it
                             // replaces, not after the app default's three retries
                             retry: false,
@@ -129,6 +130,16 @@ export const useDashboardRoutes = () => {
                             revalidateIfStale: true,
                             staleTime: 5_000,
                           })
+                          // A vote never goes back to a draft, so a cached draft may be out of date (published
+                          // since): read it again before sending it to the editor.
+                          if (!election.published) {
+                            election = await queryClient.fetchQuery({ queryKey, queryFn, retry: false, staleTime: 0 })
+                          }
+                          // A draft is not a running vote: it opens in the editor, as its list row does.
+                          if (!election.published) {
+                            const search = createSearchParams({ draftId: election.id }).toString()
+                            return redirect(`${generatePath(Routes.processes.create)}?${search}`)
+                          }
                           // The view keys the provider by the API's id: seed that too if the URL spells it differently
                           if (election.id !== id) {
                             queryClient.setQueryData(QueryKeys.election.process(election.id), election)
@@ -138,9 +149,15 @@ export const useDashboardRoutes = () => {
                         shouldRevalidate: shouldRevalidateDashboardProcess,
                         errorElement: <Error />,
                         children: [
-                          { index: true, element: <Fragment /> },
-                          { path: Routes.dashboard.processResults, element: <Fragment /> },
+                          { index: true, lazy: lazyPage(VoteSummary) },
+                          { path: Routes.dashboard.processBallot, lazy: lazyPage(VoteBallot) },
                         ],
+                      },
+                      // The Results tab is retired (R31): its results are read on Gestió. A sibling, so the redirect
+                      // does not wait for the process read.
+                      {
+                        path: Routes.dashboard.processResults,
+                        ...redirectLegacyPath(Routes.dashboard.process),
                       },
                       {
                         path: Routes.dashboard.census.checkout,
@@ -159,17 +176,14 @@ export const useDashboardRoutes = () => {
                           // Index redirects run as loaders, so a menu link to a section is one
                           // navigation: no empty section committed before its first tab loads.
                           indexRedirect(generatePath(Routes.dashboard.processes.all)),
-                          {
-                            path: Routes.dashboard.processes.all,
-                            lazy: lazyPage(AllProcesses),
-                          },
+                          // The list is one page (the Outlet's parent); each filter path only selects the filter.
+                          ...(['all', 'live', 'paused', 'ready', 'drafts', 'closed'] as const).map((filter) => ({
+                            path: Routes.dashboard.processes[filter],
+                            element: <Fragment />,
+                          })),
                           {
                             path: Routes.dashboard.processes.ended,
-                            lazy: lazyPage(EndedProcesses),
-                          },
-                          {
-                            path: Routes.dashboard.processes.drafts,
-                            lazy: lazyPage(Drafts),
+                            ...redirectLegacyPath(Routes.dashboard.processes.closed),
                           },
                         ],
 

@@ -1,0 +1,115 @@
+import { Button } from '@chakra-ui/react'
+import { useTranslation } from 'react-i18next'
+import type { QuestionStatusChange } from '~queries/question-status'
+
+/** What the question buttons share: one status change at a time, and the clicked button shows progress. */
+export type QuestionControls = {
+  busy: boolean
+  isLoading: (questionId: string, status: QuestionStatusChange) => boolean
+  run: (questionId: string, status: 'ready') => void
+  askClose: (questionId: string) => void
+  /** A button's accessible name: its visible label, then the question it acts on (several rows show "Open"). */
+  name: (questionId: string, action: string) => string
+}
+
+type OpenButtonProps = {
+  questionId: string
+  controls: QuestionControls
+  /** The next step: the primary button. */
+  primary: boolean
+  /**
+   * Another question is open or paused (R29), or the vote has not started: the boards' `off` button, which does
+   * nothing. `aria-disabled` keeps it focusable, and `reasonId` names the note that says why.
+   */
+  off?: boolean
+  reasonId?: string
+  /** `md` in the phone's bottom bar, where it is a full touch button. */
+  size?: 'row' | 'md'
+}
+
+/** The board's 28px "Open" (`.btn.s28`), 40px below `lg`. */
+export const OpenButton = ({ questionId, controls, primary, off = false, reasonId, size = 'row' }: OpenButtonProps) => {
+  const { t } = useTranslation()
+  const unavailable = off
+  const variant = unavailable ? 'off' : primary ? 'solid' : 'outline'
+  const label = t('votes.manage.open', { defaultValue: 'Open' })
+  return (
+    <Button
+      aria-label={controls.name(questionId, label)}
+      variant={variant}
+      data-variant={variant}
+      size={size}
+      flex={size === 'md' ? '1' : undefined}
+      flexShrink={0}
+      loading={controls.isLoading(questionId, 'ready')}
+      disabled={!unavailable && controls.busy}
+      aria-disabled={unavailable || undefined}
+      aria-describedby={unavailable ? reasonId : undefined}
+      onClick={unavailable ? undefined : () => controls.run(questionId, 'ready')}
+    >
+      {label}
+    </Button>
+  )
+}
+
+type ActiveButtonsProps = {
+  questionId: string
+  controls: QuestionControls
+  paused: boolean
+  /** A paused question whose Open is the next step. */
+  openPrimary: boolean
+  /** Another question is open (R29): Open is the `off` button, described by `reasonId`. */
+  openOff?: boolean
+  reasonId?: string
+}
+
+/**
+ * Open: Close (primary). Paused (another question is open meanwhile): Open (primary when it is the next step) and
+ * Close. The vote's own pause is the header's "Pause the vote": a question has no pause button of its own.
+ */
+export const ActiveButtons = ({
+  questionId,
+  controls,
+  paused,
+  openPrimary,
+  openOff = false,
+  reasonId,
+}: ActiveButtonsProps) => {
+  const { t } = useTranslation()
+  const grow = { base: '1', md: 'none' } as const
+  const open = openOff ? 'off' : openPrimary ? 'solid' : 'outline'
+  const close = paused ? 'outline' : 'solid'
+  const openLabel = t('votes.manage.open', { defaultValue: 'Open' })
+  const closeLabel = t('votes.manage.close', { defaultValue: 'Close' })
+  // `data-variant` says which one is the primary (tests and the e2e suite).
+  return (
+    <>
+      {paused && (
+        <Button
+          aria-label={controls.name(questionId, openLabel)}
+          variant={open}
+          data-variant={open}
+          flex={grow}
+          loading={controls.isLoading(questionId, 'ready')}
+          disabled={!openOff && controls.busy}
+          aria-disabled={openOff || undefined}
+          aria-describedby={openOff ? reasonId : undefined}
+          onClick={openOff ? undefined : () => controls.run(questionId, 'ready')}
+        >
+          {openLabel}
+        </Button>
+      )}
+      <Button
+        aria-label={controls.name(questionId, closeLabel)}
+        variant={close}
+        data-variant={close}
+        flex={grow}
+        loading={controls.isLoading(questionId, 'ended')}
+        disabled={controls.busy}
+        onClick={() => controls.askClose(questionId)}
+      >
+        {closeLabel}
+      </Button>
+    </>
+  )
+}

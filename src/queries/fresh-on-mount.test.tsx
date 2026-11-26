@@ -4,10 +4,10 @@ import { createElement, type ReactNode } from 'react'
 import { createAppQueryClient } from '~src/query-client'
 import { QueryKeys } from './keys'
 import { useDraft } from '~components/Process/Create'
-import { useDrafts } from '~src/elements/dashboard/processes/drafts'
 import { useIntegratorInfo, useManagedOrganizations } from './integrators'
 import { useImportJobProgress } from './members'
 import { useProcessPrice } from './process-price'
+import { useOrganizationVotes } from './votes'
 import { useWallet } from './wallet'
 
 const getWallet = vi.fn()
@@ -87,10 +87,10 @@ describe('queries that stay fresh on mount', () => {
     await expectRead(['draft', processId], () => useDraft(processId), getElection)
   })
 
-  it('re-reads the drafts list, which the wizard changes without touching its cache', async () => {
+  it('re-reads the votes list, which the wizard changes without touching its cache', async () => {
     listElections.mockResolvedValue({ processes: [], pagination: {} })
 
-    await expectRead([...QueryKeys.organization.drafts('0xabc'), 1, 10], () => useDrafts(), listElections)
+    await expectRead(QueryKeys.organization.votes('0xabc'), () => useOrganizationVotes(), listElections)
   })
 
   it('re-reads the status of an import job', async () => {

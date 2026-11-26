@@ -5,16 +5,23 @@ type StyleMap = Record<string, SystemStyleObject>
 const stockVariants = defaultConfig.theme?.recipes?.button?.variants
 const stock = (stockVariants?.variant ?? {}) as StyleMap
 
-// Fil has two control heights; `control.md` is the 34px default.
+// Fil has two control heights; `control.md` is the 34px default. Below `lg` a control grows to a touch target: 40px on
+// a tablet, 44px on a phone, and its text from 13.5px to 14px and 15px (`control-touch`).
+const touchHeight = { base: 'control.touch', md: 'control.tablet', lg: 'control.md' } as const
+// Its sides follow the guide too: 16px on a phone, 14px on a tablet, 12px from `lg`.
 const controlSize = defineStyle({
-  h: 'control.md',
-  minW: 'control.md',
-  px: '3',
-  textStyle: 'control',
+  h: touchHeight,
+  minW: touchHeight,
+  px: { base: '4', md: '3.5', lg: '3' },
+  textStyle: 'control-touch',
   gap: '2',
-  _icon: { width: 'icon.sm', height: 'icon.sm' },
+  // The guide's buttons carry a 14px icon from `lg`.
+  _icon: { width: { base: 'icon.sm', lg: '3.5' }, height: { base: 'icon.sm', lg: '3.5' } },
 })
-const compactSize = defineStyle({ ...controlSize, h: '7', minW: '7' })
+// The compact size is the 28px one on a desktop. An icon button is drawn at it, so its hit area is 44px, 40px, 28px
+// (the icon keeps its size).
+const compactHeight = { base: 'control.touch', md: 'control.tablet', lg: '7' } as const
+const compactSize = defineStyle({ ...controlSize, h: compactHeight, minW: compactHeight })
 
 // Chakra's sizes keep their names so call sites work: the four large ones draw the control, the small ones the compact.
 const sizes: StyleMap = {
@@ -29,7 +36,8 @@ const sizes: StyleMap = {
 
 // A focus ring is an outline of the palette's ring colour, offset 1px from the control.
 const focusRing = defineStyle({
-  outlineWidth: 'focusRing',
+  // `outlineWidth` has no token category in Chakra: a bare 'focusRing' is dropped, so it is a reference.
+  outlineWidth: '{borderWidths.focusRing}',
   outlineStyle: '[solid]',
   outlineColor: 'colorPalette.focusRing',
   outlineOffset: '[1px]',
@@ -52,6 +60,8 @@ const solid = defineStyle({
   },
 })
 
+const PANEL_HOVER = '[linear-gradient({colors.state.hover.bg}, {colors.state.hover.bg})]'
+
 // The secondary: a panel with a 1px ring instead of a border.
 const outline = defineStyle({
   // Chakra's outline variant draws a 1px border; the ring replaces it.
@@ -59,10 +69,21 @@ const outline = defineStyle({
   bg: 'surface.control',
   color: 'fg',
   boxShadow: 'shadow.control',
-  _hover: { bg: 'state.hover.bg' },
-  _expanded: { bg: 'state.hover.bg' },
+  // The hover tint is laid over the panel, not in its place: alone it is translucent, and on the grey page the
+  // button would lose its fill and its ring would read heavier.
+  _hover: { bg: 'surface.control', bgImage: PANEL_HOVER },
+  _expanded: { bg: 'surface.control', bgImage: PANEL_HOVER },
   // A loading secondary keeps its ring and ink; only a truly disabled one fades.
   _disabled: { '&[data-loading]': { opacity: '[1]', cursor: '[progress]' } },
+})
+
+// The boards' `.btn.off`: an action that exists but is not available now. Set `aria-disabled` with it, not `disabled`,
+// so it stays focusable and its reason reaches a screen reader. Sunken fill, no ring, no hover; deeper from `lg`.
+const off = defineStyle({
+  bg: { base: 'bg.muted', lg: 'bg.emphasized' },
+  color: { base: 'fg.subtle', lg: 'fg.muted' },
+  cursor: 'unavailable',
+  _disabled: { opacity: 'opaque', cursor: 'unavailable' },
 })
 
 // Discreet: no fill until hovered.
@@ -176,6 +197,46 @@ const menuItem = defineStyle({
   },
 })
 
+// A row of a bottom sheet (ui/ResponsiveMenu on a phone), under a rule, with an 18px muted icon; a destructive one
+// carries `data-danger` and is in the danger colour, icon too. The height and text are set by the compound variants
+// below. The 6px inset is the boards' (their rows are buttons with the browser's padding).
+const sheetRow = defineStyle({
+  ...menuItem,
+  px: '1.5',
+  py: '0',
+  gap: '3',
+  borderRadius: 'none',
+  borderTopWidth: 'hairline',
+  borderTopColor: 'border',
+  color: 'fg',
+  fontWeight: 'medium',
+  _hover: { bg: 'transparent' },
+  _icon: { color: 'fg.subtle' },
+  '&[data-danger]': { color: 'danger.action', _icon: { color: 'danger.action' } },
+})
+
+// The sheet's closing button: a full-width secondary at the touch height.
+// The sheet's body scrolls, which clips an outer ring on three sides: the same ring, drawn inside the button.
+const sheetClose = defineStyle({
+  ...outline,
+  boxShadow: '[inset 0 0 0 {borderWidths.hairline} {colors.border.emphasized}]',
+  w: 'full',
+  justifyContent: 'center',
+  mt: '2',
+})
+
+// A page header's "More" menu button: below `lg` the "…" icon alone, borderless and square (a ghost icon button);
+// from `lg` a labelled secondary: its word, then a 15px muted chevron, with a tighter end. The button shows its word
+// and chevron from `lg` and the icon below it (`hideBelow` / `hideFrom` on its children), keeping one name at every
+// width. Sides and icons in a compound variant.
+const more = defineStyle({
+  bg: { base: 'transparent', lg: 'surface.control' },
+  color: { base: 'fg.muted', lg: 'fg' },
+  boxShadow: { base: '[none]', lg: 'shadow.control' },
+  _hover: { bg: { base: 'state.hover.bg', lg: 'surface.control' }, bgImage: { lg: PANEL_HOVER }, color: 'fg' },
+  _expanded: { bg: { base: 'state.hover.bg', lg: 'surface.control' }, bgImage: { lg: PANEL_HOVER }, color: 'fg' },
+})
+
 // Button that opens a menu about the current user: avatar, names and a chevron, left-aligned.
 const menuTrigger = defineStyle({
   ...subtle,
@@ -196,6 +257,32 @@ const segment = defineStyle({
     fontWeight: 'semibold',
     boxShadow: '[0 0 0 {borderWidths.hairline} {colors.border}]',
     _hover: { bg: 'segment.selected' },
+  },
+})
+
+// A filter chip in a group (votes by state); the chosen one carries `aria-pressed`. Use at `size='sm'`. Its height
+// and text are set by the compound variant below: 36px, 32px, 28px.
+// A border, not a ring: the guide's chip is 1px wider each side than its padding (transparent when chosen).
+const chip = defineStyle({
+  ...ghost,
+  color: 'fg.muted',
+  bg: 'bg.panel',
+  fontWeight: 'medium-plus',
+  borderWidth: 'hairline',
+  borderColor: 'border.strong',
+  _hover: { bg: 'state.hover.bg' },
+  _pressed: {
+    bg: 'state.selected.bg',
+    color: 'fg',
+    borderColor: 'transparent',
+    _hover: { bg: 'state.selected.bg' },
+  },
+  // The dark boards: no fill and the softer hairline; the chosen chip keeps its selected fill.
+  _dark: {
+    bg: 'transparent',
+    borderColor: 'border.emphasized',
+    _hover: { bg: 'state.hover.bg' },
+    _pressed: { bg: 'state.selected.bg', borderColor: 'transparent', _hover: { bg: 'state.selected.bg' } },
   },
 })
 
@@ -226,8 +313,8 @@ const danger = defineStyle({
   color: 'status.error.fg',
   _hover: { bg: 'status.error.bg' },
   _expanded: { bg: 'status.error.bg' },
-  // The dark error wash is an opaque grey, so the dark hover is the neutral wash.
-  _dark: { _hover: { bg: 'state.hover.bg' }, _expanded: { bg: 'state.hover.bg' } },
+  // The dark error wash is an opaque grey, so in dark the hover is the secondary's own tint over its fill.
+  _dark: { _hover: outline._hover, _expanded: outline._expanded },
 })
 
 // Round launcher pinned to a corner of the viewport (support chat).
@@ -273,11 +360,24 @@ const cta = defineStyle({
   px: '6',
 })
 
+const chipHeight = { base: '9', md: '8', lg: '7' } as const
+
+const row = defineStyle({
+  h: { base: 'control.tablet', lg: '7' },
+  minW: '0',
+  px: { base: '3.5', lg: '2.5' },
+  gap: '2',
+  fontSize: { base: 'item', md: 'md', lg: 'sm' },
+  lineHeight: 'moderate',
+  _icon: { width: 'icon.sm', height: 'icon.sm' },
+})
+
 export const Button = defineRecipe({
   base: baseStyle,
   variants: {
     variant: {
       solid,
+      off,
       outline,
       ghost,
       subtle,
@@ -288,16 +388,21 @@ export const Button = defineRecipe({
       'nav-item': navItem,
       'menu-item': menuItem,
       'menu-item-strong': { ...menuItem, fontWeight: 'bold' },
+      'sheet-row': sheetRow,
+      'sheet-close': sheetClose,
+      more,
       'menu-trigger': menuTrigger,
       segment,
+      chip,
       disclosure,
       quiet,
       danger,
       floating,
       whatsapp,
     },
-    // An open map, so the compound variants below can name Chakra's own sizes.
-    size: { ...sizes, cta } as StyleMap,
+    // An open map, so the compound variants below can name Chakra's own sizes. `row` is the small action inside a
+    // list row (a question's "Open"): 40px with 14px sides below `lg`, 28px with 10px sides and 13px text from `lg`.
+    size: { ...sizes, cta, row } as StyleMap,
     // Long labels wrap onto more lines instead of overflowing the button.
     multiline: {
       true: {
@@ -309,14 +414,43 @@ export const Button = defineRecipe({
   },
   // A one-line label keeps the size's height.
   compoundVariants: [
-    ...(['2xs', 'xs', 'sm'] as const).map((size) => ({ multiline: true, size, css: { minH: '7' as const } })),
+    ...(['2xs', 'xs', 'sm'] as const).map((size) => ({ multiline: true, size, css: { minH: compactHeight } })),
     ...(['md', 'lg', 'xl', '2xl', 'cta'] as const).map((size) => ({
       multiline: true,
       size,
-      css: { minH: 'control.md' as const },
+      css: { minH: touchHeight },
     })),
     // The sidebar entry and the segment keep their own height next to any size.
     { variant: 'nav-item', css: { h: '8', minW: '0' } },
     { variant: 'segment', css: { h: '7', minW: '0' } },
+    // A sheet row is 52px with 16px text whatever the size; the close button is a 44px, 15px button.
+    {
+      variant: 'sheet-row',
+      css: {
+        h: 'control.row',
+        minW: '0',
+        px: '1.5',
+        gap: '3',
+        textStyle: 'control-input',
+        _icon: { width: '4.5', height: '4.5' },
+      },
+    },
+    { variant: 'sheet-close', css: { h: 'control.touch', minW: '0', textStyle: 'control-touch' } },
+    // "More": square below `lg` (no sides), a tighter end, gap and chevron from `lg`. The size would reset them.
+    {
+      variant: 'more',
+      css: {
+        gap: '1',
+        px: { base: '0', lg: '3' },
+        pe: { base: '0', lg: '2' },
+        _icon: {
+          width: { base: 'icon.sm', lg: 'icon.chevron' },
+          height: { base: 'icon.sm', lg: 'icon.chevron' },
+          color: { lg: 'fg.subtle' },
+        },
+      },
+    },
+    // The chip is a smaller control than a button at every width: 36px on a phone, 32px on a tablet, 28px from `lg`.
+    { variant: 'chip', css: { h: chipHeight, minW: '0', gap: 'chip', textStyle: 'control-chip' } },
   ],
 })

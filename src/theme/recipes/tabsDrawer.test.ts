@@ -15,7 +15,7 @@ describe('intent-named variants', () => {
       ])
     )
 
-    expect(roles).toEqual({ sidebar: 'surface.overlay.drawer', panel: 'surface.overlay' })
+    expect(roles).toEqual({ sidebar: 'surface.overlay.drawer', panel: 'surface.overlay', sheet: 'surface.overlay' })
     expect(Drawer.defaultVariants).toEqual({ variant: 'panel' })
   })
 })

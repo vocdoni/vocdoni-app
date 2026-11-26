@@ -99,6 +99,13 @@ describe('stress theme', () => {
     }
   })
 
+  it('moves the control heights a pixel, so an input padded by its height is off the spacing scale', () => {
+    expect(stockSystem.token('sizes.control.touch')).toBe('44px')
+    expect(stressSystem.token('sizes.control.touch')).toBe('45px')
+    expect(stressSystem.token('sizes.control.tablet')).toBe('41px')
+    expect(stressSystem.token('sizes.control.md')).toBe('35px')
+  })
+
   it('lists the stock palette steps it looks for, without the third-party brand marks', () => {
     expect(stressProbeSpec.palette['#6b6b6b']).toBe('gray.500')
     expect(Object.values(stressProbeSpec.palette).some((name) => name.startsWith('whatsapp.'))).toBe(false)

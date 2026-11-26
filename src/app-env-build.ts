@@ -42,6 +42,9 @@ export type AppEnv = {
   SHOW_ORG_LOGO?: boolean
   // When true, the anonymous voting option is not offered in the process wizard.
   DISABLE_ANONYMOUS_VOTING?: boolean
+  // When true, the process wizard offers question-by-question voting. It only hides UI: the API accepts the
+  // mode from any manager, and existing question-by-question votes are managed whatever it says.
+  QUESTION_BY_QUESTION?: boolean
   // The certificate gateway, port included (e.g. https://cert.vocdoni.io:15140). Unset hides the
   // "digital certificate" voter sign-in option.
   CERT_GATEWAY_URL?: string
@@ -263,6 +266,7 @@ export const buildAppEnv = (env: EnvSource = {}): AppEnvObject => {
     PRIMARY_COLOR: resolvePrimaryColor(env.PRIMARY_COLOR),
     SHOW_ORG_LOGO: env.SHOW_ORG_LOGO === 'true',
     DISABLE_ANONYMOUS_VOTING: env.DISABLE_ANONYMOUS_VOTING === 'true',
+    QUESTION_BY_QUESTION: env.QUESTION_BY_QUESTION === 'true',
     CERT_GATEWAY_URL: resolveCertGatewayUrl(env.CERT_GATEWAY_URL),
   }
 }

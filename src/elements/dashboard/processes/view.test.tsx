@@ -1,6 +1,6 @@
 import { render, screen } from '~src/test-utils'
 import { resetReactProvidersMock, setReactProvidersMock } from '~src/test-utils-react-providers-mock'
-import DashboardProcessViewElement from './view'
+import DashboardProcessViewElement, { makeRefetchInterval } from './view'
 
 const election = { id: 'process-1', orgAddress: '0xabc' }
 
@@ -51,7 +51,13 @@ describe('DashboardProcessViewElement', () => {
 
     expect(screen.getByText('Dashboard process view')).toBeInTheDocument()
     expect(electionProviderProps).toHaveLength(1)
-    expect(electionProviderProps[0].queryOptions).toEqual({ refetchInterval: 30_000 })
-    expect(electionProviderProps[0].resultsQueryOptions).toEqual({ refetchInterval: 30_000 })
+    expect(electionProviderProps[0].queryOptions).toMatchObject({
+      refetchInterval: makeRefetchInterval,
+      refetchOnWindowFocus: 'always',
+    })
+    expect(electionProviderProps[0].resultsQueryOptions).toEqual({
+      refetchInterval: 30_000,
+      refetchOnWindowFocus: 'always',
+    })
   })
 })

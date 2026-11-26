@@ -14,7 +14,7 @@ import { checkStress, loadSpec, probe, STRESS_MODULE, stressAlias, UPDATE_FLAG }
 
 const USAGE = `pnpm ui:snapshot -- --label <name> [--primary-color <hex>] [--url <base>] [--routes a,b]
                     [--viewports 1440,390] [--modes light,dark] [--no-warmup] [--build]
-                    [--theme stress] [${UPDATE_FLAG}] [--a11y] [${A11Y_UPDATE_FLAG}]`
+                    [--theme stress] [${UPDATE_FLAG}] [--a11y] [${A11Y_UPDATE_FLAG}] [--lang ca]`
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const OUT_ROOT = path.join(ROOT, '.ui-snapshot')
@@ -26,7 +26,6 @@ const DEFAULT_BASE = `http://localhost:${APP_PORT}`
 const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]', '::1'])
 const TIMEZONE = 'Europe/Madrid'
 const LOCALE = 'en-US'
-const LANG = 'en'
 const sameItems = (a, b) => a.length === b.length && b.every((item) => a.includes(item))
 
 // Computed properties saved for every visible element. Shorthands cover the four sides.
@@ -94,6 +93,7 @@ const parseCli = () => {
       'update-stress-baseline': { type: 'boolean', default: false },
       a11y: { type: 'boolean', default: false },
       'update-a11y-baseline': { type: 'boolean', default: false },
+      lang: { type: 'string', default: 'en' },
       help: { type: 'boolean', short: 'h', default: false },
     },
   })
@@ -117,6 +117,9 @@ const parseCli = () => {
   if (values.a11y && primaryColor)
     fail('--a11y needs the stock palette: --primary-color makes colour-contrast incomparable')
   if (values['update-a11y-baseline'] && !values.a11y) fail(`${A11Y_UPDATE_FLAG} needs --a11y`)
+  if (!/^[a-z]{2}(-[a-z]{2})?$/.test(values.lang)) fail('--lang takes a locale folder name, e.g. ca or pt-br')
+  if (values.lang !== 'en' && (stress || values.a11y))
+    fail('--lang is for side-by-side checks: run stress and a11y in en')
   if (values.build && values.url) fail('--build starts the app itself: drop --url')
   let base = DEFAULT_BASE
   if (values.url) {
@@ -153,6 +156,7 @@ const parseCli = () => {
     updateStressBaseline: values['update-stress-baseline'],
     a11y: values.a11y,
     updateA11yBaseline: values['update-a11y-baseline'],
+    lang: values.lang,
   }
 }
 
@@ -406,7 +410,7 @@ const isLocalUrl = (url) => {
   }
 }
 
-const newPage = async (browser, { width, mode, auth, authKey, blocked }) => {
+const newPage = async (browser, { width, mode, auth, authKey, blocked, storage = {} }) => {
   const context = await browser.newContext({
     viewport: { width, height: width < 768 ? 844 : 900 },
     deviceScaleFactor: 1,
@@ -449,7 +453,7 @@ const newPage = async (browser, { width, mode, auth, authKey, blocked }) => {
   await context.addCookies([{ name: 'vocdoni-cookie-consent', value: 'rejected', url: DEFAULT_BASE }])
   await page.clock.setFixedTime(new Date(FIXED_NOW))
   await context.addInitScript(
-    ({ mode, auth, authKey, org, token, expiry, css }) => {
+    ({ mode, auth, authKey, org, token, expiry, css, storage }) => {
       // Seeded Math.random (mulberry32): testimonials, avatars etc. pick the same item every run.
       let seed = 0x5eed
       Math.random = () => {
@@ -462,6 +466,7 @@ const newPage = async (browser, { width, mode, auth, authKey, blocked }) => {
         localStorage.setItem('theme-preference', mode)
         localStorage.setItem('vocdoni-cookie-consent', 'rejected')
         localStorage.setItem('vocdoni-cookie-consent-migrated', '1')
+        for (const [key, value] of Object.entries(storage)) localStorage.setItem(key, value)
         if (auth) {
           localStorage.setItem(`${authKey}.token`, token)
           localStorage.setItem(`${authKey}.expiry`, expiry)
@@ -488,7 +493,7 @@ const newPage = async (browser, { width, mode, auth, authKey, blocked }) => {
         observer.observe(document, { childList: true })
       }
     },
-    { mode, auth, authKey, org: ORG, token: FAKE_TOKEN, expiry: TOKEN_EXPIRY, css: DETERMINISM_CSS }
+    { mode, auth, authKey, org: ORG, token: FAKE_TOKEN, expiry: TOKEN_EXPIRY, css: DETERMINISM_CSS, storage }
   )
   page.on('console', (m) => {
     if (m.type() !== 'error') return
@@ -728,10 +733,18 @@ const main = async () => {
         auth: route.auth !== false,
         authKey,
         blocked,
+        storage: route.storage,
       })
       try {
-        // Straight to the English URL: the app would otherwise redirect /admin to /en/admin.
-        await page.goto(`${opts.base}/${LANG}${route.path}`, { waitUntil: 'domcontentloaded', timeout: 60_000 })
+        // A route's own answers for some mock paths (an empty list), checked before the request reaches the mock.
+        for (const [pathname, body] of Object.entries(route.mock || {})) {
+          await page.route(
+            (url) => url.port === String(MOCK_PORT) && url.pathname === pathname,
+            (request) => request.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) })
+          )
+        }
+        // Straight to the language's URL: the app would otherwise redirect /admin to /en/admin.
+        await page.goto(`${opts.base}/${opts.lang}${route.path}`, { waitUntil: 'domcontentloaded', timeout: 60_000 })
         await settle(page, warnings)
         return { context, page, record, warnings }
       } catch (e) {

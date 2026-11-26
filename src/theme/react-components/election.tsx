@@ -9,6 +9,7 @@ import {
   chakra,
   Checkbox,
   Dialog,
+  type DialogContentProps,
   Field,
   Flex,
   type FlexProps,
@@ -32,12 +33,13 @@ import {
   defineComponent,
   getElectionTitle,
   linkifyIpfs,
+  QuestionsConfirmation,
   useElection,
 } from '@vocdoni/react-components'
-import { ChangeEvent, useEffect, useRef, useState } from 'react'
+import { ChangeEvent, isValidElement, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CheckIcon } from '~theme/icons'
-import { ConfirmDialogContent } from '~components/ui/ConfirmDialog'
+import { ConfirmDialogContent, ConfirmDialogShell } from '~components/ui/ConfirmDialog'
 import { Markdown } from '~components/ui/Markdown'
 import { StatusBadge, type StatusBadgeProps } from '~components/ui/StatusBadge'
 import { ElectionTitle as electionTitleRecipe } from '~theme/recipes/election'
@@ -475,13 +477,16 @@ export const electionComponents: ComponentsPartialDefinition = {
       {error}
     </Text>
   )),
+  // Every useConfirm() prompt is a confirm dialog, except the voter's ballot summary, which keeps the plain dialog.
   ConfirmShell: defineComponent<'ConfirmShell', BoxProps>(({ isOpen, onClose, content, ...props }) => (
-    <Dialog.Root open={isOpen} onOpenChange={({ open }) => !open && onClose()}>
-      <Dialog.Backdrop />
-      <Dialog.Positioner>
-        <Dialog.Content {...props}>{content}</Dialog.Content>
-      </Dialog.Positioner>
-    </Dialog.Root>
+    <ConfirmDialogShell
+      layout={isValidElement(content) && content.type === QuestionsConfirmation ? 'summary' : 'decision'}
+      open={isOpen}
+      onOpenChange={({ open }) => !open && onClose()}
+      contentProps={props as DialogContentProps}
+    >
+      {content}
+    </ConfirmDialogShell>
   )),
   QuestionsConfirmation: defineComponent<'QuestionsConfirmation', BoxProps>(
     ({ election, answersView, onConfirm, onCancel }) => {
@@ -492,7 +497,7 @@ export const electionComponents: ComponentsPartialDefinition = {
       return (
         <ConfirmDialogContent
           layout='summary'
-          destructive={false}
+          tone='primary'
           title={getElectionTitle(election)}
           description={t('process.spreadsheet.confirm.election_title', {
             defaultValue: 'Your vote has been recorded for:',
@@ -685,7 +690,6 @@ export const electionComponents: ComponentsPartialDefinition = {
     ({ title, description, confirm, cancel, onConfirm, onCancel, ...props }) => (
       <Box {...props}>
         <ConfirmDialogContent
-          layout='shell'
           title={title}
           description={description}
           confirmText={confirm}

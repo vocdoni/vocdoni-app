@@ -113,6 +113,8 @@ there, here's a list of variables you can use:
   read at runtime, so a single build/image can be branded with `docker run -e SHOW_ORG_LOGO=true`.
 - `DISABLE_ANONYMOUS_VOTING` set it to `true` to hide the anonymous voting option from the process
   creation wizard. Unset or any other value leaves the option available. Read at runtime.
+- `QUESTION_BY_QUESTION` set it to `true` to offer question-by-question
+  voting in the process wizard. It only hides the option: existing question-by-question votes are managed either way.
 - `CERT_GATEWAY_URL` the base https origin of the certificate gateway, port included (for example
   `https://cert.vocdoni.io:15140`). When unset, the "digital certificate" voter sign-in option is hidden.
   Each sign-in attempt goes to a fresh random subdomain of it, on the same port (for example

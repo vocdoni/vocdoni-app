@@ -75,7 +75,16 @@ export const statusColors = defineSemanticTokens.colors({
       // `status.success.contrast` (white in light, near black in dark).
       mark: { value: { _light: '{colors.success.text}', _dark: '{colors.success.solid}' } },
     },
-    warning: statusRole('warning'),
+    warning: {
+      ...statusRole('warning'),
+      // The ring of a warning notice (a paused vote): the warning colour at a quarter.
+      ring: {
+        value: {
+          _light: 'color-mix(in oklch, {colors.warning.fg} 25%, transparent)',
+          _dark: '{colors.warning.border}',
+        },
+      },
+    },
     error: statusRole('danger'),
     info: statusRole('info'),
     neutral: {
