@@ -199,15 +199,6 @@ const segment = defineStyle({
   },
 })
 
-// Icon toggle in a group (colour mode); the selected one carries `aria-pressed`.
-const toggle = defineStyle({
-  ...ghost,
-  _pressed: {
-    bg: 'bg.muted',
-    _hover: { bg: 'bg.muted' },
-  },
-})
-
 // Show/hide toggle for a section, flush with the content it folds.
 const disclosure = defineStyle({
   color: 'fg.muted',
@@ -297,7 +288,6 @@ export const Button = defineRecipe({
       'menu-item-strong': { ...menuItem, fontWeight: 'bold' },
       'menu-trigger': menuTrigger,
       segment,
-      toggle,
       disclosure,
       quiet,
       danger,
