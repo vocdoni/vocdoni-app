@@ -65,8 +65,9 @@ test.describe('voting on an anonymous census', () => {
       await castVote(voter, 0)
 
       // The receipt is a one-time thing on an anonymous census, and the receipt
-      // screen says so: this is the only moment the voter can save it.
-      await expect(voter.getByTestId('vote-receipt')).toContainText(/cannot show it to you again/i)
+      // screen says so: this is the only moment the voter can save it. The warning
+      // is the receipt's one non-empty status region, so the check does not depend on copy.
+      await expect(voter.getByTestId('vote-receipt').getByRole('status').filter({ hasText: /\S/ })).toBeVisible()
 
       // The envelope carried a valid blind signature and the chain accepted it:
       // read the count back in a session that never authenticated.

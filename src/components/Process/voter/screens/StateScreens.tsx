@@ -1,14 +1,15 @@
-import { Alert, Box, Button, Spinner, Status, Text, VisuallyHidden } from '@chakra-ui/react'
+import { Alert, Box, Button, Card, Spinner, Status, Text, VisuallyHidden } from '@chakra-ui/react'
 import { resolveEndDate } from '@vocdoni/api-client'
 import { useReactComponentsLocalize } from '@vocdoni/react-components'
 import { useId, type ComponentProps, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { SuccessDisc } from '~components/ui/SuccessDisc'
 import { useAppEnv } from '~src/app-env'
+import { closedAt } from '~utils/vote-state'
 import { useVoterFlow } from '../flow-context'
 import { formatVoteDay, formatVoteTime, textOf, voterTurnout, type Turnout } from '../format'
+import { CheckVoteAction } from '../parts/CheckVoteAction'
 import { ReceiptCard } from '../parts/ReceiptCard'
-import { ResultsLine } from '../parts/ResultsLine'
 import {
   InlineAction,
   LocalText,
@@ -18,7 +19,9 @@ import {
   ScreenKicker,
   VoterScreenFrame,
 } from '../parts/ScreenParts'
+import { ShowResultsButton } from '../parts/ShowResultsButton'
 import { VoterActionBar } from '../parts/VoterActionBar'
+import { hasExplorerFor } from '../receipt'
 import type { VoterScreenKind } from '../voter-flow'
 
 type CentredProps = {
@@ -59,7 +62,7 @@ const useVoteTexts = () => {
 }
 
 /** "Hi van votar 221 de 312 persones.": the count e2e reads, when the deployment shows counts. */
-export const TurnoutLine = ({ turnout }: { turnout: Turnout }) => {
+const TurnoutLine = ({ turnout }: { turnout: Turnout }) => {
   const { t } = useTranslation()
   return (
     // data-testid: the count is interpolated in a plural sentence; the e2e observer reads the number from here.
@@ -89,12 +92,6 @@ export const UnavailableScreen = ({ refused = false }: { refused?: boolean }) =>
   const { t } = useTranslation()
   const body = refused ? t('voter.unavailable.refused_body') : t('voter.unavailable.body')
   return <Centred kind='unavailable' title={t('voter.unavailable.title')} body={body} />
-}
-
-/** A vote held question by question: shown until the SDK can cast a subset of questions. */
-export const UnsupportedScreen = () => {
-  const { t } = useTranslation()
-  return <Centred kind='unsupported' title={t('voter.unsupported.title')} body={t('voter.unsupported.body')} />
 }
 
 /** Board V4VoterWideLive 6: the dates with the time zone, so a wrong device clock shows (audit F18). */
@@ -162,9 +159,9 @@ const useFailedCast = () => {
 export const ClosedScreen = () => {
   const { t } = useTranslation()
   const env = useAppEnv()
-  const { election, facts, showResults, checkReceipt } = useVoterFlow()
+  const { election, facts, anonymous, showResults } = useVoterFlow()
   const { title, organization, day, time } = useVoteTexts()
-  const end = resolveEndDate(election)
+  const end = closedAt(election)
   const turnout = voterTurnout(election, env)
   const cast = useFailedCast()
   return (
@@ -186,18 +183,16 @@ export const ClosedScreen = () => {
           </Alert.Content>
         </Alert.Root>
       )}
-      {cast.receipt && <ReceiptCard />}
+      {cast.receipt && <ReceiptCard anonymous={anonymous} />}
       <VoterActionBar
         primary={
           <Button size='ballot' onClick={() => showResults(true)}>
             {t('voter.results.show')}
           </Button>
         }
-        note={
-          !facts.connected || cast.unknown ? (
-            <InlineAction onClick={checkReceipt}>{t('voter.results.check_vote')}</InlineAction>
-          ) : undefined
-        }
+        // An anonymous census verifies a code on the Explorer, so it is always offered (ruling R8); an unknown cast
+        // is asked of the chain again, which only a sign-in reaches (`chain`).
+        note={anonymous || !facts.connected || cast.unknown ? <CheckVoteAction chain={cast.unknown} /> : undefined}
       />
     </Centred>
   )
@@ -286,10 +281,44 @@ export const NotEligibleScreen = () => {
 export const AlreadyVotedScreen = () => {
   const { t } = useTranslation()
   const localize = useReactComponentsLocalize()
-  const { election, voteIds, anonymous, statuses } = useVoterFlow()
+  const { election, voteIds, anonymous, statuses, verifyReceipt } = useVoterFlow()
   const { title } = useVoteTexts()
   const hasCodes = election.questions.some((question) => voteIds[question.id])
-  const locked = statuses.find((status) => status === 'unconfirmed' || status === 'signed')
+  const hasExplorer = hasExplorerFor(election.chainId)
+  // `unconfirmed` wins over `signed`: a vote the chain does not hold is said as such, whatever else is signed.
+  const locked = statuses.includes('unconfirmed') ? 'unconfirmed' : statuses.includes('signed') ? 'signed' : undefined
+  // Board V4VoterWideMore 13: an anonymous vote the platform authorised but cannot show from here (another tab or
+  // device, or after the end). It says only what it knows: no success mark, no "Ja has votat".
+  if (anonymous && !hasCodes && locked === 'signed') {
+    return (
+      <Centred
+        kind='alreadyVoted'
+        title={t('voter.voted.anonymous_title')}
+        body={t('voter.voted.anonymous_help')}
+        privateContent
+      >
+        <Card.Root variant='ballot' mt='6'>
+          <Card.Body gap='2.5' py='4'>
+            <Box>
+              <Card.Title>{t('voter.receipt.card_title')}</Card.Title>
+              <Card.Description textStyle='body' color='fg.subtle' mt='0.5'>
+                {t(hasExplorer ? 'voter.voted.anonymous_card_note' : 'voter.voted.anonymous_card_note_no_explorer')}
+              </Card.Description>
+            </Box>
+            {hasExplorer ? (
+              <Box>
+                {/* testId: an InlineAction has no structural handle; the unit tests and the UI snapshot click it. */}
+                <InlineAction onClick={() => verifyReceipt(true)} testId='voter-verify-receipt'>
+                  {t('voter.verify.title')}
+                </InlineAction>
+              </Box>
+            ) : null}
+          </Card.Body>
+        </Card.Root>
+        <VoterActionBar primary={<ShowResultsButton />} />
+      </Centred>
+    )
+  }
   const lost = locked === 'unconfirmed'
   return (
     <Centred
@@ -300,7 +329,7 @@ export const AlreadyVotedScreen = () => {
       body={lost ? undefined : t('voter.voted.body')}
       privateContent
     >
-      {hasCodes ? <ReceiptCard /> : null}
+      {hasCodes ? <ReceiptCard anonymous={anonymous} /> : null}
       {locked ? (
         <NoticeCard
           title={locked === 'signed' ? localize('vote.disabled.signed') : localize('vote.disabled.unconfirmed')}
@@ -308,7 +337,7 @@ export const AlreadyVotedScreen = () => {
       ) : !hasCodes && anonymous ? (
         <NoticeCard title={t('aside.anonymous_receipt_gone')} />
       ) : null}
-      <ResultsLine />
+      <VoterActionBar primary={<ShowResultsButton />} />
     </Centred>
   )
 }

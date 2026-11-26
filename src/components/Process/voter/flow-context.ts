@@ -40,6 +40,8 @@ export type VoterFlow = {
   signOut: () => void
   showResults: (on: boolean) => void
   checkReceipt: () => void
+  /** Opens or leaves "Verifica el teu comprovant" (anonymous census). */
+  verifyReceipt: (on: boolean) => void
   /** Leaves "Comprova el teu vot" for the closed screen again. */
   leaveReceipt: () => void
 }

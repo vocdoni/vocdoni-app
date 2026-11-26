@@ -1,5 +1,16 @@
 import type { VotingProcessQuestion } from '@vocdoni/api-types'
-import { describeAnswer, formatVoteDay, formatVoteTime, maskContact, textOf, voterTurnout } from './format'
+import {
+  describeAnswer,
+  formatVoteDay,
+  formatVoteReturnDay,
+  formatVoteTime,
+  maskContact,
+  resultKind,
+  resultsFinal,
+  sentenceStop,
+  textOf,
+  voterTurnout,
+} from './format'
 
 const question = (over: Partial<VotingProcessQuestion> = {}) =>
   ({
@@ -149,5 +160,134 @@ describe('voterTurnout', () => {
   it('omits the denominator when the read has none, and everything when the deployment hides counts', () => {
     expect(voterTurnout({ questions: [{ id: 'q1', results: { voteCount: 3 } }] } as never, {})).toEqual({ count: 3 })
     expect(voterTurnout(election, { HIDE_VOTER_COUNT: true })).toBeNull()
+  })
+})
+
+const PROTOCOL = { maxVoteOverwrites: 0, costExponent: 1, maxTotalCost: 0, costFromWeight: false }
+
+describe('resultKind', () => {
+  it('names how each castable type is answered (boards M10, M11)', () => {
+    expect(
+      resultKind(
+        question({
+          type: 'singlechoice',
+          ballotProtocol: { ...PROTOCOL, maxCount: 1, maxValue: 2, uniqueValues: false },
+        })
+      )
+    ).toEqual({ key: 'single' })
+    expect(
+      resultKind(
+        question({
+          type: 'multichoice',
+          typeSetup: { maxChoices: 2, minChoices: 0, uniqueChoices: false },
+          ballotProtocol: { ...PROTOCOL, maxCount: 2, maxValue: 4, uniqueValues: true },
+        })
+      )
+    ).toEqual({ key: 'multiple', count: 2 })
+    expect(
+      resultKind(
+        question({
+          type: undefined,
+          metadata: { type: { name: 'approval' } },
+          ballotProtocol: { ...PROTOCOL, maxCount: 3, maxValue: 1, uniqueValues: false },
+        } as Partial<VotingProcessQuestion>)
+      )
+    ).toEqual({ key: 'approval' })
+    expect(
+      resultKind(
+        question({
+          metadata: { type: { name: 'ranked' } },
+          ballotProtocol: { ...PROTOCOL, maxCount: 3, maxValue: 2, uniqueValues: true },
+        } as Partial<VotingProcessQuestion>)
+      )
+    ).toEqual({ key: 'ranked' })
+  })
+
+  it('says nothing for a question whose type cannot be read (a legacy projection)', () => {
+    expect(resultKind(question({ type: '' } as Partial<VotingProcessQuestion>))).toBeNull()
+  })
+})
+
+describe('resultsFinal', () => {
+  const withFinal = (...flags: (boolean | undefined)[]) =>
+    ({
+      questions: flags.map((finalResults) => ({ results: finalResults === undefined ? undefined : { finalResults } })),
+    }) as never
+
+  it('is final only when every question carries the chain final tally', () => {
+    expect(resultsFinal(withFinal(true, true))).toBe(true)
+    expect(resultsFinal(withFinal(true, false))).toBe(false)
+    expect(resultsFinal(withFinal(true, undefined))).toBe(false)
+  })
+
+  it('leaves a canceled question out: a vote over with one ended and one canceled is final', () => {
+    const election = {
+      questions: [
+        { id: 'q1', status: 'ENDED', results: { finalResults: true, voteCount: 3 } },
+        { id: 'q2', status: 'CANCELED', results: { voteCount: 0 } },
+      ],
+    } as never
+    expect(resultsFinal(election)).toBe(true)
+  })
+
+  it('is final when every question was canceled: nothing is left to count', () => {
+    const election = {
+      questions: [
+        { id: 'q1', status: 'CANCELED', results: { voteCount: 0 } },
+        { id: 'q2', status: 'CANCELED', results: { voteCount: 0 } },
+      ],
+    } as never
+    expect(resultsFinal(election)).toBe(true)
+  })
+
+  it('is final when every question ended before it opened: nothing is left to count', () => {
+    const endedAt = '2026-12-01T19:00:00.000Z'
+    const election = {
+      initialStatus: 'PAUSED',
+      published: true,
+      questions: [
+        { id: 'q1', status: 'ENDED', endedAt, results: { voteCount: 0 } },
+        { id: 'q2', status: 'ENDED', endedAt, results: { voteCount: 0 } },
+      ],
+    } as never
+    expect(resultsFinal(election)).toBe(true)
+  })
+
+  it('leaves out a question the vote ended before it opened, which has no tally', () => {
+    const endedAt = '2026-12-01T19:00:00.000Z'
+    const election = {
+      initialStatus: 'PAUSED',
+      published: true,
+      questions: [
+        { id: 'q1', status: 'ENDED', endedAt, results: { finalResults: true, voteCount: 3 } },
+        { id: 'q2', status: 'ENDED', endedAt, results: { voteCount: 0 } },
+      ],
+    } as never
+    expect(resultsFinal(election)).toBe(true)
+  })
+})
+
+describe('formatVoteReturnDay', () => {
+  const reference = new Date(Date.UTC(2026, 10, 10, 12, 0))
+  const at = (date: Date, language = 'ca') => formatVoteReturnDay(date, language, { reference, timeZone: 'UTC' })
+
+  it('is the bare weekday when the date is within the next six days', () => {
+    expect(at(new Date(Date.UTC(2026, 10, 12, 19, 0)))).toBe('dijous')
+    expect(at(new Date(Date.UTC(2026, 10, 16, 19, 0)), 'en')).toBe('Monday')
+    expect(at(reference)).toBe('dimarts')
+  })
+
+  it('keeps the full day from a week on, and for a date already past', () => {
+    expect(at(new Date(Date.UTC(2026, 10, 17, 19, 0)))).toBe('dimarts 17')
+    expect(at(new Date(Date.UTC(2026, 11, 17, 19, 0)))).toMatch(/de desembre$/)
+    expect(at(new Date(Date.UTC(2026, 10, 9, 19, 0)))).toBe('dilluns 9')
+  })
+})
+
+describe('sentenceStop', () => {
+  it('adds a full stop to a plain title and none after punctuation', () => {
+    expect(sentenceStop('Assemblea General')).toBe('.')
+    for (const title of ['Vols aprovar?', 'Endavant!', 'Fi.', 'Etc\u2026', 'Vols aprovar? '])
+      expect(sentenceStop(title)).toBe('')
   })
 })

@@ -5,8 +5,8 @@ import { BallotType, questionSelectionRange, tryInferQuestionBallotType } from '
 export type ResultsState = 'hidden' | 'provisional' | 'final'
 
 /**
- * The one thing the voter page shows (spec D4). SP4 adds `room`, `openQuestion` and `castWaiting`; SP5 replaces the
- * interim `results` screen with its own.
+ * The one thing the voter page shows (spec D4). `room` is the read-only waiting room of a question-by-question vote;
+ * SP4 adds `openQuestion` and `castWaiting`; `results` is SP5's screen (boards V4VoterWideMore 9 to 11).
  */
 export type VoterScreen =
   | { kind: 'identify'; notice?: 'sessionExpired' }
@@ -14,13 +14,14 @@ export type VoterScreen =
   | { kind: 'checking' }
   // `refused`: the membership check was refused for good, so waiting or a retry will not change the screen.
   | { kind: 'unavailable'; refused?: true }
-  | { kind: 'unsupported' }
+  | { kind: 'room' }
   | { kind: 'welcome' }
   | { kind: 'question'; index: number; paused: boolean }
   | { kind: 'review'; paused: boolean }
   | { kind: 'sending' }
   | { kind: 'receipt' }
   | { kind: 'alreadyVoted' }
+  | { kind: 'verifyReceipt' }
   | { kind: 'upcoming' }
   | { kind: 'closed' }
   | { kind: 'paused' }
@@ -91,6 +92,8 @@ export type VoterLocalState = {
   checkReceipt: boolean
   /** "Mostra els resultats" and the other links to results. */
   viewResults: boolean
+  /** "Verifica el teu comprovant" (anonymous census): the page where one receipt code is checked on the Explorer. */
+  verifyReceipt: boolean
   notice: 'sessionExpired' | null
 }
 
@@ -105,6 +108,7 @@ export type VoterAction =
   | { type: 'checkReceipt' }
   | { type: 'leaveReceipt' }
   | { type: 'viewResults'; on: boolean }
+  | { type: 'verifyReceipt'; on: boolean }
   | { type: 'signedOut'; notice?: 'sessionExpired' }
 
 export const WELCOME: VoterStep = { name: 'welcome' }
@@ -133,6 +137,7 @@ export const initialVoterState: VoterLocalState = {
   castUnconfirmed: false,
   checkReceipt: false,
   viewResults: false,
+  verifyReceipt: false,
   notice: null,
 }
 
@@ -152,7 +157,7 @@ export const voterReducer = (state: VoterLocalState, action: VoterAction): Voter
     case 'memo':
       return { ...state, memos: { ...state.memos, [action.key]: action.value } }
     case 'castStarted':
-      return { ...state, castError: null, castUnconfirmed: false, sent: { ...state.answers } }
+      return { ...state, castError: null, castUnconfirmed: false, sent: { ...state.answers }, viewResults: false }
     case 'castSucceeded':
       return { ...state, castDone: true, castError: null, castUnconfirmed: false }
     case 'castFailed':
@@ -163,6 +168,8 @@ export const voterReducer = (state: VoterLocalState, action: VoterAction): Voter
       return { ...state, checkReceipt: false }
     case 'viewResults':
       return { ...state, viewResults: action.on }
+    case 'verifyReceipt':
+      return { ...state, verifyReceipt: action.on }
     case 'signedOut':
       return { ...initialVoterState, notice: action.notice ?? null }
   }
@@ -171,7 +178,7 @@ export const voterReducer = (state: VoterLocalState, action: VoterAction): Voter
 const ENDED: ReadonlySet<QuestionStatus> = new Set<QuestionStatus>(['ENDED', 'RESULTS'])
 
 /** The vote is over: its stored status, or the clock (stored statuses lag the scheduled end). */
-const isVoteOver = (facts: Pick<VoterFacts, 'status' | 'endedBySchedule'>): boolean =>
+export const isVoteOver = (facts: Pick<VoterFacts, 'status' | 'endedBySchedule'>): boolean =>
   (facts.status !== null && ENDED.has(facts.status)) || facts.endedBySchedule
 
 /**
@@ -195,17 +202,22 @@ export const firstUnanswered = (answered: readonly boolean[]): number => answere
 export const deriveVoterScreen = (facts: VoterFacts, local: VoterLocalState): VoterScreen => {
   if (!facts.loaded) return { kind: 'checking' }
   if (facts.voting) return { kind: 'sending' }
+  // One code is checked on the Explorer with no identification, from any screen that links to it ("Enrere" leaves).
+  if (local.verifyReceipt) return { kind: 'verifyReceipt' }
   // A canceled vote wins over the receipt: if the vote is canceled after the voter casts, the page switches live.
   if (facts.status === 'CANCELED') return { kind: 'canceled' }
-  if (local.castDone) return { kind: 'receipt' }
+  // The receipt offers the results (R19 Q1): they open over it while asked for, and "Enrere" comes back to it.
+  if (local.castDone && !local.viewResults) return { kind: 'receipt' }
   if (facts.status === 'UPCOMING') return { kind: 'upcoming' }
 
   const results: VoterScreen = { kind: 'results', state: resultsStateOf(facts) }
+  if (local.castDone) return results
   const over = isVoteOver(facts)
   if (over && !local.checkReceipt) return local.viewResults ? results : { kind: 'closed' }
-  // A question-by-question vote cannot be voted here; once it is over the closed screen and its results apply (F8).
-  if (facts.questionByQuestion) return { kind: 'unsupported' }
   if (facts.status === null || facts.status === 'PROCESS_UNKNOWN') return { kind: 'unavailable' }
+  // A question-by-question vote cannot be voted here yet (SDK issue #111): its room shows the questions, read only,
+  // with no identification. Once it is over the closed screen and its results apply (F8).
+  if (facts.questionByQuestion) return facts.questionCount === 0 ? { kind: 'unavailable' } : { kind: 'room' }
 
   if (!facts.connected) {
     if (facts.challengePending) return { kind: 'code' }

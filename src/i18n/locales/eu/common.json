@@ -1893,19 +1893,54 @@
       "review": "Berrikusi eta eman botoa"
     },
     "receipt": {
+      "anonymous_warning": "<strong>Boto anonimoa:</strong> gorde ziurtagiri hau orain; plataformak ezin izango dizu berriro erakutsi.",
       "card_note_one": "Zure botoa zenbatu dela egiaztatzeko balio du, zer bozkatu duzun esan gabe.",
       "card_note_other": "Kode bat erantzun bakoitzeko. Zenbatu direla egiaztatzeko balio dute, zer bozkatu duzun esan gabe.",
+      "card_note_anonymous_one": "Zure botoa zenbatu dela egiaztatzeko balio du, zer bozkatu duzun esan gabe.",
+      "card_note_anonymous_other": "Kode bat erantzun bakoitzeko. Zenbatu direla egiaztatzeko balio dute, zer bozkatu duzun esan gabe.",
       "card_title": "Zure ziurtagiria",
+      "copied": "Kopiatuta",
+      "copied_announce": "Kodeak arbelera kopiatu dira.",
+      "copy": "Kopiatu kodeak",
       "copy_code": "{{code}}: kopiatu {{question}}ren kode osoa",
+      "copy_failed": "Ezin izan da kopiatu",
+      "copy_failed_announce": "Ezin izan dira kodeak kopiatu. Deskargatu itzazu horren ordez.",
+      "download": "Deskargatu",
+      "file_name": "ziurtagiria",
       "help_one": "Egiaztatuta: erantzuna erregistroan dago. Orria itxi dezakezu orain.",
       "help_other": "Egiaztatuta: {{count}} erantzunak erregistroan daude. Orria itxi dezakezu orain.",
-      "results_later": "Emaitzak hemen bertan argitaratuko dira: {{date}}, {{time}}.",
+      "help_anonymous_one": "Egiaztatuta: erantzuna erregistroan dago.",
+      "help_anonymous_other": "Egiaztatuta: {{count}} erantzunak erregistroan daude.",
       "title": "Botoa emanda. Eskerrik asko."
     },
     "results": {
       "check_vote": "Egiaztatu zure botoa",
-      "kicker": "Emaitzak",
-      "show": "Erakutsi emaitzak"
+      "closed": "Itxita",
+      "closed_on": "Itxita: {{date}}, {{time}}",
+      "counting_help": "Azken emaitzak hemen bertan agertuko dira zenbatu bezain laster. Ez duzu orria berriro kargatu beharrik.",
+      "counting_help_secret": "Emaitzak hemen bertan agertuko dira zenbatu bezain laster. Ez duzu orria berriro kargatu beharrik.",
+      "counting_last": "Zenbaketaren aurreko azken emaitzak. Alda daitezke oraindik.",
+      "counting_title": "Botoak zenbatzen ari dira",
+      "final_title": "Azken emaitzak",
+      "hidden_card_body": "Ez duzu beste ezer egin beharrik. Orria itxi dezakezu eta {{day}} itzuli.",
+      "hidden_help": "Emaitzak hemen bertan ikusiko dira bozketa ixten denean, {{date}}, {{time}}.",
+      "kind_approval": "Onarpen-bozketa",
+      "kind_multiple_one": "Gehienez {{count}} aukera",
+      "kind_multiple_other": "Gehienez {{count}} aukera",
+      "kind_ranked": "Lehentasun-ordena, puntutan",
+      "kind_single": "Aukera bat",
+      "no_votes": "Oraindik ez dago botorik.",
+      "no_votes_final": "Ez da botorik eman.",
+      "not_counted": "Oraindik ez da zenbatu.",
+      "not_counted_final": "Ez dago erakusteko emaitzarik.",
+      "of_vote": "{{title}}{{stop}}",
+      "provisional_note": "Bozketa irekita dago oraindik eta emaitza hauek alda daitezke.",
+      "provisional_title": "Behin-behineko emaitzak",
+      "show": "Erakutsi emaitzak",
+      "turnout_one": "Bozkatu du: {{count}} pertsona.",
+      "turnout_other": "Bozkatu dute: {{count}} pertsona.",
+      "turnout_share_one": "Bozkatu du: {{count}} / {{total}} pertsona (%{{percent}}).",
+      "turnout_share_other": "Bozkatu dute: {{count}} / {{total}} pertsona (%{{percent}})."
     },
     "review": {
       "cast": "Eman botoa",
@@ -1917,6 +1952,24 @@
       "title": "Hau da bozkatuko duzuna",
       "weight_label": "Zure botoaren pisua",
       "weight_value": "Zure botoak {{weight}} balio du"
+    },
+    "room": {
+      "live": "Zuzenean. Bere kabuz eguneratzen da.",
+      "next": "Hurrengoa",
+      "none_body": "Bat irekitzen denean, hemen agertuko da bere kabuz. Ez duzu orria berrkargatu beharrik.",
+      "none_title": "Une honetan ez dago galderarik irekita",
+      "not_started_body": "Erakundeak lehen galdera irekitzen duenean, hemen agertuko da berez. Ez duzu orria berriz kargatu behar.",
+      "not_started_line": "Ez da oraindik hasi",
+      "not_started_title": "Bozketa ez da oraindik hasi",
+      "not_votable": "Galdera honetan oraindik ezin da orri honetatik bozkatu.",
+      "open_label": "{{number}}. galdera, orain irekita",
+      "state": {
+        "canceled": "Bertan behera utzita",
+        "closed": "Itxita",
+        "open": "Orain irekita",
+        "paused": "Pausatuta",
+        "waiting": "Oraindik ireki gabe"
+      }
     },
     "sending": {
       "authorizing": "Botoa baimentzen",
@@ -1938,16 +1991,25 @@
       "refused_body": "Orri honek ezin du baieztatu bozketa honen erroldean zaudela. Kargatu berriro orria geroago, edo jarri harremanetan erakundearekin, uste baduzu akats bat dela.",
       "title": "Une honetan ezin da bozketa hau erakutsi"
     },
-    "unsupported": {
-      "body": "Oraindik ezin da orri honetatik bozkatu.",
-      "title": "Bozketa hau galderaz galdera egiten da"
-    },
     "upcoming": {
       "card_body": "Itzuli orri honetara ireki ondoren.",
       "card_title": "Oraindik ezin da bozkatu",
       "sentence": "Bozketa irekiko da: {{startDate}}, {{startTime}}. Itxiko da: {{endDate}}, {{endTime}}."
     },
+    "verify": {
+      "error_format": "Kode honek ez du formatu zuzena. Kopiatu ezazu osorik ziurtagiritik.",
+      "error_incomplete": "Kode hau ez dago osorik. Kopiatu ezazu osorik ziurtagiritik, hiru punturik gabe.",
+      "field_label": "Ziurtagiriaren kodea",
+      "help": "Itsatsi botoa ematean gorde zenuen ziurtagiriko kodeetako bat. Galdera bakoitzeko bat dago: banan-banan egiaztatu ditzakezu.",
+      "hint": "Explorer fitxa berri batean irekiko da. Ez duzu zertan identifikatu.",
+      "submit": "Egiaztatu Explorer-en",
+      "title": "Egiaztatu zure ziurtagiria"
+    },
     "voted": {
+      "anonymous_card_note": "Botoa ematen amaitu zenuenean erakutsi zen. Kode horiekin Explorer-en egiaztatu dezakezu zure botoa zenbatu dela.",
+      "anonymous_card_note_no_explorer": "Bozkatzen amaitu zenean erakutsi zen. Gorde kode hauek: zure botoaren agiria dira.",
+      "anonymous_help": "Bozketa anonimoa da: plataformak ez daki zein den zure botoa, eta horregatik ezin du gailu honetatik baieztatu ez erakutsi.",
+      "anonymous_title": "Zure botoa baimenduta dago jada",
       "body": "Ezin da berriro bozkatu.",
       "title": "Dagoeneko bozkatu duzu"
     },

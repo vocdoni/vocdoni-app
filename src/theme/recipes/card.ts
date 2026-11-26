@@ -171,7 +171,8 @@ export const Card = defineSlotRecipe({
         title: { textStyle: 'ballot-body', fontWeight: 'semibold' },
         header: { px: '4.5', py: '3.5' },
         body: { px: '4.5', py: '3.5' },
-        footer: { px: '4.5', py: '3.5' },
+        // A receipt's actions sit in the footer under a rule, as the rows above.
+        footer: { px: '4.5', py: '3.5', gap: '2.5', borderTopWidth: 'hairline', borderColor: 'border.muted' },
       },
       // The same card around one notice ("Encara no es pot votar"), padded 18px and 20px on the root: its title in
       // semibold over a quiet note (compound variant below, after the size's title).

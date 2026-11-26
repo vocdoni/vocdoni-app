@@ -236,12 +236,35 @@ three widths, in Catalan to compare:
 
 ```bash
 UI_SNAPSHOT_PORT=3009 pnpm ui:snapshot -- --label voter --viewports 1440,768,390 --modes light --lang ca \
-  --routes voter-live,voter-sending,voter-secret,voter-2fa,voter-weighted,voter-voted,voter-not-in,voter-checking,voter-upcoming,voter-closed,voter-paused,voter-canceled,voter-unsupported
+  --routes voter-live,voter-sending,voter-secret,voter-2fa,voter-weighted,voter-voted,voter-not-in,voter-checking,voter-upcoming,voter-closed,voter-paused,voter-canceled,voter-room,voter-results,voter-results-final,voter-results-counting,voter-results-secret
 ```
 
 `voter-checking` leaves the membership check unanswered on purpose: its capture waits out the settle timeouts (about
 30 s per width) and logs "network never idle". `paused-mid-ballot` pauses the vote in the browser's copy of the
-process read (`['mock', …]`) and refocuses the page.
+process read (`['mock', …]`) and refocuses the page. `voter-room` is a question-by-question vote with one question
+open; its `none-open` state serves the read again with that question closed, so the room says no question is open.
+
+The results routes use the boards' tallies (221 voters). `voter-results` opens the provisional results from identify,
+`voter-results-final` the final ones from the closed screen. `voter-results-counting` is a public vote that has
+ended with its tally not final yet: the last live bars under the "may still change" line (board 10b). `voter-results-secret` is an ended secret vote whose
+tally is not published: `counting` identifies through "Comprova el teu vot" (the mock answers it as voted) and opens
+the results; `hidden` then answers the process read as extended (open and secret again) and refocuses, which is the
+only way the page reaches the hidden state without a link (plan Open question 1).
+
+The anonymous-census routes (boards V4VoterWideMore 12 to 14b) use censuses with `anonymous: true`, which the mock
+answers as the backend does: `/check` never says `hasVoted`, `/sign-info` lists consumed questions with no address or
+nullifier, and `/blind-point`, `/blind-sign` and `/votes/verify` stand in for the blind CSP and the chain.
+
+| route               | vote            | states                                                                                                                   |
+| ------------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `voter-anon-cast`   | `V_ANON`        | `receipt` (12): the cast through the blind CSP, the receipt with its keep-the-codes warning, copy, download              |
+| `voter-anon-signed` | `V_ANON_SIGNED` | `authorised` (13): identified, signed from another device, no codes; `verify` (14): its link opened                      |
+| `voter-anon-ended`  | `V_ANON_ENDED`  | the closed screen; `verify` (14) from it; `verify-short-code` (14b): `a3f1…9c2e` typed and submitted, so the error shows |
+
+```bash
+pnpm ui:snapshot -- --label anon --lang ca --viewports 1440 --modes light \
+  --routes voter-anon-cast,voter-anon-signed,voter-anon-ended
+```
 
 ## Known limits
 

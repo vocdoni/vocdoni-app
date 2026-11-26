@@ -1935,21 +1935,61 @@
       "review": "Revisar e enviar o voto"
     },
     "receipt": {
+      "anonymous_warning": "<strong>Voto anônimo:</strong> salve este comprovante agora, a plataforma não poderá exibi-lo novamente.",
       "card_note_one": "Serve para verificar que seu voto foi contado, sem revelar em que você votou.",
       "card_note_many": "Um código por resposta. Servem para verificar que foram contadas, sem revelar em que você votou.",
       "card_note_other": "Um código por resposta. Servem para verificar que foram contadas, sem revelar em que você votou.",
+      "card_note_anonymous_one": "Serve para verificar que seu voto foi contado, sem revelar em que você votou.",
+      "card_note_anonymous_many": "Um código por resposta. Servem para verificar que foram contadas, sem revelar em que você votou.",
+      "card_note_anonymous_other": "Um código por resposta. Servem para verificar que foram contadas, sem revelar em que você votou.",
       "card_title": "Seu comprovante",
+      "copied": "Copiado",
+      "copied_announce": "Códigos copiados para a área de transferência.",
+      "copy": "Copiar os códigos",
       "copy_code": "{{code}}: copiar o código completo de {{question}}",
+      "copy_failed": "Não foi possível copiar",
+      "copy_failed_announce": "Não foi possível copiar os códigos. Baixe-os no lugar.",
+      "download": "Baixar",
+      "file_name": "comprovante",
       "help_one": "Verificado: a resposta está no registro. Você já pode fechar a página.",
       "help_many": "Verificado: as {{count}} respostas estão no registro. Você já pode fechar a página.",
       "help_other": "Verificado: as {{count}} respostas estão no registro. Você já pode fechar a página.",
-      "results_later": "Os resultados serão publicados aqui mesmo {{date}} às {{time}}.",
+      "help_anonymous_one": "Verificado: a resposta está no registro.",
+      "help_anonymous_many": "Verificado: as {{count}} respostas estão no registro.",
+      "help_anonymous_other": "Verificado: as {{count}} respostas estão no registro.",
       "title": "Voto enviado. Obrigado."
     },
     "results": {
       "check_vote": "Verificar seu voto",
-      "kicker": "Resultados",
-      "show": "Mostrar os resultados"
+      "closed": "Encerrada",
+      "closed_on": "Encerrada em {{date}} às {{time}}",
+      "counting_help": "Os resultados finais vão aparecer aqui assim que forem contados. Você não precisa recarregar a página.",
+      "counting_help_secret": "Os resultados vão aparecer aqui assim que forem contados. Você não precisa recarregar a página.",
+      "counting_last": "Últimos resultados antes da contagem. Eles ainda podem mudar.",
+      "counting_title": "Contando os votos",
+      "final_title": "Resultados finais",
+      "hidden_card_body": "Você não precisa fazer mais nada. Pode fechar a página e voltar {{day}}.",
+      "hidden_help": "Os resultados vão aparecer aqui mesmo quando a votação for encerrada, {{date}} às {{time}}.",
+      "kind_approval": "Votação por aprovação",
+      "kind_multiple_one": "Até {{count}} opção",
+      "kind_multiple_many": "Até {{count}} opções",
+      "kind_multiple_other": "Até {{count}} opções",
+      "kind_ranked": "Ordem de preferência, em pontos",
+      "kind_single": "Uma opção",
+      "no_votes": "Ainda não há votos.",
+      "no_votes_final": "Nenhum voto foi registrado.",
+      "not_counted": "Ainda não foi contado.",
+      "not_counted_final": "Não há resultado para mostrar.",
+      "of_vote": "{{title}}{{stop}}",
+      "provisional_note": "A votação ainda está aberta e estes resultados podem mudar.",
+      "provisional_title": "Resultados provisórios",
+      "show": "Mostrar os resultados",
+      "turnout_one": "Votou {{count}} pessoa.",
+      "turnout_many": "Votaram {{count}} pessoas.",
+      "turnout_other": "Votaram {{count}} pessoas.",
+      "turnout_share_one": "Votou {{count}} de {{total}} pessoas ({{percent}}%).",
+      "turnout_share_many": "Votaram {{count}} de {{total}} pessoas ({{percent}}%).",
+      "turnout_share_other": "Votaram {{count}} de {{total}} pessoas ({{percent}}%)."
     },
     "review": {
       "cast": "Enviar o voto",
@@ -1961,6 +2001,24 @@
       "title": "Isto é o que você vai votar",
       "weight_label": "Peso do seu voto",
       "weight_value": "Seu voto vale {{weight}}"
+    },
+    "room": {
+      "live": "Ao vivo. Atualiza sozinha.",
+      "next": "A próxima",
+      "none_body": "Quando uma for aberta, ela vai aparecer aqui sozinha. Você não precisa recarregar a página.",
+      "none_title": "No momento não há nenhuma pergunta aberta",
+      "not_started_body": "Quando a organização abrir a primeira pergunta, ela vai aparecer aqui sozinha. Não precisa recarregar a página.",
+      "not_started_line": "Ainda não começou",
+      "not_started_title": "A votação ainda não começou",
+      "not_votable": "Ainda não é possível votar nesta pergunta por esta página.",
+      "open_label": "Pergunta {{number}}, aberta agora",
+      "state": {
+        "canceled": "Cancelada",
+        "closed": "Fechada",
+        "open": "Aberta agora",
+        "paused": "Pausada",
+        "waiting": "Ainda não foi aberta"
+      }
     },
     "sending": {
       "authorizing": "Autorizando o voto",
@@ -1984,16 +2042,25 @@
       "refused_body": "Esta página não consegue confirmar que você está na lista de participantes desta votação. Recarregue a página mais tarde ou entre em contato com a organização se você achar que houve um erro.",
       "title": "Não é possível mostrar esta votação agora"
     },
-    "unsupported": {
-      "body": "Ainda não é possível votar por esta página.",
-      "title": "Esta votação acontece pergunta por pergunta"
-    },
     "upcoming": {
       "card_body": "Volte a esta página quando ela abrir.",
       "card_title": "Ainda não é possível votar",
       "sentence": "A votação abre {{startDate}} às {{startTime}} e encerra {{endDate}} às {{endTime}}."
     },
+    "verify": {
+      "error_format": "Este código não tem o formato correto. Copie-o inteiro do comprovante.",
+      "error_incomplete": "Este código não está completo. Copie-o inteiro do comprovante, sem reticências.",
+      "field_label": "Código do comprovante",
+      "help": "Cole um dos códigos do comprovante que você salvou ao votar. Há um por pergunta: você pode verificá-los um de cada vez.",
+      "hint": "O Explorer vai abrir em uma nova aba. Você não precisa se identificar.",
+      "submit": "Verificar no Explorer",
+      "title": "Verifique seu comprovante"
+    },
     "voted": {
+      "anonymous_card_note": "Ele foi exibido quando você terminou de votar. Com esses códigos você pode verificar no Explorer que seu voto foi contado.",
+      "anonymous_card_note_no_explorer": "Foi exibido quando você terminou de votar. Guarde estes códigos: eles são o comprovante do seu voto.",
+      "anonymous_help": "A votação é anônima: a plataforma não sabe qual é o seu voto, por isso não pode confirmá-lo nem exibi-lo neste dispositivo.",
+      "anonymous_title": "Seu voto já foi autorizado",
       "body": "Não é possível votar novamente.",
       "title": "Você já votou"
     },

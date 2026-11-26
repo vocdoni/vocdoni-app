@@ -67,8 +67,6 @@ type VoterFlowProviderProps = {
   brand: ProcessBrand
   /** The end-instant timer fired (`useVoterLive`). */
   endPassed?: boolean
-  /** Tells the page whether a live results view is open, so it can poll the results read. */
-  onResultsLive?: (live: boolean) => void
   children: ReactNode
 }
 
@@ -78,7 +76,7 @@ type VoterFlowProviderProps = {
  * `ConfirmProvider`, `QuestionsFormProvider` and `CspAuthProvider`. It renders nothing until the process read exists
  * (so `checking` for a read not loaded is never drawn); the page always seeds that read from the server.
  */
-export const VoterFlowProvider = ({ brand, endPassed = false, onResultsLive, children }: VoterFlowProviderProps) => {
+export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterFlowProviderProps) => {
   const {
     election,
     status: sdkStatus,
@@ -227,14 +225,10 @@ export const VoterFlowProvider = ({ brand, endPassed = false, onResultsLive, chi
     [questions, lockedNotice]
   )
 
-  // Results: poll them while a live view is open, and read them fresh when it opens.
+  // Results: the process read carries the figures and keeps polling (spec D5); it is read fresh when a view opens.
   const resultsOpen = screen.kind === 'results'
-  const resultsLive = resultsOpen && screen.state !== 'final'
   useEffect(() => {
-    onResultsLive?.(resultsLive)
-  }, [resultsLive, onResultsLive])
-  useEffect(() => {
-    if (resultsOpen && id) void queryClient.invalidateQueries({ queryKey: electionQueryKeys.results(id) })
+    if (resultsOpen && id) void queryClient.invalidateQueries({ queryKey: electionQueryKeys.election(id) })
   }, [resultsOpen, id, queryClient])
 
   // The heading of a new screen takes the focus, but not on the first paint.
@@ -357,6 +351,7 @@ export const VoterFlowProvider = ({ brand, endPassed = false, onResultsLive, chi
     casting,
     signOut,
     showResults: (on) => dispatch({ type: 'viewResults', on }),
+    verifyReceipt: (on) => dispatch({ type: 'verifyReceipt', on }),
     checkReceipt: () => {
       dispatch({ type: 'checkReceipt' })
       // A connected voter whose vote could not be confirmed as it closed asks the chain again (gate-2 N2).

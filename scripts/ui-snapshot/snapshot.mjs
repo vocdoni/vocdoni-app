@@ -613,44 +613,70 @@ const collectStyles = (props) => {
 // How long a css or fill step waits for its target to show.
 const STEP_WAIT_MS = 8000
 
-// Waits up to 5 s for one of the candidates to show: a dialog's later steps often appear after a request.
+// A server-rendered page (the voter page) shows its buttons before React hydrates them, and a click in that window is
+// lost: wait until React owns the page's root (it tags hydrated elements with its own keys). Other pages pass at once.
+const waitHydrated = (page) =>
+  page
+    .waitForFunction(
+      () => {
+        const root = document.querySelector('[data-testid="voter-screen"]')
+        return !root || Object.keys(root).some((key) => key.startsWith('__react'))
+      },
+      undefined,
+      { timeout: STEP_WAIT_MS }
+    )
+    .catch(() => {})
+
 const runStep = async (page, candidates) => {
-  const deadline = Date.now() + 5000
-  for (;;) {
-    for (const [role, name, value] of candidates) {
-      if (role === 'refocus') {
-        await page.evaluate(() => window.dispatchEvent(new Event('visibilitychange')))
-        return true
-      }
-      if (role === 'mock') {
-        await page.route(
-          (url) => url.port === String(MOCK_PORT) && url.pathname === name,
-          (request) => request.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(value) })
-        )
-        return true
-      }
-      const loc = role === 'css' || role === 'fill' ? page.locator(name) : page.getByRole(role, { name })
-      // A voter step often follows a screen change that waits on the mock (identify, the membership check, the cast):
-      // give its target a moment to show before deciding it is not there.
-      if (role === 'css' || role === 'fill') {
-        await loc
-          .first()
-          .waitFor({ state: 'visible', timeout: STEP_WAIT_MS })
-          .catch(() => {})
-      }
+  const instant = ([role]) => role === 'refocus' || role === 'mock'
+  const run = async ([role, name, value]) => {
+    if (role === 'refocus') {
+      await page.evaluate(() => window.dispatchEvent(new Event('visibilitychange')))
+    } else {
+      await page.route(
+        (url) => url.port === String(MOCK_PORT) && url.pathname === name,
+        (request) => request.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(value) })
+      )
+    }
+  }
+  const targets = candidates
+    .filter((candidate) => !instant(candidate))
+    .map(([role, name, value]) => ({
+      role,
+      value,
+      loc: role === 'css' || role === 'fill' ? page.locator(name) : page.getByRole(role, { name }),
+    }))
+  // A voter step often follows a screen change that waits on the mock (identify, the membership check, the cast) or
+  // on hydration: poll for its target, found by selector or by role, until a visible one takes the action. A single
+  // wait is not enough: a screen can show the target for a frame and re-render it away (the check settling), and the
+  // element is then gone by the time it is counted. All alternatives share one deadline, so an absent one costs nothing.
+  const deadline = Date.now() + STEP_WAIT_MS
+  let lastError = null
+  while (targets.length) {
+    for (const { role, value, loc } of targets) {
       const n = await loc.count()
       for (let i = 0; i < n; i++) {
         const el = loc.nth(i)
-        if (await el.isVisible().catch(() => false)) {
+        if (!(await el.isVisible().catch(() => false))) continue
+        try {
           if (role === 'fill') await el.fill(value, { timeout: 5000 })
           else await el.click({ timeout: 5000 })
           return true
+        } catch (error) {
+          // Detached or covered while acting: look again.
+          lastError = error
         }
       }
     }
-    if (Date.now() >= deadline) return false
+    if (Date.now() >= deadline) break
     await page.waitForTimeout(100)
   }
+  for (const candidate of candidates.filter(instant)) {
+    await run(candidate)
+    return true
+  }
+  if (lastError) console.warn(`step found its target but could not act: ${String(lastError.message).split('\n')[0]}`)
+  return false
 }
 
 // ---- run ----------------------------------------------------------------------------------
@@ -891,8 +917,17 @@ const main = async () => {
           const errorsBefore = visited.record.consoleErrors.length
           const failedBefore = visited.record.failedRequests.length
           const warnings = []
-          for (const step of state.open) {
-            if (!(await runStep(visited.page, step))) throw new Error(`no visible trigger for ${state.slug}`)
+          await waitHydrated(visited.page)
+          for (const [n, step] of state.open.entries()) {
+            if (!(await runStep(visited.page, step))) {
+              const on = await visited.page
+                .locator('[data-testid="voter-screen"]')
+                .first()
+                .getAttribute('data-screen', { timeout: 1000 })
+                .catch(() => null)
+              const where = on ? `, on screen ${on}` : ''
+              throw new Error(`no visible trigger for ${state.slug} (step ${n + 1}: ${String(step[0][1])}${where})`)
+            }
           }
           await settle(visited.page, warnings)
           const elements = await save(visited.page, name, false)

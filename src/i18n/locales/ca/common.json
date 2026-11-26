@@ -1935,21 +1935,61 @@
       "review": "Revisa i emet el vot"
     },
     "receipt": {
+      "anonymous_warning": "<strong>Vot anònim:</strong> desa ara aquest comprovant, la plataforma no te'l podrà tornar a mostrar.",
       "card_note_one": "Serveix per comprovar que el teu vot s'ha comptat, sense dir què has votat.",
       "card_note_many": "Un codi per cada resposta. Serveixen per comprovar que s'han comptat, sense dir què has votat.",
       "card_note_other": "Un codi per cada resposta. Serveixen per comprovar que s'han comptat, sense dir què has votat.",
+      "card_note_anonymous_one": "Serveix per verificar que s'ha comptat el teu vot, sense dir què has votat.",
+      "card_note_anonymous_many": "Un codi per resposta. Serveix per verificar que s'han comptat, sense dir què has votat.",
+      "card_note_anonymous_other": "Un codi per resposta. Serveix per verificar que s'han comptat, sense dir què has votat.",
       "card_title": "El teu comprovant",
+      "copied": "Copiat",
+      "copied_announce": "Codis copiats al porta-retalls.",
+      "copy": "Copia els codis",
       "copy_code": "{{code}}: copia el codi complet de {{question}}",
+      "copy_failed": "No s'ha pogut copiar",
+      "copy_failed_announce": "No s'han pogut copiar els codis. Baixa'ls.",
+      "download": "Baixa'ls",
+      "file_name": "comprovant",
       "help_one": "Comprovat: la resposta és al registre. Ja pots tancar la pàgina.",
       "help_many": "Comprovat: les {{count}} respostes són al registre. Ja pots tancar la pàgina.",
       "help_other": "Comprovat: les {{count}} respostes són al registre. Ja pots tancar la pàgina.",
-      "results_later": "Els resultats es publicaran aquí mateix {{date}} a les {{time}}.",
+      "help_anonymous_one": "Comprovat: la resposta és al registre.",
+      "help_anonymous_many": "Comprovat: les {{count}} respostes són al registre.",
+      "help_anonymous_other": "Comprovat: les {{count}} respostes són al registre.",
       "title": "Vot emès. Gràcies."
     },
     "results": {
       "check_vote": "Comprova el teu vot",
-      "kicker": "Resultats",
-      "show": "Mostra els resultats"
+      "closed": "Tancada",
+      "closed_on": "Tancada {{date}} a les {{time}}",
+      "counting_help": "Els resultats finals sortiran aquí mateix quan s'hagin comptat. No cal que recarreguis la pàgina.",
+      "counting_help_secret": "Els resultats sortiran aquí mateix quan s'hagin comptat. No cal que recarreguis la pàgina.",
+      "counting_last": "Últims resultats abans del recompte. Encara poden canviar.",
+      "counting_title": "S'estan comptant els vots",
+      "final_title": "Resultats finals",
+      "hidden_card_body": "No cal que facis res més. Pots tancar la pàgina i tornar-hi {{day}}.",
+      "hidden_help": "Els resultats es veuran aquí mateix quan es tanqui la votació, {{date}} a les {{time}}.",
+      "kind_approval": "Votació per aprovació",
+      "kind_multiple_one": "Fins a {{count}} opció",
+      "kind_multiple_many": "Fins a {{count}} opcions",
+      "kind_multiple_other": "Fins a {{count}} opcions",
+      "kind_ranked": "Ordre de preferència, en punts",
+      "kind_single": "Una opció",
+      "no_votes": "Encara no hi ha vots.",
+      "no_votes_final": "No s'ha emès cap vot.",
+      "not_counted": "Encara no s'ha comptat.",
+      "not_counted_final": "No hi ha cap resultat per mostrar.",
+      "of_vote": "{{title}}{{stop}}",
+      "provisional_note": "La votació segueix oberta i aquests resultats poden canviar.",
+      "provisional_title": "Resultats provisionals",
+      "show": "Mostra els resultats",
+      "turnout_one": "Ha votat {{count}} persona.",
+      "turnout_many": "Han votat {{count}} persones.",
+      "turnout_other": "Han votat {{count}} persones.",
+      "turnout_share_one": "Ha votat {{count}} de {{total}} persones, el {{percent}}%.",
+      "turnout_share_many": "Han votat {{count}} de {{total}} persones, el {{percent}}%.",
+      "turnout_share_other": "Han votat {{count}} de {{total}} persones, el {{percent}}%."
     },
     "review": {
       "cast": "Emet el vot",
@@ -1961,6 +2001,24 @@
       "title": "Això és el que votaràs",
       "weight_label": "Pes del teu vot",
       "weight_value": "El teu vot val {{weight}}"
+    },
+    "room": {
+      "live": "En directe. S'actualitza sola.",
+      "next": "La següent",
+      "none_body": "Quan se n'obri una, apareixerà aquí sola. No cal que recarreguis la pàgina.",
+      "none_title": "Ara mateix no hi ha cap pregunta oberta",
+      "not_started_body": "Quan l'organització obri la primera pregunta, apareixerà aquí sola. No cal que recarreguis la pàgina.",
+      "not_started_line": "Encara no ha començat",
+      "not_started_title": "La votació encara no ha començat",
+      "not_votable": "Aquesta pregunta encara no es pot votar des d'aquesta pàgina.",
+      "open_label": "Pregunta {{number}}, oberta ara",
+      "state": {
+        "canceled": "Cancel·lada",
+        "closed": "Tancada",
+        "open": "Oberta ara",
+        "paused": "En pausa",
+        "waiting": "Encara no s'ha obert"
+      }
     },
     "sending": {
       "authorizing": "Autoritzant el vot",
@@ -1984,16 +2042,25 @@
       "refused_body": "Aquesta pàgina no pot confirmar que siguis al cens d'aquesta votació. Torna a carregar-la més tard, o contacta amb l'organització si creus que és un error.",
       "title": "Ara mateix no es pot mostrar aquesta votació"
     },
-    "unsupported": {
-      "body": "Encara no s'hi pot votar des d'aquesta pàgina.",
-      "title": "Aquesta votació es fa pregunta per pregunta"
-    },
     "upcoming": {
       "card_body": "Torna a aquesta pàgina quan s'hagi obert.",
       "card_title": "Encara no es pot votar",
       "sentence": "La votació s'obre {{startDate}} a les {{startTime}} i es tanca {{endDate}} a les {{endTime}}."
     },
+    "verify": {
+      "error_format": "Aquest codi no té el format correcte. Copia'l sencer del comprovant.",
+      "error_incomplete": "Aquest codi no és complet. Copia'l sencer del comprovant, sense punts suspensius.",
+      "field_label": "Codi del comprovant",
+      "help": "Enganxa un dels codis del comprovant que vas desar en votar. N'hi ha un per pregunta: els pots verificar d'un en un.",
+      "hint": "S'obrirà l'Explorer en una pestanya nova. No cal que t'identifiquis.",
+      "submit": "Verifica a l'Explorer",
+      "title": "Verifica el teu comprovant"
+    },
     "voted": {
+      "anonymous_card_note": "Es va mostrar quan vas acabar de votar. Amb aquells codis pots verificar a l'Explorer que el teu vot s'ha comptat.",
+      "anonymous_card_note_no_explorer": "Es va mostrar en acabar de votar. Guarda aquests codis: són el comprovant del teu vot.",
+      "anonymous_help": "La votació és anònima: la plataforma no sap quin vot és el teu, i per això no el pot confirmar ni mostrar des d'aquest dispositiu.",
+      "anonymous_title": "El teu vot ja es va autoritzar",
       "body": "No es pot tornar a votar.",
       "title": "Ja has votat"
     },

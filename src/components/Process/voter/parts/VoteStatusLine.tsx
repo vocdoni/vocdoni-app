@@ -1,6 +1,7 @@
 import { Status } from '@chakra-ui/react'
 import { resolveEndDate } from '@vocdoni/api-client'
 import { useTranslation } from 'react-i18next'
+import { closedAt, type VoteState } from '~utils/vote-state'
 import { useVoterFlow } from '../flow-context'
 import { formatVoteDay, formatVoteTime } from '../format'
 import { LocalText } from './ScreenParts'
@@ -42,6 +43,53 @@ export const VoteStatusLine = ({ context = 'screen' }: { context?: 'head' | 'scr
           time: formatVoteTime(end, i18n.language),
         })}
       </LocalText>
+    </Status.Root>
+  )
+}
+
+/** "Tancada dijous 12 de març a les 20:00": an ended vote's status line on its results (board M11). */
+export const VoteClosedLine = () => {
+  const { t, i18n } = useTranslation()
+  const { election } = useVoterFlow()
+  // When it closed, not its schedule: a question-by-question vote ended early shows the early close.
+  const end = closedAt(election)
+  return (
+    <Status.Root size='ballot' tone='closed'>
+      <Status.Indicator />
+      {end ? (
+        <LocalText>
+          {t('voter.results.closed_on', {
+            date: formatVoteDay(end, i18n.language),
+            time: formatVoteTime(end, i18n.language),
+          })}
+        </LocalText>
+      ) : (
+        t('voter.results.closed')
+      )}
+    </Status.Root>
+  )
+}
+
+/**
+ * The room's line (board V4VoterWideLive 4) from the vote's derived state, the organiser's rule: "En directe.
+ * S'actualitza sola." once a question has opened, "Encara no ha començat" while none has (the backend reports every
+ * unopened question as paused), and the paused line only when a question that was open is held.
+ */
+export const VoteLiveLine = ({ state }: { state: VoteState }) => {
+  const { t } = useTranslation()
+  if (state === 'paused') return <VoteStatusLine />
+  if (state === 'ready') {
+    return (
+      <Status.Root size='ballot' tone='gray'>
+        <Status.Indicator />
+        {t('voter.room.not_started_line')}
+      </Status.Root>
+    )
+  }
+  return (
+    <Status.Root size='ballot' tone='success'>
+      <Status.Indicator />
+      {t('voter.room.live')}
     </Status.Root>
   )
 }
