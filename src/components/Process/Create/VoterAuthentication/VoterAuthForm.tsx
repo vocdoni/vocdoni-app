@@ -134,10 +134,11 @@ const describeFields = (t: TFunction, language: string, { credentials, codeMetho
   }
 }
 
-// Outlined option cards, selected by a single solid border rather than the
-// recipe's extra ring, so a selection reads without shouting.
+// Outlined option cards, selected by a single accent border rather than the
+// recipe's extra ring, so a selection reads without shouting. A colour too pale
+// for the page adds its hairline outside the border.
 const optionCardStyles = {
-  _checked: { boxShadow: '[none]', borderColor: 'colorPalette.solid' },
+  _checked: { boxShadow: 'shadow.edge.outer', borderColor: 'accent.solid' },
   _hover: { borderColor: 'border.emphasized' },
 } as const
 

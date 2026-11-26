@@ -29,7 +29,14 @@ export const AppProviders = ({
   queryClient,
   language,
   followSystem,
-}: PropsWithChildren<{ queryClient?: QueryClient; language?: string; followSystem?: boolean }>) => {
+  primaryColor,
+}: PropsWithChildren<{
+  queryClient?: QueryClient
+  language?: string
+  followSystem?: boolean
+  /** A branded vote's colour, resolved on the server; replaces PRIMARY_COLOR for this page. */
+  primaryColor?: string
+}>) => {
   // Runtime env comes from Vike's globalContext (resolved on the server, passed
   // to the client). resolveAppEnv falls back to defaults if it isn't available
   // (e.g. an unexpected render outside the Vike runtime) and warns, so broken
@@ -71,7 +78,7 @@ export const AppProviders = ({
   return (
     <AppEnvProvider value={appEnv}>
       <I18nextProvider i18n={i18nInstance}>
-        <Theme followSystem={followSystem}>
+        <Theme followSystem={followSystem} primaryColor={primaryColor}>
           <QueryClientProvider client={client}>
             <AppRuntimeProviders>{children}</AppRuntimeProviders>
           </QueryClientProvider>

@@ -1,7 +1,9 @@
 import { defineSlotRecipe, type SystemStyleObject } from '@chakra-ui/react'
 import { checkboxAnatomy } from '@chakra-ui/react/anatomy'
+import { solidEdge } from './solidEdge'
 
-// 16px with a 1.5px `border.strong` outline; checked it fills with the palette and a contrast tick. Chakra's
+// 16px with a 1.5px `border.strong` outline; checked it fills with the palette and a contrast tick, edged when the fill
+// is too pale for the page. Chakra's
 // 20px `md` and 24px `lg` draw the same 16px box, so call sites keep their size prop.
 const box: Record<string, SystemStyleObject> = { control: { boxSize: '4', p: '0' }, label: { textStyle: 'control' } }
 
@@ -20,10 +22,12 @@ export const checkbox = defineSlotRecipe({
           borderWidth: 'mark',
           borderColor: 'border.strong',
           bg: 'checkbox.empty',
+          // The fill replaces the outline, so the edge is drawn on the box's outer boundary and the size holds.
           '&:is([data-state=checked], [data-state=indeterminate])': {
             bg: 'colorPalette.solid',
             color: 'colorPalette.contrast',
-            borderColor: 'colorPalette.solid',
+            borderWidth: '[0]',
+            boxShadow: solidEdge,
           },
         },
       },

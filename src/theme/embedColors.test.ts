@@ -13,24 +13,24 @@ describe('embedBrandColors', () => {
     expect(embedBrandColors('not a colour').brand).toBe(EMBED_DARK.primary)
   })
 
-  it('takes the dark solid of a configured brand, the one the buttons fill with', () => {
+  it('takes the dark line step of a configured brand, the one its focus ring uses', () => {
     const scale = generatePaletteScale('#ff6600')
-    const darkSolid = generateBrandSemanticTokens(scale, PAGE_BACKGROUNDS).solid._dark
-    const step = Number(/brand\.(\d+)/.exec(darkSolid)?.[1]) as keyof PaletteScale
+    const darkLine = generateBrandSemanticTokens(scale, PAGE_BACKGROUNDS).focusRing._dark
+    const step = Number(/brand\.(\d+)/.exec(darkLine)?.[1]) as keyof PaletteScale
     expect(embedBrandColors('#ff6600').brand).toBe(scale[step])
     expect(embedBrandColors('#ff6600').brand).not.toBe(EMBED_DARK.primary)
   })
 
-  // The label is the palette's own contrast colour for the solid, so it reads on the brand as the buttons' labels do.
-  it.each(['#1a55cc', '#ff6600', '#ffe600', '#000000'])('labels the brand %s with a readable text colour', (base) => {
-    const { brand, text } = embedBrandColors(base)
+  // The label and the hover are the ones the palette gives that fill, so they read on it as the app's buttons do.
+  it.each(['#1a55cc', '#ff6600', '#ffe600', '#000000'])('labels the brand %s and its hover readably', (base) => {
+    const { brand, text, emphasis } = embedBrandColors(base)
     expect(contrastRatio(text, brand)).toBeGreaterThanOrEqual(4.5)
+    expect(contrastRatio(text, emphasis)).toBeGreaterThanOrEqual(4.5)
   })
 
-  // The hover is the solid nudged 6% towards white, as the app's own solid hover is in dark.
-  it.each(['#1a55cc', '#ff6600'])('makes the hover of %s a slightly lighter brand', (base) => {
-    const { brand, emphasis } = embedBrandColors(base)
-    expect(emphasis).not.toBe(brand)
-    expect(contrastRatio(emphasis, brand)).toBeLessThan(1.3)
+  // The booker sits on the dark dialog, so a brand as dark as black must still show there (its fills would vanish).
+  it('keeps a near-black brand readable on the dark dialog', () => {
+    expect(contrastRatio(embedBrandColors('#000000').brand, EMBED_DARK.dialog)).toBeGreaterThanOrEqual(3)
+    expect(contrastRatio(embedBrandColors('#0b0b0b').brand, EMBED_DARK.dialog)).toBeGreaterThanOrEqual(3)
   })
 })

@@ -40,6 +40,34 @@ describe('Theme', () => {
     const css = injectedCss()
     expect(css).toMatch(/--chakra-colors-brand-500:\s*#1a73e8/)
     expect(css).toMatch(/--chakra-colors-color-palette-solid:\s*var\(--chakra-colors-brand-solid\)/)
+    // The recipes read a fill's edge through the palette (recipes/solidEdge.ts), so the brand must expose it there.
+    expect(css).toMatch(/--chakra-colors-color-palette-solid-edge:\s*var\(--chakra-colors-brand-solid-edge\)/)
+  })
+
+  // A branded vote's colour (resolved on the server) wins over the deployment's PRIMARY_COLOR on its page.
+  it('builds the system from a valid primaryColor instead of PRIMARY_COLOR', () => {
+    render(
+      <AppEnvProvider value={buildAppEnv({ PRIMARY_COLOR: '#1a73e8' })}>
+        <Theme primaryColor='#F5D90A'>
+          <div>child</div>
+        </Theme>
+      </AppEnvProvider>
+    )
+
+    expect(injectedCss()).toMatch(/--chakra-colors-brand-500:\s*#f5d90a/)
+    expect(injectedCss()).not.toMatch(/--chakra-colors-brand-500:\s*#1a73e8/)
+  })
+
+  it('keeps PRIMARY_COLOR when primaryColor is not a hex colour', () => {
+    render(
+      <AppEnvProvider value={buildAppEnv({ PRIMARY_COLOR: '#1a73e8' })}>
+        <Theme primaryColor='red'>
+          <div>child</div>
+        </Theme>
+      </AppEnvProvider>
+    )
+
+    expect(injectedCss()).toMatch(/--chakra-colors-brand-500:\s*#1a73e8/)
   })
 
   it('uses the Fil blue brand without PRIMARY_COLOR', () => {
