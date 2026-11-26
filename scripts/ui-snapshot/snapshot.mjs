@@ -687,6 +687,7 @@ const main = async () => {
     if (opts.external) {
       console.log(`Using the app at ${opts.base}. It must run with SAAS_URL=${mock.url} (see README.md).`)
     } else if (opts.build) {
+      await requireFreePort()
       buildDir = path.join(BUILD_ROOT, opts.label)
       console.log(`Building the app${variant}…`)
       await buildApp({
