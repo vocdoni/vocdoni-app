@@ -236,23 +236,6 @@ export const RoomMissedScreen = ({
   )
 }
 
-/** The open question is not for this voter (the check's `canVote`): it says so, with no ballot and no button. */
-export const RoomNotEligibleScreen = ({ index }: { index: number }) => {
-  const { t } = useTranslation()
-  const { moved } = useVoterFlow()
-  const number = index + 1
-  return (
-    <VoterScreenFrame kind='roomNotEligible'>
-      <ScreenKicker wide>{t('voter.room.open_label', { number })}</ScreenKicker>
-      <ScreenHeading focus={moved} mt={{ base: '0', lg: '2' }}>
-        {t('voter.room.not_eligible_title', { number })}
-      </ScreenHeading>
-      <ScreenHelp>{t('voter.room.not_eligible_body')}</ScreenHelp>
-      <Preparing />
-    </VoterScreenFrame>
-  )
-}
-
 /**
  * Frame 3e: the question closed after the voter voted it, and the creator shows its result: the title and the result
  * card ("Resultat"), with no sentence over it and never the answer (gate-3 F1, owner ruling 2026-11-24). While the

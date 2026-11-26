@@ -14,6 +14,11 @@ const room = (questions: RoomQuestion[]): RoomFacts => ({
   questions: questions.map((question, index) => ({ ...question, id: `q${index + 1}` })),
 })
 const FOUR = room([q('closed', 'recorded'), q('closed', 'recorded'), q('open'), q('toOpen')])
+// The check leaves this voter out of the question: the SDK skips it, so it has no row and no place in the strip.
+const leftOut = (facts: RoomFacts, id: string): RoomFacts => ({
+  ...facts,
+  questions: facts.questions.map((question) => (question.id === id ? { ...question, eligible: false } : question)),
+})
 
 describe('roomRowOf: each question in the rail (board V4VoterWideLive)', () => {
   it.each<[RoomQuestion, boolean, ReturnType<typeof roomRowOf>]>([
@@ -30,9 +35,6 @@ describe('roomRowOf: each question in the rail (board V4VoterWideLive)', () => {
     [q('closed', 'lost', 'q', true), false, { state: 'skipped', note: 'closedLost' }],
     [q('closed', 'unknown'), false, { state: 'skipped', note: 'closedUnknown' }],
     [q('open', 'unknown'), false, { state: 'now', note: 'open' }],
-    // A question the check leaves this voter out of (gate-3 F10).
-    [{ ...q('open'), eligible: false }, false, { state: 'pending', note: 'notEligible' }],
-    [{ ...q('closed'), eligible: false }, false, { state: 'pending', note: 'closed' }],
     [q('closed', 'none', 'q', true), false, { state: 'skipped', note: 'closedMissed' }],
     [q('closed'), false, { state: 'skipped', note: 'closedMissed' }],
     [q('closed'), true, { state: 'skipped', note: 'closedMissed' }],
@@ -79,6 +81,10 @@ describe('roomRail: folds a long agenda (board 1b, 20 questions)', () => {
     ])
   })
 
+  it('drops the rows of questions the voter may not vote, and keeps the agenda numbers of the others', () => {
+    expect(kinds(roomRail(leftOut(FOUR, 'q2'), [], { closed: false, more: false }))).toEqual([1, 3, 4])
+  })
+
   it('anchors on the next question to open when none is open, and never folds a single row', () => {
     const nine = room([
       ...Array.from({ length: 4 }, () => q('closed', 'recorded')),
@@ -102,7 +108,14 @@ describe('roomProgress: the strip label and line (R6, R7)', () => {
     expect(roomProgress(FOUR, { kind: 'roomVoted', index: 2, record: 'recorded' })?.kind).toBe('voted')
     // A lost vote never reads "ja has votat" (gate-3 F2).
     expect(roomProgress(FOUR, { kind: 'roomVoted', index: 2, record: 'lost' })?.kind).toBe('lost')
-    expect(roomProgress(FOUR, { kind: 'roomNotEligible', index: 2 })).toMatchObject({ kind: 'notEligible', current: 3 })
+    // The strip counts the questions this voter may vote: question 3 is the second of three.
+    expect(roomProgress(leftOut(FOUR, 'q2'), { kind: 'roomQuestion', index: 2, paused: false })).toEqual({
+      kind: 'open',
+      current: 2,
+      closed: 1,
+      total: 3,
+      value: 2,
+    })
     expect(roomProgress(FOUR, { kind: 'roomSkipped', index: 2 })?.kind).toBe('skipped')
     expect(roomProgress(FOUR, { kind: 'roomClosedVoted', index: 1 })).toEqual(roomProgress(FOUR, { kind: 'roomNone' }))
     expect(roomProgress(FOUR, { kind: 'roomNone' })).toEqual({
@@ -129,7 +142,6 @@ describe('room helpers', () => {
         'roomClosedVoted',
         'roomMissed',
         'roomNone',
-        'roomNotEligible',
         'roomNotStarted',
         'roomOpen',
         'roomQuestion',

@@ -5,7 +5,6 @@ import {
   RoomClosedVotedScreen,
   RoomMissedScreen,
   RoomNoneScreen,
-  RoomNotEligibleScreen,
   RoomNotStartedScreen,
   RoomOpenScreen,
   RoomSkippedScreen,
@@ -245,18 +244,6 @@ describe('frame 3c: a cast the chain does not hold (gate-3 F2, F3)', () => {
     expect(screen.queryByText('voter.room.missed_help')).toBeNull()
     // No "Comprova el teu vot" button: outcome is definitive, nothing to re-check.
     expect(screen.queryByRole('button', { name: 'voter.results.check_vote' })).toBeNull()
-  })
-})
-
-describe('the open question is not for this voter (gate-3 F10)', () => {
-  it('says so, with no ballot and no button', () => {
-    renderWithFlow(
-      <RoomNotEligibleScreen index={1} />,
-      flowIn({ kind: 'roomNotEligible', index: 1 }, testRoom([['closed', 'recorded'], 'open', 'toOpen']))
-    )
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('voter.room.not_eligible_title')
-    expect(screen.getByText('voter.room.not_eligible_body')).toBeInTheDocument()
-    expect(screen.queryByRole('button')).toBeNull()
   })
 })
 

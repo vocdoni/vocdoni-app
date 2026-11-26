@@ -21,7 +21,6 @@ import {
   RoomClosedVotedScreen,
   RoomMissedScreen,
   RoomNoneScreen,
-  RoomNotEligibleScreen,
   RoomNotStartedScreen,
   RoomOpenScreen,
   RoomSkippedScreen,
@@ -61,7 +60,6 @@ const COLUMN: Partial<Record<VoterScreenKind, VoterShellColumn>> = {
   roomSkipped: 'rail',
   roomMissed: 'rail',
   roomClosedVoted: 'rail',
-  roomNotEligible: 'rail',
   roomNone: 'rail',
 }
 
@@ -128,8 +126,6 @@ const Screen = ({ screen }: { screen: VoterScreen }) => {
       )
     case 'roomClosedVoted':
       return <RoomClosedVotedScreen key={screen.index} index={screen.index} />
-    case 'roomNotEligible':
-      return <RoomNotEligibleScreen key={screen.index} index={screen.index} />
     case 'roomNone':
       return <RoomNoneScreen />
   }
@@ -153,7 +149,6 @@ const LEGAL_NOTICE_SCREENS: ReadonlySet<VoterScreenKind> = new Set<VoterScreenKi
   'roomSkipped',
   'roomMissed',
   'roomClosedVoted',
-  'roomNotEligible',
   'roomNone',
   'results',
 ])

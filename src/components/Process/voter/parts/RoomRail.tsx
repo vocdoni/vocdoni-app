@@ -21,8 +21,6 @@ const noteText = (t: TFunction, note: RoomNote): string => {
       return t('voter.room.state.open_skipped')
     case 'openLost':
       return t('voter.room.state.open_lost')
-    case 'notEligible':
-      return t('voter.room.state.not_eligible')
     case 'paused':
       return t('voter.room.state.paused')
     case 'closed':
@@ -109,8 +107,6 @@ const progressLabel = (t: TFunction, progress: RoomProgress): string => {
       return t('voter.progress.room_voted', { current, total })
     case 'lost':
       return t('voter.progress.room_lost', { current, total })
-    case 'notEligible':
-      return t('voter.progress.room_not_eligible', { current, total })
     case 'skipped':
       return t('voter.progress.room_skipped', { current, total })
     case 'none':
