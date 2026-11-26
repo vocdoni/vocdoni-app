@@ -249,8 +249,8 @@ export const ImportProgress = () => {
 
     return (
       <>
-        <Progress.Root size='md' value={progress} borderRadius='md' animated striped>
-          <Progress.Track borderRadius='md'>
+        <Progress.Root variant='job' size='md' value={progress} animated striped>
+          <Progress.Track>
             <Progress.Range />
           </Progress.Track>
         </Progress.Root>

@@ -260,6 +260,21 @@ describe('createSsrCacheMiddleware', () => {
       expect(res.headers['X-SSR-Cache']).toBeUndefined()
     })
 
+    it('renders every request and caches nothing when cache is off', async () => {
+      const renderPage = makeRenderPage()
+      const mw = createSsrCacheMiddleware({
+        renderPage,
+        getViteServer: () => null,
+        isProduction: true,
+        cache: false,
+      })
+      const req = makeReq('/en/organization/0xabc')
+      await mw(req, makeRes(), next)
+      await mw(req, makeRes(), next)
+      expect(renderPage).toHaveBeenCalledTimes(2)
+      expect(ssrCache.size).toBe(0)
+    })
+
     it('different lang prefixes get separate cache entries', async () => {
       const renderPage = makeRenderPage()
       const mw = createSsrCacheMiddleware({ renderPage, getViteServer: () => null, isProduction: true })

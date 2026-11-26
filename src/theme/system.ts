@@ -27,14 +27,25 @@ export const createAppSystem = (primaryColor?: string) => {
   const asTokens = (slots: object) =>
     Object.fromEntries(Object.entries(slots).map(([slot, value]) => [slot, { value }]))
   const brandSemantic = asTokens(generateBrandSemanticTokens(scale, PAGE_BACKGROUNDS))
-  const accent = asTokens(generateAccentTokens(scale, PAGE_BACKGROUNDS))
+  const palette = defaultColorPalette(brand)
+  // The accent steps alias the palette `colorPalette` falls back to, so a recipe that reads `accent.solid` instead
+  // of `colorPalette.solid` paints the same. `solid.hover` is Chakra's solid button hover.
+  const accent = {
+    ...asTokens(generateAccentTokens(scale, PAGE_BACKGROUNDS)),
+    solid: {
+      DEFAULT: { value: `{colors.${palette}.solid}` },
+      hover: { value: `{colors.${palette}.solid/90}` },
+    },
+    contrast: { value: `{colors.${palette}.contrast}` },
+    subtle: { value: `{colors.${palette}.subtle}` },
+  }
 
   const appSystem = createSystem(defaultConfig, {
     // Style props only take theme tokens; `[value]` is the escape for non-design values (0, auto, 100%).
     strictTokens: true,
     globalCss: {
       html: {
-        colorPalette: defaultColorPalette(brand),
+        colorPalette: palette,
       },
       // Text that sets no size (a bare Text, markdown, list items) inherits the body role, so a new type
       // scale reaches it too.

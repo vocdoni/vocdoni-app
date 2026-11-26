@@ -22,17 +22,18 @@ pnpm ui:diff -- before after
 
 `pnpm ui:snapshot` options:
 
-| option                  | default       | what it does                                                              |
-| ----------------------- | ------------- | ------------------------------------------------------------------------- |
-| `--label <name>`        | required      | output folder: `.ui-snapshot/<name>/` (git-ignored; replaced on each run) |
-| `--routes a,b`          | all           | only these route slugs (see `routes.mjs`); their states come along        |
-| `--viewports 1440,390`  | `1440,390`    | widths; height is 900 (844 below 768)                                     |
-| `--modes light,dark`    | `light,dark`  | colour modes                                                              |
-| `--primary-color <hex>` | unset         | starts the app with `PRIMARY_COLOR`, to see a brand colour change         |
-| `--url <base>`          | spawn the app | use an app you started yourself on localhost (see below)                  |
-| `--no-warmup`           | warm-up on    | skip the warm-up pass (faster, but see "How determinism works")           |
-| `--theme stress`        | `stock`       | renders with the stress theme and lists leaks (see "Stress theme")        |
-| `--a11y`                | off           | runs axe-core on every capture (see "Accessibility (axe)")                |
+| option                  | default       | what it does                                                                |
+| ----------------------- | ------------- | --------------------------------------------------------------------------- |
+| `--label <name>`        | required      | output folder: `.ui-snapshot/<name>/` (git-ignored; replaced on each run)   |
+| `--routes a,b`          | all           | only these route slugs (see `routes.mjs`); their states come along          |
+| `--viewports 1440,390`  | `1440,390`    | widths; height is 900 (844 below 768)                                       |
+| `--modes light,dark`    | `light,dark`  | colour modes                                                                |
+| `--primary-color <hex>` | unset         | starts the app with `PRIMARY_COLOR`, to see a brand colour change           |
+| `--url <base>`          | spawn the app | use an app you started yourself on localhost (see below)                    |
+| `--no-warmup`           | warm-up on    | skip the warm-up pass (faster, but see "How determinism works")             |
+| `--build`               | off           | serves a production build instead of the dev server (no warm-up; see below) |
+| `--theme stress`        | `stock`       | renders with the stress theme and lists leaks (see "Stress theme")          |
+| `--a11y`                | off           | runs axe-core on every capture (see "Accessibility (axe)")                  |
 
 `pnpm ui:diff -- <labelA> <labelB>` options: `--ignore width,height` drops properties from the
 comparison; `--limit <n>` caps the elements printed per capture (default 50; totals always count
@@ -52,6 +53,12 @@ minutes and writes about 18 MB.
    When `node_modules` is a symlink into another checkout (a shared worktree install), vite would
    refuse to serve the font files from there; the script then runs `pnpm exec vike dev`, the same
    server, with that path allowed through `VITE_CONFIG`.
+   With `--build`, it runs `pnpm exec vike build` once into `.ui-snapshot-build/<label>/` (the same
+   env, and the stress alias through `VITE_CONFIG` with `--theme stress`), then serves that build with
+   the app's own server (`server/index.mjs`, `NODE_ENV=production`) on `127.0.0.1:3000`. That server
+   gets `SSR_CACHE=off`, so every page renders on every request. The build is removed when the run
+   ends; `build.log` and `server.log` go to the output folder. Nothing compiles on demand, so
+   there is no warm-up and no reload to report.
 3. Opens the app once and refuses to go on unless the app really talks to the mock.
 4. Opens each route with Playwright (Chromium) and saves, per route × width × mode:
    - `<route>-<width>-<mode>.png`: full-page screenshot.
@@ -93,9 +100,14 @@ Two runs on the same commit and machine must give `0` differences. What makes th
   embeds like the YouTube player stay idle instead of throwing), everything else is aborted.
 - **Settled pages**: network idle, no visible spinner or skeleton, `document.fonts.ready`, and the
   DOM size, page height and text length unchanged on three polls in a row.
+- **Build mode**: `--build` serves a production build, so no dependency is optimized on demand and nothing
+  reloads. It logs fewer console errors than the dev server (React's development warnings are gone); the
+  captures themselves are the same kind of render.
 - **Warm-up**: vite optimizes dependencies the first time a route needs them and reloads the page
-  when it does. A warm-up pass visits every route first, and repeats while vite keeps reloading.
-  Reloads during the capture are listed in `summary.json` (`devServerReloadsDuringCapture`).
+  when it does. A warm-up pass visits each route once (its states are skipped: a dialog rarely loads
+  a module its route did not), and repeats while vite keeps reloading. Reloads during the capture
+  are listed in `summary.json` (`devServerReloadsDuringCapture`), so a module a state needs still
+  shows up there.
 
 Compare runs from the same machine and browser: `ui:diff` warns when the browser versions differ.
 The browser is Playwright's bundled Chromium, or Chrome when that is not installed; force one with
@@ -119,7 +131,7 @@ read directly. `stress-report.json` holds the counts with examples. The run fail
 `stress-baseline.json`, the leaks known on the branch it was written on; after a fix, lower it with
 `--update-stress-baseline` (a `--routes` run updates only its captures). Elements that keep stock values on
 purpose are listed with a reason in `STRESS_EXCEPTIONS` (`stress.mjs`). CI runs it on pull requests that
-touch `src/`, the snapshot scripts, dependencies, `vite.config.ts`, `public/` or the workflow (the `Stress theme` leg of the `ui-snapshot` job in `.github/workflows/test.yml`) and keeps the run as the `stress` artifact.
+touch `src/`, `server/`, the snapshot scripts, dependencies, `vite.config.ts`, `public/` or the workflow (the `Stress theme` leg of the `ui-snapshot` job in `.github/workflows/test.yml`) and keeps the run as the `stress` artifact. The job runs both legs with `--build`.
 
 With your own dev server, start it with the alias and pass `--url`; the run stops if the stress theme is
 not the one rendering:
@@ -149,7 +161,7 @@ committing. A `--routes`, `--viewports` or `--modes` run updates only its captur
 files it does not expect (the current routes at the default viewports and modes), and skips that when a capture failed.
 `--baseline-from` prunes the same way. A deliberate case goes with a reason in
 `A11Y_EXCEPTIONS` (`a11y.mjs`); violations still waiting for a fix belong in the baseline.
-CI runs it as the `Accessibility (axe)` leg of the same job and fails like the stress leg; the run is the `a11y`
+CI runs it as the `Accessibility (axe)` leg of the same job, with `--build`, and fails like the stress leg; the run is the `a11y`
 artifact and the rule table lands in the job summary. If axe itself fails on a page, the capture is kept and
 the report lists an `axe-error` entry for it.
 

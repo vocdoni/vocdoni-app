@@ -93,6 +93,7 @@ jobs:
 
   # Renders the app against the snapshot's mock SaaS (no docker, no backend) in two legs. Both fail on counts above
   # their baseline: stress-baseline.json (leaks of stock values) and a11y-baseline.json (axe violations).
+  # Both legs serve a production build (--build): the dev server warm-up took most of the 30 minutes.
   # See scripts/ui-snapshot/README.md.
   ui-snapshot:
     name: ${{ matrix.name }}
@@ -103,8 +104,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { name: Stress theme, label: stress, args: --theme stress }
-          - { name: Accessibility (axe), label: a11y, args: --a11y }
+          - { name: Stress theme, label: stress, args: --theme stress --build }
+          - { name: Accessibility (axe), label: a11y, args: --a11y --build }
 
     steps:
       - name: Checkout
@@ -117,7 +118,7 @@ jobs:
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
-          if git diff --quiet "$BASE_SHA" HEAD -- src scripts/ui-snapshot package.json pnpm-lock.yaml vite.config.ts public .github/workflows/test.yml; then
+          if git diff --quiet "$BASE_SHA" HEAD -- src server scripts/ui-snapshot package.json pnpm-lock.yaml vite.config.ts public .github/workflows/test.yml; then
             echo "Nothing that changes what renders was touched: no snapshot run."
           else
             echo "run=true" >> "$GITHUB_OUTPUT"
