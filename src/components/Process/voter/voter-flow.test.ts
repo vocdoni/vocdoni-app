@@ -860,6 +860,11 @@ describe('deriveVoterScreen: question by question (boards V4VoterWideLive, M4Vot
       expect(roomFormSet(four.questions)).toEqual([1, 2])
     })
 
+    it('a closed question the voter may not vote is not the last one closed: the one they could vote is', () => {
+      const room = notFor(roomOf([['closed', 'none', 1], ['closed', 'none', 2], 'toOpen']), 'q2')
+      expect(screen(qbq(room, { status: 'PROCESS_UNKNOWN' }))).toEqual({ kind: 'roomMissed', index: 0 })
+    })
+
     it('no question the voter may vote, and none cast: not eligible, as a non-member', () => {
       const none = roomOf(['open', 'toOpen'])
       const all = { ...none, questions: none.questions.map((question) => ({ ...question, eligible: false })) }

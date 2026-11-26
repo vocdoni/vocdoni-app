@@ -180,9 +180,11 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
     statusKey,
     running,
   })
-  // A question is ineligible when the SDK says so on connect, or the check does (`canVote: false`).
+  // A question is ineligible when the SDK says so on connect, the check does (`canVote: false`), or the session saw it so.
   const ineligibleOf = (questionId: string) =>
-    voteStatus[questionId] === 'ineligible' || ineligibleIds.includes(questionId)
+    voteStatus[questionId] === 'ineligible' ||
+    ineligibleIds.includes(questionId) ||
+    state.ineligible.includes(questionId)
 
   // The SDK publishes the voter's per-question state a moment after the check. If it never does (its own check failed
   // and it does not retry), nothing can be cast from this session: back to identification, never a wrong sentence.
@@ -241,9 +243,10 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
         voteState: deriveVoteState(election, roomNow),
         questions: questions.map((question) => {
           const endedAt = question.endedAt ? Date.parse(question.endedAt) || null : null
+          const questionState = deriveQuestionState(question, election, roomNow)
           return {
             id: question.id,
-            state: deriveQuestionState(question, election, roomNow),
+            state: questionState,
             cast: (() => {
               const base = roomCastOf({
                 onChain: onChain(question.id) || !!voteIds[question.id] || votedIds.includes(question.id),
@@ -264,7 +267,11 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
             })(),
             endedAt,
             showsResult: voterSeesQuestionResult(question),
-            ...(ineligibleOf(question.id) ? { eligible: false } : {}),
+            // The SDK locks a question it marks 'ineligible'. The check alone hides only a question that is not open: an
+            // open one the SDK did not lock is still sent, and the SDK signs it or refuses it (EligibilityChangedError).
+            ...(voteStatus[question.id] === 'ineligible' || (questionState !== 'open' && ineligibleOf(question.id))
+              ? { eligible: false }
+              : {}),
           }
         }),
       }
@@ -433,7 +440,7 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
   }, [answered, failCast, fmethods, id, localize, queryClient, questions, serverOffset, vote, voting])
 
   // The open set's cast: the open questions this voter may vote (answered in the form) and the question the cast was
-  // pressed on. The SDK skips the questions this voter may not vote, so only the asked set's answers are sent.
+  // pressed on. Only the asked set's answers are sent: the room leaves out the questions this voter may not vote.
   const castQuestion = useCallback(
     async (index: number) => {
       const roomQuestions = latestRoom.current?.questions ?? []
@@ -463,7 +470,7 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
         questionIds: askedSet.map((member) => questions[member].id),
       })
       try {
-        // Only the asked set's answers: SDK #118 locks every other question and signs the batch it is given.
+        // Only the asked set's answers: the SDK signs the batch it is given, and locks what its own form locks.
         const all = formValuesFor(latest.current) as Record<string, unknown> & { memo?: Record<string, string> }
         const values: Record<string, unknown> = {}
         const memo: Record<string, string> = {}

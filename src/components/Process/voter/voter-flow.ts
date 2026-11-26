@@ -393,7 +393,8 @@ export const isRoomCast = (question: Pick<RoomQuestion, 'cast'>): boolean => CAS
 export const lastClosedIndex = (questions: readonly RoomQuestion[]): number => {
   let last = -1
   questions.forEach((question, index) => {
-    if (question.state !== 'closed') return
+    // A question this voter may not vote has nothing to show them, so it is not the last one they saw close.
+    if (question.state !== 'closed' || !isRoomEligible(question)) return
     const ended = question.endedAt ?? -Infinity
     const lastEnded = last === -1 ? -Infinity : (questions[last].endedAt ?? -Infinity)
     if (last === -1 || ended >= lastEnded) last = index
@@ -434,8 +435,8 @@ export const roomNeeded = (questions: readonly Pick<RoomQuestion, 'state' | 'eli
     questions.some((question) => question.eligible === false))
 
 /**
- * The open set the ballot covers: the questions open now that this voter has not cast and may vote. The SDK skips the
- * others, so they are absent here: no screen, no answer, nothing to wait for.
+ * The open set the ballot covers: the questions open now that this voter has not cast and may vote. A question this
+ * voter may not vote is absent: no screen, no answer, nothing to wait for.
  */
 export const roomGroup = (questions: readonly RoomQuestion[]): number[] =>
   questions.flatMap((question, index) =>
@@ -465,7 +466,7 @@ const shownOpenIndex = (questions: readonly RoomQuestion[], answered: readonly b
 
 /**
  * The questions the voter answers together in one form: the open set's, when there are two or more. One question is the
- * room's single question. The SDK skips the questions this voter may not vote, so they are not in the form either.
+ * room's single question. The questions this voter may not vote are not in the form either.
  */
 export const roomFormSet = (questions: readonly RoomQuestion[], voteState: VoteState = 'live'): number[] | null => {
   const set = roomHeldSet(questions, voteState)
@@ -559,9 +560,8 @@ const deriveRoomScreen = (
     if (closed.cast === 'lost' || closed.cast === 'unknown' || closed.cast === 'late') {
       return { kind: 'roomMissed', index: last, ...result, record: closed.cast }
     }
-    // The creator shows the result of a closed question until the next one opens (3d, 3e). A question this voter
-    // could not vote has nothing to tell them.
-    if (!isRoomCast(closed) && isRoomEligible(closed)) return { kind: 'roomMissed', index: last, ...result }
+    // The creator shows the result of a closed question until the next one opens (3d, 3e).
+    if (!isRoomCast(closed)) return { kind: 'roomMissed', index: last, ...result }
     if (closed.showsResult && closed.cast === 'recorded') return { kind: 'roomClosedVoted', index: last }
   }
   return { kind: 'roomNone' }
@@ -603,7 +603,7 @@ export const deriveVoterScreen = (facts: VoterFacts, asked: VoterLocalState): Vo
   if (facts.membership === 'sessionLost') return { kind: 'identify', notice: 'sessionExpired' }
   if (facts.membership === 'notInProcess') return { kind: 'notEligible' }
   if (!facts.voterStateReady) return { kind: 'checking' }
-  // A room the voter may vote none of, and has cast none of: the same screen as a non-member (the SDK skips them all).
+  // A room the voter may vote none of, and has cast none of: the same screen as a non-member, as no question is left.
   if (
     facts.room?.questions.length &&
     facts.room.questions.every((question) => !isRoomEligible(question)) &&

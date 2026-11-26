@@ -14,6 +14,8 @@ const sdk = vi.hoisted(() => ({
   // What the membership check answers: the questions on chain for this voter, and the ones they may not vote.
   checkVoted: ['q1'] as string[],
   notEligible: [] as string[],
+  // Questions the check alone says this voter may not vote: the SDK's status is not 'ineligible' for them.
+  checkOnlyIneligible: [] as string[],
   // Holds the membership check until released, to let a sign-out overtake a re-check.
   holdCheck: undefined as Promise<void> | undefined,
   checkCalls: 0,
@@ -119,7 +121,7 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
       belongsToProcess: true,
       questions: ids.map((questionId) => ({
         questionId,
-        canVote: !sdk.notEligible.includes(questionId),
+        canVote: !sdk.notEligible.includes(questionId) && !sdk.checkOnlyIneligible.includes(questionId),
         hasVoted: sdk.checkVoted.includes(questionId),
         hasSigned: sdk.checkVoted.includes(questionId),
       })),
@@ -185,6 +187,7 @@ beforeEach(() => {
   sdk.errors = {}
   sdk.checkVoted = ['q1']
   sdk.notEligible = []
+  sdk.checkOnlyIneligible = []
   sdk.holdCheck = undefined
   sdk.checkCalls = 0
   sdk.clearErrors.mockClear()
@@ -605,7 +608,7 @@ describe('VoterFlowProvider, question by question', () => {
     expect(probe.current?.state).toMatchObject({ castQuestionId: 'q2', castError: 'errors.vote_failed_unknown' })
   })
 
-  // The blocked warning is on the screen already (with the cast off), so the refusal adds no second message.
+  // A refused cast of a partly answered set names the first question still unanswered, and sends nothing.
   it('casts nothing until every question of the open set is answered, and says which one is missing', async () => {
     sdk.statuses = ['RESULTS', 'ONGOING', 'ONGOING']
     await renderFlow()
@@ -635,7 +638,7 @@ describe('VoterFlowProvider, question by question', () => {
     expect(sdk.vote.mock.calls[0][0]).toEqual({ '1': '0', '2': '1' })
   })
 
-  // The SDK skips a question this voter may not vote, so the cast carries the eligible set's answers only.
+  // The room leaves out a question this voter may not vote, so the cast carries the set's answers only.
   it('sends vote() only the eligible open question, never one this voter may not vote (SDK 4.3)', async () => {
     sdk.statuses = ['RESULTS', 'ONGOING', 'ONGOING']
     sdk.notEligible = ['q3']
@@ -648,6 +651,24 @@ describe('VoterFlowProvider, question by question', () => {
     expect(sdk.vote).toHaveBeenCalledTimes(1)
     expect(Object.keys(sdk.vote.mock.calls[0][0])).toEqual(['1'])
     expect(sdk.clearErrors).toHaveBeenCalledWith('root')
+  })
+
+  // The check alone calls the question ineligible (the SDK's status is not 'ineligible'): the answer is still sent,
+  // and no placeholder stands in for it. The SDK's refusal is a stale form, shown on that question.
+  it('sends an open question only the check calls ineligible, as answered, and a stale refusal lands on it', async () => {
+    sdk.checkOnlyIneligible = ['q2']
+    await renderFlow()
+    expect(probe.current?.facts.room?.questions[1].state).toBe('open')
+    expect(probe.current?.facts.room?.questions[1].eligible).toBeUndefined()
+    act(() => sdk.watch?.({ '1': '0' }, { name: '1' }))
+    sdk.vote.mockResolvedValueOnce(false)
+    sdk.errors = { root: { vote: { message: 'errors.vote_eligibility_changed' } } }
+    await act(async () => {
+      await probe.current?.castQuestion(1)
+    })
+    expect(sdk.vote).toHaveBeenCalledTimes(1)
+    expect(sdk.vote.mock.calls[0][0]).toEqual({ '1': '0' })
+    expect(probe.current?.state).toMatchObject({ castError: 'errors.vote_eligibility_changed', castQuestionId: 'q2' })
   })
 
   // A refused cast is a failure: it is never completed by the check, and the check is read again.
