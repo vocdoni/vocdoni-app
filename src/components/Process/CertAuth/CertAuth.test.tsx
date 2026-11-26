@@ -507,17 +507,21 @@ describe('certificate voter flow', () => {
     expect(screen.queryByText(/certificate page didn't load/)).not.toBeInTheDocument()
   })
 
-  it('the "page didn\'t load" hint after going back from the browser\'s error page', async () => {
+  it('the "page didn\'t load" hint on a new page load after going back from the browser\'s error page', async () => {
     useCensus([])
-    vi.spyOn(performance, 'getEntriesByType').mockReturnValue([{ type: 'back_forward' } as unknown as PerformanceEntry])
+    // the error page of a dropped port shows after the TCP connect timeout, and the voter may linger on it
     sessionStorage.setItem(
       certAuthStorageKey(PID),
-      JSON.stringify({ state: STATE, codeVerifier: VERIFIER, startedAt: Date.now() - 10_000 })
+      JSON.stringify({
+        state: STATE,
+        codeVerifier: VERIFIER,
+        startedAt: Date.now() - 5 * 60_000,
+        loadId: 'the page that left',
+      })
     )
     const { CertAuthStart } = await import('./CertAuth')
     render(<CertAuthStart />, { appEnv })
     expect(screen.getByText(/certificate page didn't load/)).toBeInTheDocument()
-    vi.restoreAllMocks()
   })
 
   it('the "page didn\'t load" hint when the page is restored from the back/forward cache', async () => {
