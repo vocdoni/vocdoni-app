@@ -1985,6 +1985,7 @@
       "fold_more_note": "Von {{from}} bis {{to}}.",
       "kicker": "Die Fragen öffnen sich nacheinander.",
       "kicker_set": "Die Fragen öffnen sich gemeinsam.",
+      "late_dropped": "Deine Stimme zu Frage {{number}} ist nach dem Schliessen der Frage eingegangen und wurde nicht gezählt.",
       "late_help": "Deine Stimme ist nach dem Schliessen der Frage eingegangen und wurde nicht gezählt.",
       "late_title": "Deine Stimme ist zu spät angekommen",
       "live": "Live. Aktualisiert sich von selbst.",

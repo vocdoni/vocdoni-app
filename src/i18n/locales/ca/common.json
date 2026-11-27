@@ -2040,6 +2040,7 @@
       "fold_more_note": "De la {{from}} a la {{to}}.",
       "kicker": "Les preguntes s'obren una a una.",
       "kicker_set": "Les preguntes s'obren juntes.",
+      "late_dropped": "El teu vot a la pregunta {{number}} ha arribat quan ja s'havia tancat i no s'ha comptat.",
       "late_help": "El teu vot ha arribat quan la pregunta ja s'havia tancat i no s'ha comptat.",
       "late_title": "El teu vot ha arribat massa tard",
       "live": "En directe. S'actualitza sola.",

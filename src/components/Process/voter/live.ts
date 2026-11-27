@@ -23,6 +23,12 @@ export const VOTER_JITTER = 0.2
  * voter back to identification.
  */
 export const VOTER_STATE_GRACE_MS = 20_000
+/**
+ * A cast that reads the process again (a question of its set closed) waits this long, in these steps, for the page to
+ * render with that read before it sends what is still open; past it, the failure shows as it is.
+ */
+export const RECAST_RENDER_WAIT_MS = 2_000
+export const RECAST_RENDER_STEP_MS = 25
 /** The membership check's first retry while it fails for another reason than an expired session. */
 const VOTER_CHECK_RETRY_MS = 5_000
 /** Its ceiling: each failure doubles the wait up to this (gate F5). */

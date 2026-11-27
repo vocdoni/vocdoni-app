@@ -1985,6 +1985,7 @@
       "fold_more_note": "From {{from}} to {{to}}.",
       "kicker": "Questions open one at a time.",
       "kicker_set": "Questions open together.",
+      "late_dropped": "Your vote on question {{number}} arrived after it had closed and was not counted.",
       "late_help": "Your vote arrived after the question had closed and was not counted.",
       "late_title": "Your vote arrived too late",
       "live": "Live. Updates by itself.",
