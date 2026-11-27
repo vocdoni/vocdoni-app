@@ -204,8 +204,8 @@ export type ProcessSpec = {
   endsInMinutes?: number
   /**
    * The create form's "Open the questions yourself" switch: the questions start paused and the organiser opens them
-   * from the vote's page. The switch only exists while the app runs with QUESTION_BY_QUESTION (see
-   * playwright.config.ts).
+   * from the vote's page. The switch is hidden only when the app runs with
+   * QUESTION_BY_QUESTION=false.
    */
   startPaused?: boolean
   /**

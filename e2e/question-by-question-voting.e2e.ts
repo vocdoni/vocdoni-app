@@ -21,7 +21,7 @@ import { expect, prepareContext, test } from './helpers/fixtures'
  * 90). Covers every room frame the voter can reach: not started, the open question, cast, the closed question's result,
  * skipped, parked ("Vota ara") and missed, then the closed vote, its results and the receipt checked from another device.
  *
- * Needs the app server to run with QUESTION_BY_QUESTION (playwright.config.ts sets it).
+ * Needs the app server to run without QUESTION_BY_QUESTION=false (it is on by default).
  */
 
 /** A frame follows the organiser's change with no reload: one poll, with its jitter, and some slack. */
