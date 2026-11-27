@@ -193,4 +193,31 @@ describe('fetchLegacyOrganizationElections', () => {
     )
     expect(fetchSpy).toHaveBeenCalledTimes(2)
   })
+
+  it('reads a page past the last one (404 code 4057) as an empty page', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify({ code: 4057, error: 'page not found' }), { status: 404 }) as Response
+    )
+
+    const page = await fetchLegacyOrganizationElections(gateway, rawElection.organizationId, 3)
+
+    expect(page.elections).toEqual([])
+    expect(page.pagination).toEqual({
+      totalItems: undefined,
+      previousPage: null,
+      currentPage: 3,
+      nextPage: null,
+      lastPage: 3,
+    })
+  })
+
+  it('still throws VochainNotFoundError for an unknown organization (404 code 4006)', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify({ code: 4006, error: 'organization not found' }), { status: 404 }) as Response
+    )
+
+    await expect(fetchLegacyOrganizationElections(gateway, rawElection.organizationId, 0)).rejects.toBeInstanceOf(
+      VochainNotFoundError
+    )
+  })
 })
