@@ -1815,7 +1815,6 @@
       "partly_cast_other": "Nur {{count}} deiner {{total}} Antworten wurden erfasst, bevor die Abstimmung endete.",
       "partly_unconfirmed_one": "{{count}} deiner {{total}} Antworten ist bestätigt erfasst. Der Rest konnte nicht bestätigt werden, bevor die Abstimmung endete, und wurde vielleicht ebenfalls erfasst: Prüfe deine Stimme, um es herauszufinden.",
       "partly_unconfirmed_other": "{{count}} deiner {{total}} Antworten sind bestätigt erfasst. Der Rest konnte nicht bestätigt werden, bevor die Abstimmung endete, und wurde vielleicht ebenfalls erfasst: Prüfe deine Stimme, um es herauszufinden.",
-      "sentence": "Die Abstimmung endete am {{date}} um {{time}}.",
       "turnout_one": "{{count}} von {{total}} Personen hat abgestimmt.",
       "turnout_other": "{{count}} von {{total}} Personen haben abgestimmt.",
       "turnout_any_one": "Mindestens {{count}} von {{total}} Personen hat abgestimmt.",

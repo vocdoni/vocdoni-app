@@ -1850,7 +1850,6 @@
       "partly_unconfirmed_one": "Está confirmado que {{count}} das tuas {{total}} respostas está no registo. O resto não pôde ser confirmado antes de a votação terminar e pode ter sido registado também: verifica o teu voto para saberes.",
       "partly_unconfirmed_many": "Está confirmado que {{count}} das tuas {{total}} respostas estão no registo. O resto não pôde ser confirmado antes de a votação terminar e pode ter sido registado também: verifica o teu voto para saberes.",
       "partly_unconfirmed_other": "Está confirmado que {{count}} das tuas {{total}} respostas estão no registo. O resto não pôde ser confirmado antes de a votação terminar e pode ter sido registado também: verifica o teu voto para saberes.",
-      "sentence": "A votação terminou {{date}} às {{time}}.",
       "turnout_one": "Votou {{count}} de {{total}} pessoas.",
       "turnout_many": "Votaram {{count}} de {{total}} pessoas.",
       "turnout_other": "Votaram {{count}} de {{total}} pessoas.",

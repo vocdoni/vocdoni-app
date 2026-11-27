@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next'
 import { SuccessDisc } from '~components/ui/SuccessDisc'
 import { useAppEnv } from '~src/app-env'
 import { isQuestionByQuestion } from '~src/types/voting-process'
-import { closedAt } from '~utils/vote-state'
 import { useVoterFlow } from '../flow-context'
 import { formatVoteDay, formatVoteTime, textOf, voterTurnout, type Turnout } from '../format'
 import { CheckVoteAction } from '../parts/CheckVoteAction'
@@ -22,6 +21,7 @@ import {
   VoterScreenFrame,
 } from '../parts/ScreenParts'
 import { useShowResultsAction } from '../parts/ShowResultsButton'
+import { VoteClosedLine, VoteStatusLine } from '../parts/VoteStatusLine'
 import { VoterActionBar } from '../parts/VoterActionBar'
 import { hasExplorerFor } from '../receipt'
 import type { VoterScreenKind } from '../voter-flow'
@@ -104,13 +104,14 @@ export const UnavailableScreen = ({ refused = false }: { refused?: boolean }) =>
 export const UpcomingScreen = () => {
   const { t } = useTranslation()
   const { election } = useVoterFlow()
-  const { title, organization, day, time } = useVoteTexts()
+  const { title, day, time } = useVoteTexts()
   const start = election.startDate ? new Date(election.startDate) : undefined
   const end = resolveEndDate(election)
   return (
     <Centred
       kind='upcoming'
-      kicker={organization ? <ScreenKicker>{organization}</ScreenKicker> : undefined}
+      headingMt='2.5'
+      kicker={<VoteStatusLine />}
       title={title}
       body={
         start && end ? (
@@ -175,8 +176,7 @@ export const ClosedScreen = () => {
   const env = useAppEnv()
   const { election, facts, state, anonymous } = useVoterFlow()
   const resultsAction = useShowResultsAction()
-  const { title, organization, day, time } = useVoteTexts()
-  const end = closedAt(election)
+  const { title } = useVoteTexts()
   const turnout = voterTurnout(election, env)
   const cast = useFailedCast()
   // Reached with "Comprova el teu vot" as a signed-in member who has no vote here: say so, instead of the plain page
@@ -185,14 +185,11 @@ export const ClosedScreen = () => {
   return (
     <Centred
       kind='closed'
-      kicker={organization ? <ScreenKicker>{organization}</ScreenKicker> : undefined}
+      headingMt='2.5'
+      // The status line says when it closed, so the sentence under the title only gives the turnout.
+      kicker={<VoteClosedLine />}
       title={title}
-      body={
-        <>
-          {end ? <LocalText>{t('voter.closed.sentence', { date: day(end), time: time(end) })}</LocalText> : null}{' '}
-          {turnout ? <TurnoutLine turnout={turnout} /> : null}
-        </>
-      }
+      body={turnout ? <TurnoutLine turnout={turnout} /> : undefined}
     >
       {cast.failed && (
         <Alert.Root status={cast.unknown ? 'warning' : 'error'} layout='ballot' mt='6' role='alert'>
