@@ -873,20 +873,18 @@ describe('deriveVoterScreen: question by question (boards V4VoterWideLive, M4Vot
   })
 
   describe('an open set of several questions (the group answered in one ballot)', () => {
-    it('answers the open questions one by one, then the group is cast from its first question', () => {
+    it('shows the whole open set on one screen, answered or not', () => {
       const two = roomOf([['closed', 'recorded', 1], 'open', 'open', 'toOpen'])
-      expect(screen(qbq(two))).toEqual({ kind: 'question', index: 1, paused: false, set: true })
+      expect(screen(qbq(two))).toEqual({ kind: 'roomSet', set: [1, 2], paused: false })
       expect(screen(qbq(two, { answered: [true, true, false, false] }))).toEqual({
-        kind: 'question',
-        index: 2,
+        kind: 'roomSet',
+        set: [1, 2],
         paused: false,
-        set: true,
       })
       expect(screen(qbq(two, { answered: [true, true, true, false] }))).toEqual({
-        kind: 'review',
+        kind: 'roomSet',
+        set: [1, 2],
         paused: false,
-        set: true,
-        index: 2,
       })
     })
 
@@ -908,38 +906,19 @@ describe('deriveVoterScreen: question by question (boards V4VoterWideLive, M4Vot
       expect(screen(qbq(group))).toEqual({ kind: 'roomQuestion', index: 2, paused: false })
     })
 
-    it('answers the eligible open set as one form: question, question, review', () => {
-      const pair = roomOf([['closed', 'recorded', 1], 'open', 'open', 'toOpen'])
-      expect(screen(qbq(pair))).toEqual({ kind: 'question', index: 1, paused: false, set: true })
-      expect(screen(qbq(pair, { answered: [true, true, false, false] }))).toEqual({
-        kind: 'question',
-        index: 2,
-        paused: false,
-        set: true,
-      })
-      expect(screen(qbq(pair, { answered: [true, true, true, false] }))).toEqual({
-        kind: 'review',
-        paused: false,
-        set: true,
-        index: 2,
-      })
-    })
-
-    it('goes back to a question of the set from review, and never to one outside it', () => {
+    it('answers the eligible open set on one screen, and an old classic step never splits it', () => {
       const pair = roomOf([['closed', 'recorded', 1], 'open', 'open', 'toOpen'])
       const all = { answered: [true, true, true, false] }
+      expect(screen(qbq(pair))).toEqual({ kind: 'roomSet', set: [1, 2], paused: false })
       expect(screen(qbq(pair, all), { step: { name: 'question', index: 1 } })).toEqual({
-        kind: 'question',
-        index: 1,
+        kind: 'roomSet',
+        set: [1, 2],
         paused: false,
-        set: true,
       })
-      // Question 4 is not open yet: the step to it is not the set's, so the review stands.
       expect(screen(qbq(pair, all), { step: { name: 'question', index: 3 } })).toEqual({
-        kind: 'review',
+        kind: 'roomSet',
+        set: [1, 2],
         paused: false,
-        set: true,
-        index: 2,
       })
     })
 
@@ -963,9 +942,9 @@ describe('deriveVoterScreen: question by question (boards V4VoterWideLive, M4Vot
 
     it('five questions opened two, two and one: each group is its own room', () => {
       const first = roomOf(['open', 'open', 'toOpen', 'toOpen', 'toOpen'])
-      expect(screen(qbq(first))).toEqual({ kind: 'question', index: 0, paused: false, set: true })
+      expect(screen(qbq(first))).toEqual({ kind: 'roomSet', set: [0, 1], paused: false })
       const second = roomOf([['closed', 'recorded', 1], ['closed', 'recorded', 2], 'open', 'open', 'toOpen'])
-      expect(screen(qbq(second))).toEqual({ kind: 'question', index: 2, paused: false, set: true })
+      expect(screen(qbq(second))).toEqual({ kind: 'roomSet', set: [2, 3], paused: false })
       const last = roomOf([
         ['closed', 'recorded', 1],
         ['closed', 'recorded', 2],
@@ -984,20 +963,19 @@ describe('deriveVoterScreen: question by question (boards V4VoterWideLive, M4Vot
       })
     })
 
-    it('a voter reloading mid-group is asked for the questions of the group still to vote', () => {
+    it('a voter reloading mid-group is shown the whole set of the group still to vote', () => {
       const reloaded = roomOf([['open', 'recorded'], 'open', 'open', 'toOpen'])
       expect(screen(qbq(reloaded, { answered: [false, false, false, false] }), {})).toEqual({
-        kind: 'question',
-        index: 1,
+        kind: 'roomSet',
+        set: [1, 2],
         paused: false,
-        set: true,
       })
     })
 
     it('"Enrere" parks the whole group, and only that group: a new open set is not parked', () => {
       const group = roomOf([['closed', 'recorded', 1], 'open', 'open'])
       expect(screen(qbq(group), { parked: 'q2,q3' })).toEqual({ kind: 'roomOpen', index: 1 })
-      expect(screen(qbq(group), { parked: 'q2' })).toEqual({ kind: 'question', index: 1, paused: false, set: true })
+      expect(screen(qbq(group), { parked: 'q2' })).toEqual({ kind: 'roomSet', set: [1, 2], paused: false })
     })
 
     it('skipping the group skips every question of it, nothing is cast for them', () => {
@@ -1008,12 +986,12 @@ describe('deriveVoterScreen: question by question (boards V4VoterWideLive, M4Vot
 
   describe('a whole-vote pause while a set was open', () => {
     const held = roomOf([['closed', 'recorded', 1], 'paused', 'paused'], 'paused')
-    it('shows the set as the form, paused, not only its first question', () => {
-      expect(screen(qbq(held))).toEqual({ kind: 'question', index: 1, paused: true, set: true })
+    it('shows the set on one screen, paused, not only its first question', () => {
+      expect(screen(qbq(held))).toEqual({ kind: 'roomSet', set: [1, 2], paused: true })
       expect(roomFormSet(held.questions, 'paused')).toEqual([1, 2])
       expect(roomFormSet(held.questions)).toBeNull()
       const answered = qbq(held, { answered: [true, true, true] })
-      expect(screen(answered)).toEqual({ kind: 'review', paused: true, set: true, index: 2 })
+      expect(screen(answered)).toEqual({ kind: 'roomSet', set: [1, 2], paused: true })
     })
 
     it('a parked or skipped set stays on the plain paused screen', () => {

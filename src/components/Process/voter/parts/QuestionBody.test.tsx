@@ -53,3 +53,15 @@ describe('QuestionBody help line: a multiple choice states both ends (owner ruli
     expect(helpOf(2, 2)).toBe('voter.question.help_exact')
   })
 })
+
+describe('QuestionBody in a set of several questions', () => {
+  it('titles the question as an h2 with its own id, not as the screen heading', () => {
+    renderWithFlow(
+      <QuestionBody index={0} inSet />,
+      testFlow({ election: testElection({ questions: [multiple(1, 2)] }) })
+    )
+    const title = screen.getByRole('heading', { level: 2, name: 'Question 1' })
+    expect(title).toHaveAttribute('id', 'voter-question-0-title')
+    expect(screen.queryByRole('heading', { level: 1 })).toBeNull()
+  })
+})

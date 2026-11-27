@@ -123,6 +123,16 @@ describe('roomProgress: the strip label and line (R6, R7)', () => {
       value: 3,
     })
     expect(roomProgress(FOUR, { kind: 'roomQuestion', index: 2, paused: true })?.kind).toBe('paused')
+    // An open set on one screen: its place is the set's last question.
+    const pair = room([q('closed', 'recorded'), q('open'), q('open')])
+    expect(roomProgress(pair, { kind: 'roomSet', set: [1, 2], paused: false })).toEqual({
+      kind: 'open',
+      current: 3,
+      closed: 1,
+      total: 3,
+      value: 3,
+    })
+    expect(roomProgress(pair, { kind: 'roomSet', set: [1, 2], paused: true })?.kind).toBe('paused')
     expect(roomProgress(FOUR, { kind: 'roomOpen', index: 2 })?.kind).toBe('open')
     expect(roomProgress(FOUR, { kind: 'roomVoted', index: 2, record: 'recorded' })?.kind).toBe('voted')
     // A lost vote never reads "ja has votat" (gate-3 F2).
@@ -164,6 +174,7 @@ describe('room helpers', () => {
         'roomNotStarted',
         'roomOpen',
         'roomQuestion',
+        'roomSet',
         'roomSkipped',
         'roomVoted',
       ].sort()

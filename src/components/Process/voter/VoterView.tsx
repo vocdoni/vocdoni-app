@@ -17,6 +17,7 @@ import { QuestionScreen } from './screens/QuestionScreen'
 import { ReceiptScreen } from './screens/ReceiptScreen'
 import { ResultsScreen } from './screens/ResultsScreen'
 import { RoomQuestionScreen } from './screens/RoomQuestionScreen'
+import { RoomSetScreen } from './screens/RoomSetScreen'
 import {
   RoomClosedVotedScreen,
   RoomMissedScreen,
@@ -56,6 +57,7 @@ const COLUMN: Partial<Record<VoterScreenKind, VoterShellColumn>> = {
   roomNotStarted: 'rail',
   roomOpen: 'rail',
   roomQuestion: 'rail',
+  roomSet: 'rail',
   roomVoted: 'rail',
   roomSkipped: 'rail',
   roomMissed: 'rail',
@@ -111,6 +113,8 @@ const Screen = ({ screen }: { screen: VoterScreen }) => {
       return <RoomOpenScreen key={screen.index} index={screen.index} />
     case 'roomQuestion':
       return <RoomQuestionScreen key={screen.index} index={screen.index} paused={screen.paused} />
+    case 'roomSet':
+      return <RoomSetScreen key={screen.set.join(',')} set={screen.set} paused={screen.paused} />
     case 'roomVoted':
       return <RoomVotedScreen key={screen.index} index={screen.index} record={screen.record} />
     case 'roomSkipped':
@@ -165,12 +169,10 @@ export const showsLegalNotice = (kind: VoterScreenKind): boolean => LEGAL_NOTICE
 export const VoterView = ({ publicLanguageLinks }: { publicLanguageLinks?: Record<string, string> }) => {
   const { t } = useTranslation()
   const { screen, election, brand, facts } = useVoterFlow()
-  // An open set answered in one form is the classic ballot inside the room: the room keeps its head, progress and agenda.
-  const formInRoom = (screen.kind === 'question' || screen.kind === 'review') && screen.set === true
-  const ballot = (screen.kind === 'question' || screen.kind === 'review') && !formInRoom
+  const ballot = screen.kind === 'question' || screen.kind === 'review'
   // Question by question: the room's frames keep the vote's head, the strip's progress and the agenda (boards
   // V4VoterWideLive / M4VoterLive 0 to 4); the head's line is the room's live one.
-  const room = facts.room && (isRoomScreen(screen) || formInRoom) ? facts.room : null
+  const room = facts.room && isRoomScreen(screen) ? facts.room : null
   const total = election.questions.length
   const reached = screen.kind === 'question' ? screen.index + 1 : total
   const label =
