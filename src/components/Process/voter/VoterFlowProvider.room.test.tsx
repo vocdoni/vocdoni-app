@@ -1,5 +1,6 @@
+import type { QueryClient } from '@tanstack/react-query'
 import { act, render, waitFor } from '@testing-library/react'
-import { AllProviders } from '~src/test-utils'
+import { AllProviders, createTestQueryClient } from '~src/test-utils'
 import { useVoterFlow, type VoterFlow } from './flow-context'
 import { VoterFlowProvider, VoterServerNow } from './VoterFlowProvider'
 
@@ -167,8 +168,8 @@ const Probe = () => {
   probe.current = useVoterFlow()
   return null
 }
-const tree = (serverNow?: number) => (
-  <AllProviders>
+const tree = (serverNow?: number, queryClient?: QueryClient) => (
+  <AllProviders queryClient={queryClient}>
     <VoterServerNow.Provider value={serverNow}>
       <VoterFlowProvider brand={{ branded: false, name: 'Ateneu' }}>
         <Probe />
@@ -176,10 +177,10 @@ const tree = (serverNow?: number) => (
     </VoterServerNow.Provider>
   </AllProviders>
 )
-const renderFlow = async (serverNow?: number) => {
-  const view = render(tree(serverNow))
+const renderFlow = async (serverNow?: number, queryClient?: QueryClient) => {
+  const view = render(tree(serverNow, queryClient))
   await waitFor(() => expect(probe.current?.facts.membership).toBe('ok'))
-  return { ...view, reread: () => view.rerender(tree(serverNow)) }
+  return { ...view, reread: () => view.rerender(tree(serverNow, queryClient)) }
 }
 
 beforeEach(() => {
@@ -778,7 +779,7 @@ describe('VoterFlowProvider, question by question', () => {
         answerBoth()
         sdk.vote.mockResolvedValueOnce(false)
         await act(async () => {
-          await probe.current?.cast()
+          await probe.current?.castQuestion(1)
         })
         sdk.statuses = ['RESULTS', 'RESULTS', 'RESULTS']
         vi.setSystemTime(endedAt + 2_000)
@@ -799,7 +800,7 @@ describe('VoterFlowProvider, question by question', () => {
         return false
       })
       await act(async () => {
-        await probe.current?.cast()
+        await probe.current?.castQuestion(1)
       })
       sdk.statuses = ['RESULTS', 'RESULTS', 'RESULTS']
       reread()
@@ -820,13 +821,31 @@ describe('VoterFlowProvider, question by question', () => {
         return false
       })
       await act(async () => {
-        await probe.current?.cast()
+        await probe.current?.castQuestion(1)
       })
       expect(probe.current?.state).toMatchObject({
         votedElsewhere: null,
         castError: 'errors.vote_partial',
         castQuestionId: 'q3',
       })
+    })
+
+    it('a set that changes to another set moves the focus to its heading', async () => {
+      sdk.statuses = ['ONGOING', 'ONGOING', 'ONGOING']
+      sdk.notEligible = ['q1']
+      sdk.checkVoted = []
+      // A second mount on the same client: the check is cached, so the first screen is already the set.
+      const queryClient = createTestQueryClient()
+      const first = await renderFlow(undefined, queryClient)
+      first.unmount()
+      const { reread } = await renderFlow(undefined, queryClient)
+      expect(probe.current?.screen).toEqual({ kind: 'roomSet', set: [1, 2], paused: false })
+      expect(probe.current?.moved).toBe(false)
+      sdk.statuses = ['ONGOING', 'RESULTS', 'ONGOING']
+      sdk.notEligible = []
+      reread()
+      await waitFor(() => expect(probe.current?.screen).toEqual({ kind: 'roomSet', set: [0, 2], paused: false }))
+      expect(probe.current?.moved).toBe(true)
     })
 
     it('a set that grows while the voter is on it: the answer is kept, the new question joins the same screen', async () => {
@@ -871,11 +890,11 @@ describe('VoterFlowProvider, question by question', () => {
       expect(Object.keys(sdk.vote.mock.calls[0][0])).toEqual(['1', '2'])
     })
 
-    it('"Enrere" from the set\'s second question, with the first locked, parks the set rather than going to welcome', async () => {
+    it("'Enrere' on the set screen, with a member locked, parks the set", async () => {
       setOpen()
       sdk.pendingVotes = { q2: true }
       await renderFlow()
-      act(() => probe.current?.back(2))
+      act(() => probe.current?.park(2))
       expect(probe.current?.screen).toEqual({ kind: 'roomOpen', index: 2 })
     })
   })

@@ -48,23 +48,9 @@ const ReviewRow = ({
 export const ReviewScreen = ({ paused }: { paused: boolean }) => {
   const { t } = useTranslation()
   const localize = useReactComponentsLocalize()
-  const {
-    election,
-    form,
-    state,
-    weight,
-    weighted,
-    moved,
-    voteIds,
-    lockedNotice,
-    change,
-    cast,
-    casting,
-    facts,
-    signOut,
-  } = useVoterFlow()
-  // The open set's questions when it is answered in one form (`roomFormSet`); the classic form lists the whole vote.
-  const listed = form ?? election.questions.map((_question, index) => index)
+  const { election, state, weight, weighted, moved, voteIds, lockedNotice, change, cast, casting, facts, signOut } =
+    useVoterFlow()
+  const listed = election.questions.map((_question, index) => index)
   const words = {
     blank: t('voter.question.blank'),
     ranked: (position: number, label: string) => t('voter.answer.ranked_item', { position, label }),
