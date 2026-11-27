@@ -1850,7 +1850,6 @@
       "partly_unconfirmed_one": "{{count}} delle tue {{total}} risposte risulta registrata. Il resto non è stato confermato prima della chiusura della votazione e potrebbe essere stato registrato comunque: verifica il tuo voto per saperlo.",
       "partly_unconfirmed_many": "{{count}} delle tue {{total}} risposte risultano registrate. Il resto non è stato confermato prima della chiusura della votazione e potrebbe essere stato registrato comunque: verifica il tuo voto per saperlo.",
       "partly_unconfirmed_other": "{{count}} delle tue {{total}} risposte risultano registrate. Il resto non è stato confermato prima della chiusura della votazione e potrebbe essere stato registrato comunque: verifica il tuo voto per saperlo.",
-      "sentence": "La votazione si è chiusa {{date}} alle {{time}}.",
       "turnout_one": "Ha votato {{count}} persona su {{total}}.",
       "turnout_many": "Hanno votato {{count}} persone su {{total}}.",
       "turnout_other": "Hanno votato {{count}} persone su {{total}}.",

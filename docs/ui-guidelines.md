@@ -500,7 +500,7 @@ The voter scale (tokens):
 | Button and field height | `sizes.control.ballot` | 52px at every width |
 | Radio, checkbox, phase disc | `sizes.mark.ballot` | 22px |
 | One-time code box | `sizes.ballot.code.width`, `.height` (`.touch` below `md`) | 56 by 64; 48 by 58 |
-| Column from `lg` | `sizes.ballot.column` (beside the rail), `.narrow`, `.code`, `.sending`, `.results`; `lead` on a status screen | 600, 440, 480, 520, 640, 560px |
+| Column from `lg` | `sizes.ballot.column` on every screen; text at the `lead` measure inside it unless the screen fills it | 600px; 560px |
 | Rail, logo, Vocdoni symbol, credit row in the phone bar | `sizes.ballot.rail`, `.logo`, `.symbol`, `.credit` | 280, 30, 22, 38px |
 | Wordmark in the credit | `sizes.wordmark.credit` (`wordmark` keeps its 125px width) | 13px tall |
 | Step progress line | `sizes.bar.thin` | 3px |
@@ -554,8 +554,9 @@ visible and accessible string as a prop and hold no logic: the page translates a
 
 - `VoterShell`: the frame. Top bar (56px, 64px from `lg`) with the organisation's `logo` or the Vocdoni symbol, its
   `name` and `actions`; the vote's `head` (title, status) as the strip below `lg`, with `progress` under it, and as the
-  `rail`'s head from `lg`; the column (`column`: `rail`, `narrow`, `code`, `sending`, `status`, `results`); the
-  `credit` at the foot.
+  `rail`'s head from `lg`; the column, one width on every screen so its left edge never moves (`column`: `full` for the
+  ballot, receipt, room and results, `lead` keeps the text at 560px, anchored left), held in the centre track from `xl`
+  with the rail on its left; the `credit` at the foot.
 - `VoterCredit`: "Votació feta amb" and the Vocdoni wordmark in ink (`text`, `brand`).
 - `StepProgress`: the strip's label and the 3px line on its bottom rule (`label`, `value`, `total`); the label is a
   polite live region that announces each change, and the bar under it is `aria-hidden`; nothing for a one-question vote.

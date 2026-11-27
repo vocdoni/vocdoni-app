@@ -3,8 +3,8 @@ import { createContext, useContext, type ReactNode } from 'react'
 import { VocdoniLogo } from '~components/Layout/Logo'
 import { VoterShell as voterShellRecipe } from '~theme/recipes/voterShell'
 
-/** The column's width from `lg`: the recipe's `column` variant. */
-export type VoterShellColumn = 'rail' | 'narrow' | 'code' | 'sending' | 'status' | 'results'
+/** The measure inside the column from `lg`: the recipe's `column` variant. */
+export type VoterShellColumn = 'full' | 'lead'
 
 type VoterShellStyles = Record<string, SystemStyleObject>
 
@@ -64,7 +64,7 @@ export type VoterShellProps = {
   rail?: ReactNode
   /** The rail's accessible name ("Preguntes a votar"). */
   railLabel?: string
-  /** The column's width from `lg` (default `status`, 560px; `rail` beside the agenda). */
+  /** The measure inside the column from `lg` (default `lead`, 560px; `full` fills the 600px column). */
   column?: VoterShellColumn
   /** The "made with Vocdoni" line and its links, at the foot (in the action bar below `md` when the page has one). */
   credit: VoterCreditProps

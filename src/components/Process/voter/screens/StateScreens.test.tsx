@@ -30,13 +30,15 @@ describe('state screens', () => {
     expect(status.querySelector('[aria-label]')).toBeNull()
   })
 
-  it('upcoming names the vote and its place, with the schedule sentence', () => {
+  it('upcoming says it has not started over the vote, with the schedule sentence', () => {
     const election = testElection({ startDate: '2026-12-02T08:00:00.000Z', endDate: '2026-12-12T19:00:00.000Z' })
-    renderWithFlow(<UpcomingScreen />, testFlow({ election }))
+    renderWithFlow(<UpcomingScreen />, testFlow({ election, facts: testFacts({ status: 'UPCOMING' }) }))
+    expect(screen.getByText('voter.room.not_started_line')).toBeInTheDocument()
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Assemblea General')
     expect(screen.getByText('voter.upcoming.card_title')).toBeInTheDocument()
     expect(screen.getByText('voter.upcoming.sentence')).toBeInTheDocument()
-    expect(screen.getByText('Ateneu de Vallnova')).toBeInTheDocument()
+    // The organisation is in the top bar; the line over the title is the vote's status, as on every screen.
+    expect(screen.queryByText('Ateneu de Vallnova')).toBeNull()
   })
 
   it('closed shows the turnout with its denominator, the results and "Comprova el teu vot" for a visitor', () => {
@@ -102,7 +104,6 @@ describe('state screens', () => {
         resources: {
           en: {
             common: {
-              'voter.closed.sentence': 'The vote closed on {{date}} at {{time}}.',
               'voter.results.closed_on': 'Closed on {{date}} at {{time}}',
             },
           },
@@ -114,7 +115,7 @@ describe('state screens', () => {
       renderWithFlow(<ClosedScreen />, testFlow({ election: early, facts: testFacts({ status: 'ENDED' }) }), {
         i18nInstance: await i18nInstance(),
       })
-      expect(screen.getByText(`The vote closed on ${when}.`)).toBeInTheDocument()
+      expect(screen.getByText(`Closed on ${when}`)).toBeInTheDocument()
     })
 
     it('the results closed line dates the close, not the schedule', async () => {

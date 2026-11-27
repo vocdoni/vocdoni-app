@@ -1850,7 +1850,6 @@
       "partly_unconfirmed_one": "{{count}} de vos {{total}} réponses est confirmée comme enregistrée. Le reste n'a pas pu être confirmé avant la clôture du vote et a peut-être aussi été enregistré : vérifiez votre vote pour le savoir.",
       "partly_unconfirmed_many": "{{count}} de vos {{total}} réponses sont confirmées comme enregistrées. Le reste n'a pas pu être confirmé avant la clôture du vote et a peut-être aussi été enregistré : vérifiez votre vote pour le savoir.",
       "partly_unconfirmed_other": "{{count}} de vos {{total}} réponses sont confirmées comme enregistrées. Le reste n'a pas pu être confirmé avant la clôture du vote et a peut-être aussi été enregistré : vérifiez votre vote pour le savoir.",
-      "sentence": "Le vote s'est clôturé le {{date}} à {{time}}.",
       "turnout_one": "{{count}} personne sur {{total}} a voté.",
       "turnout_many": "{{count}} personnes sur {{total}} ont voté.",
       "turnout_other": "{{count}} personnes sur {{total}} ont voté.",

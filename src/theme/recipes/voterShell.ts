@@ -12,8 +12,8 @@ const WRAPPING_STATUS = {
 } satisfies SystemStyleObject
 
 // The voter page's frame (ui/VoterShell), boards V4Voter* and M4Voter*: the top bar, the vote's strip below `lg`, the
-// body with the agenda rail from `lg`, and the "made with Vocdoni" credit at the foot. The column's width from `lg`
-// is the `column` variant; below `lg` it is the whole width on a phone (20px sides) and 560px on a tablet.
+// body with the agenda rail from `lg`, and the "made with Vocdoni" credit at the foot. The column is the whole width on
+// a phone (20px sides), 560px on a tablet and 600px from `lg`; the `column` variant sets the measure inside it.
 export const VoterShell = defineSlotRecipe({
   slots: [
     'root',
@@ -119,6 +119,12 @@ export const VoterShell = defineSlotRecipe({
       gap: { base: '0', lg: 'ballot.gutter' },
       px: { base: '0', lg: '8' },
       pt: { base: '0', lg: '14' },
+      // From `xl` the column keeps the centre track and the rail takes the one on its left, so moving between screens,
+      // with the rail or without it, never shifts the column. Below `xl` the rail and the column do not fit that way.
+      xl: {
+        display: 'grid',
+        gridTemplateColumns: '[minmax({sizes.ballot.rail}, 1fr) {sizes.ballot.column} minmax(0, 1fr)]',
+      },
     },
     // From `lg`: 280px beside the column, the vote's head ruled off over the agenda.
     rail: {
@@ -127,6 +133,7 @@ export const VoterShell = defineSlotRecipe({
       gap: '6',
       w: 'ballot.rail',
       flexShrink: 0,
+      xl: { gridColumn: '1', gridRow: '1', justifySelf: 'end' },
     },
     railHead: {
       ...WRAPPING_STATUS,
@@ -141,11 +148,13 @@ export const VoterShell = defineSlotRecipe({
       display: 'flex',
       flexDirection: 'column',
       w: 'full',
+      maxW: { base: 'full', md: 'lead', lg: 'ballot.column' },
       minW: '0',
       alignSelf: { base: 'stretch', md: 'center', lg: 'flex-start' },
       px: { base: '5', md: '0' },
       pt: { base: '5', md: '9', lg: '0' },
       pb: { base: '5', md: '10' },
+      xl: { gridColumn: '2', gridRow: '1' },
     },
     // The credit's row at the page's foot: 48px, centred, and taller only when the credit wraps.
     foot: { display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, minH: '12' },
@@ -172,16 +181,13 @@ export const VoterShell = defineSlotRecipe({
     links: { '& a': { whiteSpace: 'nowrap' } },
   },
   variants: {
-    // The column from `lg`: beside the rail (600px), or centred on its own: identification (440px), the one-time code
-    // (480px), sending (520px), a status screen (560px) or the results (640px). 560px on a tablet whatever it is.
+    // Every screen shares one column from `lg` (600px; 560px on a tablet), so its left edge stays put from screen to
+    // screen. `full` fills it (the ballot, the receipt, the room, the results); `lead` keeps the text at the 560px
+    // measure, anchored left.
     column: {
-      rail: { main: { maxW: { base: 'full', md: 'lead', lg: 'ballot.column' } } },
-      narrow: { main: { maxW: { base: 'full', md: 'lead', lg: 'ballot.column.narrow' } } },
-      code: { main: { maxW: { base: 'full', md: 'lead', lg: 'ballot.column.code' } } },
-      sending: { main: { maxW: { base: 'full', md: 'lead', lg: 'ballot.column.sending' } } },
-      status: { main: { maxW: { base: 'full', md: 'lead' } } },
-      results: { main: { maxW: { base: 'full', md: 'lead', lg: 'ballot.column.results' } } },
+      full: {},
+      lead: { main: { pe: { lg: '[calc({sizes.ballot.column} - {sizes.lead})]' } } },
     },
   },
-  defaultVariants: { column: 'status' },
+  defaultVariants: { column: 'lead' },
 })

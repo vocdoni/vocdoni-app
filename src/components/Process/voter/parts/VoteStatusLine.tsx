@@ -7,8 +7,8 @@ import { formatVoteDay, formatVoteTime } from '../format'
 import { LocalText } from './ScreenParts'
 
 /**
- * The vote's status line (conformance LV / ST): "Oberta fins dijous 12 a les 20:00" while open, "En pausa" or
- * "Cancel·lada". The date is in the visitor's zone, so `LocalText` swaps the server's text after hydration.
+ * The vote's status line (conformance LV / ST): "Oberta fins dijous 12 a les 20:00" while open, "Encara no ha començat",
+ * "En pausa" or "Cancel·lada". The date is in the visitor's zone, so `LocalText` swaps the server's text after hydration.
  */
 export const VoteStatusLine = ({ context = 'screen' }: { context?: 'head' | 'screen' }) => {
   const { t, i18n } = useTranslation()
@@ -21,9 +21,9 @@ export const VoteStatusLine = ({ context = 'screen' }: { context?: 'head' | 'scr
       </Status.Root>
     )
   }
-  // A question-by-question vote whose first question has not opened (the backend reports every unopened question as
-  // paused, also before the start date) is not paused and not open until anything: it has not started.
-  if (facts.room?.voteState === 'ready' && !facts.endedBySchedule) {
+  // Before its start, or a question-by-question vote whose first question has not opened (the backend reports every
+  // unopened question as paused, also before the start date): not paused and not open until anything.
+  if (facts.status === 'UPCOMING' || (facts.room?.voteState === 'ready' && !facts.endedBySchedule)) {
     return (
       <Status.Root size='ballot' tone='closed'>
         <Status.Indicator />

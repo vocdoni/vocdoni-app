@@ -43,29 +43,26 @@ import { WelcomeScreen } from './screens/WelcomeScreen'
 import { isRoomScreen } from './room'
 import type { VoterScreen, VoterScreenKind } from './voter-flow'
 
-// The column's width from `lg` per screen, as the boards set it (conformance.md 1.0.2); the rest are 560px.
-const COLUMN: Partial<Record<VoterScreenKind, VoterShellColumn>> = {
-  identify: 'narrow',
-  code: 'code',
-  question: 'rail',
-  review: 'rail',
-  sending: 'sending',
-  receipt: 'rail',
-  verifyReceipt: 'narrow',
-  results: 'results',
-  roomNotStarted: 'rail',
-  roomOpen: 'rail',
-  roomQuestion: 'rail',
-  roomVoted: 'rail',
-  roomSkipped: 'rail',
-  roomMissed: 'rail',
-  roomClosedVoted: 'rail',
-  roomNone: 'rail',
-}
+// The screens whose content fills the column from `lg`; the rest keep the text at the lead measure. Either way the column
+// is the same, so its left edge does not move from screen to screen.
+const FULL: ReadonlySet<VoterScreenKind> = new Set<VoterScreenKind>([
+  'question',
+  'review',
+  'receipt',
+  'results',
+  'roomNotStarted',
+  'roomOpen',
+  'roomQuestion',
+  'roomVoted',
+  'roomSkipped',
+  'roomMissed',
+  'roomClosedVoted',
+  'roomNone',
+])
 
-// The hidden results are a status screen (560px, board M9); the figures take the results column (640px, M10, M11).
+// The hidden results are a status screen (board M9): only the figures fill the column.
 const columnOf = (screen: VoterScreen): VoterShellColumn =>
-  screen.kind === 'results' && screen.state === 'hidden' ? 'status' : (COLUMN[screen.kind] ?? 'status')
+  FULL.has(screen.kind) && !(screen.kind === 'results' && screen.state === 'hidden') ? 'full' : 'lead'
 
 const Screen = ({ screen }: { screen: VoterScreen }) => {
   switch (screen.kind) {

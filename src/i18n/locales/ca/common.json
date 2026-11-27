@@ -1850,7 +1850,6 @@
       "partly_unconfirmed_one": "S'ha confirmat que {{count}} de les teves {{total}} respostes és al registre. La resta no s'ha pogut confirmar abans que es tanqués la votació i és possible que també s'hagi registrat: comprova el teu vot per saber-ho.",
       "partly_unconfirmed_many": "S'ha confirmat que {{count}} de les teves {{total}} respostes són al registre. La resta no s'ha pogut confirmar abans que es tanqués la votació i és possible que també s'hagi registrat: comprova el teu vot per saber-ho.",
       "partly_unconfirmed_other": "S'ha confirmat que {{count}} de les teves {{total}} respostes són al registre. La resta no s'ha pogut confirmar abans que es tanqués la votació i és possible que també s'hagi registrat: comprova el teu vot per saber-ho.",
-      "sentence": "La votació es va tancar {{date}} a les {{time}}.",
       "turnout_one": "Hi va votar {{count}} de {{total}} persones.",
       "turnout_many": "Hi van votar {{count}} de {{total}} persones.",
       "turnout_other": "Hi van votar {{count}} de {{total}} persones.",

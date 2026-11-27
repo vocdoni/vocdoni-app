@@ -1815,7 +1815,6 @@
       "partly_cast_other": "Only {{count}} of your {{total}} answers were recorded before the vote closed.",
       "partly_unconfirmed_one": "{{count}} of your {{total}} answers was confirmed as recorded. The rest could not be confirmed before the vote closed and may have been recorded too: check your vote to find out.",
       "partly_unconfirmed_other": "{{count}} of your {{total}} answers were confirmed as recorded. The rest could not be confirmed before the vote closed and may have been recorded too: check your vote to find out.",
-      "sentence": "The vote closed on {{date}} at {{time}}.",
       "turnout_one": "{{count}} of {{total}} people voted.",
       "turnout_other": "{{count}} of {{total}} people voted.",
       "turnout_any_one": "At least {{count}} of {{total}} people voted.",
