@@ -87,6 +87,9 @@ export default defineConfig({
       POSTHOG_KEY: '',
       CRISP_WEBSITE_ID: '',
       ANALYTICS_CLIENT_ID: '',
+      // On by default, pinned so a QUESTION_BY_QUESTION=false in the shell cannot hide the switch
+      // question-by-question-voting.e2e.ts needs.
+      QUESTION_BY_QUESTION: 'true',
       // Only in Stripe mode (INTEGRATION_STRIPE_SECRET_KEY set, see integration/README.md) does the
       // app get a publishable key, so the checkout spec can reach Stripe. Otherwise it stays empty
       // and payments stay off in the default suite.

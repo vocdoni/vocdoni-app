@@ -42,12 +42,14 @@ describe('buildAppEnv', () => {
     expect(buildAppEnv({ DISABLE_ANONYMOUS_VOTING: '1' }).DISABLE_ANONYMOUS_VOTING).toBe(false)
   })
 
-  it('enables QUESTION_BY_QUESTION unless it is the exact string "false"', () => {
+  it('enables QUESTION_BY_QUESTION unless it is "false" or "0"', () => {
     expect(buildAppEnv({}).QUESTION_BY_QUESTION).toBe(true)
     expect(buildAppEnv({ QUESTION_BY_QUESTION: '' }).QUESTION_BY_QUESTION).toBe(true)
     expect(buildAppEnv({ QUESTION_BY_QUESTION: 'true' }).QUESTION_BY_QUESTION).toBe(true)
     expect(buildAppEnv({ QUESTION_BY_QUESTION: '1' }).QUESTION_BY_QUESTION).toBe(true)
-    expect(buildAppEnv({ QUESTION_BY_QUESTION: 'false' }).QUESTION_BY_QUESTION).toBe(false)
+    for (const off of ['false', 'FALSE', ' False ', '0']) {
+      expect(buildAppEnv({ QUESTION_BY_QUESTION: off }).QUESTION_BY_QUESTION).toBe(false)
+    }
   })
 
   it('resolves CERT_GATEWAY_URL to an https origin, dropping anything else', () => {
