@@ -25,18 +25,19 @@ When a PR depends on an unmerged `saas-backend`, `vocdoni-sequencer` or `vocdoni
   overrides for that run only). Each is optional. A ref is a SHA, branch, tag, or PR number (bare `760` or `#760`).
   Upstreams are built from source, so the run takes longer. A `vocdoni-sequencer` ref must include 62b1ae30 (the
   `voconed migrate` subcommand) or be later; see `integration/README.md`, "Pinning upstream commits".
-- Refs that are all branches, tags or PRs make the pin **sticky**: every later push re-runs against those refs at their
-  current heads. Any SHA makes it a one-shot run, and so does a bare `/integration` (`:main` images and npm packages),
-  without changing the sticky refs. `/integration reset` goes back to the `:main` images and npm packages.
+- A comment without a SHA is **sticky**, a bare `/integration` included: every later push re-runs the suite, against the
+  refs at their current heads, or against the `:main` images and npm packages for a bare `/integration`. A later sticky
+  comment replaces the earlier one. Any SHA makes it a one-shot run that leaves the sticky state alone.
+  `/integration reset` clears it, so pushes to a PR into `develop` stop running the suite.
 - Only users with write access can trigger it. The comment trigger runs the workflow from `develop` and replies with a
-  PR comment; a failed run's reply includes the failing step's output. Sticky re-runs on push show up as the
+  PR comment; a failed run's reply includes the failing step's output. Re-runs on push show up as the
   Integration check and post a new PR comment each time.
 
 ## When it runs
 
-The workflow runs on merges into `develop`, on PRs to `stage` or `main`, on any PR with sticky pins, and on a
-`/integration` comment. A sticky pin also runs the e2e job on PRs into `develop`, which otherwise skip it. Pushes to the
-upstream PR re-run nothing here: push to this PR or comment again.
+The workflow runs on merges into `develop`, on PRs to `stage` or `main`, on any PR with a sticky `/integration`
+comment, and on a `/integration` comment. A sticky comment also runs the e2e job on PRs into `develop`, which otherwise
+skip it. Pushes to the upstream PR re-run nothing here: push to this PR or comment again.
 
 ## Merging a pinned PR
 

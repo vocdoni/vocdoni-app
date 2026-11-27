@@ -10,8 +10,9 @@
 # A ref is a commit SHA (7-40 hex), a branch or tag, or a PR number: #<N>, or a
 # bare <N> of 1-6 digits, which is output as #<N>. A branch or tag named only
 # 1-6 digits cannot be pinned by name.
-# sticky=true when refs are given and none is a SHA: the refs are re-resolved
-# on every push until `/integration reset`. A comment with any SHA runs once.
+# sticky=true unless a ref is a SHA, a bare `/integration` included: every push
+# re-runs the suite, re-resolving the refs (none means the `:main` images and npm
+# packages), until `/integration reset`. A comment with any SHA runs once.
 #
 # Env: none. Input: the comment body on stdin.
 # Output (stdout, exit 0):
@@ -51,7 +52,6 @@ sdk_ref=""
 seen_sequencer=0
 seen_saas=0
 seen_sdk=0
-sticky_refs=0
 sha_refs=0
 for tok in ${tokens[@]+"${tokens[@]}"}; do
   if [[ "$tok" != *=* ]]; then
@@ -95,21 +95,19 @@ for tok in ${tokens[@]+"${tokens[@]}"}; do
   # Ref grammar: the same rule is duplicated in integration-build-image.sh and
   # integration-build-sdk.sh. Keep all three in sync.
   if [[ "$ref" =~ ^#[0-9]{1,9}$ ]]; then
-    sticky_refs=$((sticky_refs + 1))
+    : # a PR number, never a SHA
   elif [[ "$ref" =~ ^[A-Za-z0-9][A-Za-z0-9._/-]{0,99}$ ]] && [[ "$ref" != *..* ]]; then
     if [[ "$ref" =~ ^[0-9A-Fa-f]{7,40}$ ]]; then
       sha_refs=$((sha_refs + 1))
-    else
-      sticky_refs=$((sticky_refs + 1))
     fi
   else
     fail "invalid ref '$ref' for '$key'"
   fi
 done
 
-sticky=false
-if [ "$sticky_refs" -gt 0 ] && [ "$sha_refs" = 0 ]; then
-  sticky=true
+sticky=true
+if [ "$sha_refs" -gt 0 ]; then
+  sticky=false
 fi
 
 printf 'vocdoni_sequencer_ref=%s\nsaas_backend_ref=%s\nintegrator_sdk_ref=%s\nsticky=%s\nreset=false\n' \

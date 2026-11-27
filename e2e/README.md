@@ -214,7 +214,7 @@ stays in the test account. A run cancelled before that cleanup is swept by
 `.github/workflows/integration.yml` runs this — both projects — on pushes to
 `develop` (the integration branch), on pull requests targeting `stage` or `main`
 (the two promotions that actually reach users), and on any pull request with
-pinned `/integration` refs (see [integration/README.md](../integration/README.md)).
+a sticky `/integration` comment (see [integration/README.md](../integration/README.md)).
 It runs in Stripe mode when the Stripe secrets are set, and on dummy Stripe keys with
 a warning when they are not.
 Other feature PRs into `develop` do not run it (they are covered by `test.yml`);
