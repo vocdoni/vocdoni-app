@@ -137,7 +137,7 @@ fi
       echo "These refs are re-resolved on every push to this PR until \`/integration reset\`."
     elif [ "$STICKY" = true ]; then
       echo
-      echo "Pushes to this PR also run the suite, against the \`:main\` images and npm packages, unless both its branch and its base predate this behaviour. \`/integration reset\` turns that off, except on a PR into stage or main."
+      echo "Pushes to this PR also run the suite, against the \`:main\` images and npm packages. \`/integration reset\` turns that off, except on a PR into stage or main. A push whose merge with the base predates this behaviour still treats a bare \`/integration\` as one-shot."
     else
       echo
       echo "One-shot run: pushes to this PR keep running as they did before this comment."

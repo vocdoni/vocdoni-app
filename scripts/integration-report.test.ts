@@ -73,7 +73,7 @@ describe('integration-report.sh', () => {
         '- integrator-sdk: npm (lockfile)',
         `- Run: ${RUN_URL}`,
         '',
-        'Pushes to this PR also run the suite, against the `:main` images and npm packages, unless both its branch and its base predate this behaviour. `/integration reset` turns that off, except on a PR into stage or main.',
+        'Pushes to this PR also run the suite, against the `:main` images and npm packages. `/integration reset` turns that off, except on a PR into stage or main. A push whose merge with the base predates this behaviour still treats a bare `/integration` as one-shot.',
         '',
       ].join('\n')
     )
