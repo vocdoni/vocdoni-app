@@ -93,9 +93,10 @@ export const waitForCensusPayment = async (
 ): Promise<CensusPaymentWait | undefined> => {
   const deadline = now() + timeoutMs
   let delay = intervalMs
-  // When a top-up that is not in the snapshot was first read, and whether the room was already bought again
+  // When a top-up not yet handled was first read; reset once a short recovery handles it
   let firstSeen: number | undefined
-  let attempted = false
+  // The top-ups already handled: the snapshot, and those a recovery found the wallet still short for
+  const handledTopUpIds = new Set(knownTopUpIds)
   // The recovery found the wallet still short: this payment's own debit may still land, so the wait goes on
   let short = false
   while (!signal?.aborted) {
@@ -108,16 +109,23 @@ export const waitForCensusPayment = async (
       if (entry) return signal?.aborted ? undefined : { status: 'paid', entry }
 
       // The top-up is credited but no debit followed: calling the checkout again debits it (it cannot double charge)
-      if (recover && knownTopUpIds && !attempted) {
-        const topUp = history.some((candidate) => candidate.kind === 'topup' && !knownTopUpIds.includes(candidate.id))
-        if (topUp) firstSeen ??= now()
+      if (recover && knownTopUpIds) {
+        const newTopUpIds = history
+          .filter((candidate) => candidate.kind === 'topup' && !handledTopUpIds.has(candidate.id))
+          .map((candidate) => candidate.id)
+        if (newTopUpIds.length) firstSeen ??= now()
         if (firstSeen !== undefined && now() - firstSeen >= graceMs) {
-          attempted = true
           const result = await recover().catch(() => undefined)
           // A room bought during the recovery is returned even when the wait was aborted: the wallet was debited
           if (result?.status === 'bought') return result
           if (signal?.aborted) return undefined
-          short = result?.status === 'short'
+          // A failed recovery (undefined) is retried on the next read; a short one is done with these top-ups,
+          // so only a top-up that shows up later starts its own grace period
+          if (result?.status === 'short') {
+            newTopUpIds.forEach((id) => handledTopUpIds.add(id))
+            firstSeen = undefined
+            short = true
+          }
         }
       }
     } catch (error) {

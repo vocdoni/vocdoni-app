@@ -146,7 +146,7 @@ export const CensusCheckout = ({
     returned ? stepAfterReturn(knownIds, knownTopUpIds, censusSize) : { name: 'ready' }
   )
   const [error, setError] = useState<string>()
-  // At most one recovery per mount: a StrictMode remount or a second wait must not buy the room twice
+  // At most one recovery in flight: a StrictMode remount or a second wait must not buy the room twice
   const recoveryRef = useRef(false)
 
   // The debit changes the balance and the ledger: every wallet page is read again
@@ -177,6 +177,9 @@ export const CensusCheckout = ({
       // A 400 may mean the debit landed: its ledger entry ends the wait, so nothing is claimed here
       console.warn('could not buy the places from the wallet', err)
       return undefined
+    } finally {
+      // A failed call is retried by the next read of the wait, so the guard is released either way
+      recoveryRef.current = false
     }
   }
 

@@ -296,14 +296,13 @@ describe('waitForCensusPayment', () => {
       expect(recover).not.toHaveBeenCalled()
     })
 
-    it('keeps polling when the recovery answers nothing, and resolves paid once the payment lands', async () => {
+    it('recovers again after a recovery that answers nothing, and returns what it bought', async () => {
       const clock = fakeClock()
-      let reads = 0
-      const readHistory = vi.fn(async () => {
-        reads++
-        return reads < 5 ? [topUp] : [payment, topUp]
-      })
-      const recover = vi.fn().mockResolvedValue(undefined)
+      const readHistory = vi.fn().mockResolvedValue([topUp])
+      const recover = vi
+        .fn()
+        .mockResolvedValueOnce(undefined)
+        .mockResolvedValueOnce({ status: 'bought', amountCents: 300, currency: 'eur' })
 
       const outcome = await waitForCensusPayment(readHistory, processId, [], {
         ...clock,
@@ -311,11 +310,11 @@ describe('waitForCensusPayment', () => {
         recover,
       })
 
-      expect(outcome).toEqual({ status: 'paid', entry: expect.objectContaining({ id: 'p-new' }) })
-      expect(recover).toHaveBeenCalledTimes(1)
+      expect(outcome).toEqual({ status: 'bought', amountCents: 300, currency: 'eur' })
+      expect(recover).toHaveBeenCalledTimes(2)
     })
 
-    it('keeps polling when the recovery rejects, and times out without a payment', async () => {
+    it('keeps polling when the recovery rejects, and retries it until the deadline', async () => {
       const clock = fakeClock()
       const readHistory = vi.fn().mockResolvedValue([topUp])
       const recover = vi.fn().mockRejectedValue(new Error('network down'))
@@ -328,7 +327,33 @@ describe('waitForCensusPayment', () => {
       })
 
       expect(outcome).toEqual({ status: 'timeout' })
-      expect(recover).toHaveBeenCalledTimes(1)
+      expect(recover.mock.calls.length).toBeGreaterThan(1)
+      // At most one retry per read: a retry never skips the sleep between polls
+      expect(recover.mock.calls.length).toBeLessThan(readHistory.mock.calls.length)
+    })
+
+    it('recovers a later top-up after a short recovery for an unrelated one, and returns what it bought', async () => {
+      const clock = fakeClock()
+      const other = entry({ id: 't-other', kind: 'topup', amountCents: 5000, processId: undefined })
+      let reads = 0
+      // An unrelated top-up is in the ledger from the start; this payment's top-up is credited later
+      const readHistory = vi.fn(async () => {
+        reads++
+        return reads < 4 ? [other] : [topUp, other]
+      })
+      const recover = vi
+        .fn()
+        .mockResolvedValueOnce({ status: 'short' })
+        .mockResolvedValueOnce({ status: 'bought', amountCents: 300, currency: 'eur' })
+
+      const outcome = await waitForCensusPayment(readHistory, processId, [], {
+        ...clock,
+        knownTopUpIds: [],
+        recover,
+      })
+
+      expect(outcome).toEqual({ status: 'bought', amountCents: 300, currency: 'eur' })
+      expect(recover).toHaveBeenCalledTimes(2)
     })
 
     it('keeps waiting after a short recovery, and resolves paid when this payment lands', async () => {

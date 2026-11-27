@@ -247,14 +247,13 @@ describe('CensusCheckout', () => {
     expect(mutateAsync.mock.calls[1][0]).toMatchObject({ processId, censusSize: 1200 })
   })
 
-  it('recovers at most once per mount, even when the wait asks twice', async () => {
+  it('does not buy the room twice at once when the wait asks while a recovery is in flight', async () => {
     const user = userEvent.setup()
     mutateAsync
       .mockResolvedValueOnce({ clientSecret: 'cs_test', sessionId: 'cs_session', amountCents: 300, currency: 'eur' })
       .mockResolvedValueOnce({ clientSecret: '', amountCents: 300, currency: 'eur' })
     waitForCensusPayment.mockImplementation(async (_read: unknown, _id: unknown, _known: unknown, opts: any) => {
-      await opts.recover()
-      await opts.recover()
+      await Promise.all([opts.recover(), opts.recover()])
       return { status: 'timeout' }
     })
     renderCheckout()
@@ -266,6 +265,28 @@ describe('CensusCheckout', () => {
       'Your payment is confirmed; the places are added as soon as it is processed. Try adding the members again in a moment.'
     )
     expect(mutateAsync).toHaveBeenCalledTimes(2)
+  })
+
+  it('buys the room again after a recovery that failed, once the failure is over', async () => {
+    const user = userEvent.setup()
+    vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    mutateAsync
+      .mockResolvedValueOnce({ clientSecret: 'cs_test', sessionId: 'cs_session', amountCents: 300, currency: 'eur' })
+      .mockRejectedValueOnce(new Error('network down'))
+      .mockResolvedValueOnce({ clientSecret: '', amountCents: 300, currency: 'eur' })
+    waitForCensusPayment.mockImplementation(async (_read: unknown, _id: unknown, _known: unknown, opts: any) => {
+      await opts.recover()
+      return opts.recover()
+    })
+    renderCheckout()
+
+    await user.click(buyButton())
+    await user.click(await screen.findByRole('button', { name: 'Pay €2.42' }))
+
+    expect(
+      await screen.findByText('Voter places added: €3 was charged from your wallet. Try adding the members again.')
+    ).toBeInTheDocument()
+    expect(mutateAsync).toHaveBeenCalledTimes(3)
   })
 
   it('says the top-up is credited, with no second card form, when the wallet is still short', async () => {
