@@ -2,8 +2,12 @@ import { screen } from '@testing-library/react'
 import { render } from '~src/test-utils'
 import { VoterFlowContext } from './flow-context'
 import { testElection, testFacts, testFlow, testRoom } from './test-flow'
-import { VoterView } from './VoterView'
+import { showsLegalNotice, VoterView } from './VoterView'
 import type { VoterScreen } from './voter-flow'
+
+vi.mock('./parts/QuestionBody', () => ({
+  QuestionBody: ({ index }: { index: number }) => <h2>Question {index + 1}</h2>,
+}))
 
 const election = testElection({
   initialStatus: 'PAUSED',
@@ -48,5 +52,17 @@ describe('VoterView, question by question', () => {
     first.blur()
     rerender(view(to))
     expect(screen.getByRole('heading', { level: 1 })).toHaveFocus()
+  })
+
+  it('shows the open set on one screen, its heading focused again when the set changes (gate-3 F9)', () => {
+    const { rerender } = render(view({ kind: 'roomSet', set: [0, 1], paused: false }))
+    expect(screen.getByRole('heading', { level: 1 })).toHaveFocus()
+    expect(screen.getAllByRole('heading', { level: 2 })).toHaveLength(2)
+    rerender(view({ kind: 'roomSet', set: [1, 2], paused: false }))
+    expect(screen.getByRole('heading', { level: 1 })).toHaveFocus()
+  })
+
+  it('the open set carries no legal notice, like the question it replaces', () => {
+    expect(showsLegalNotice('roomSet')).toBe(false)
   })
 })

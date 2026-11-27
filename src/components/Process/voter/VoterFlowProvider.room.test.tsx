@@ -1,5 +1,6 @@
+import type { QueryClient } from '@tanstack/react-query'
 import { act, render, waitFor } from '@testing-library/react'
-import { AllProviders } from '~src/test-utils'
+import { AllProviders, createTestQueryClient } from '~src/test-utils'
 import { useVoterFlow, type VoterFlow } from './flow-context'
 import { VoterFlowProvider, VoterServerNow } from './VoterFlowProvider'
 
@@ -167,8 +168,8 @@ const Probe = () => {
   probe.current = useVoterFlow()
   return null
 }
-const tree = (serverNow?: number) => (
-  <AllProviders>
+const tree = (serverNow?: number, queryClient?: QueryClient) => (
+  <AllProviders queryClient={queryClient}>
     <VoterServerNow.Provider value={serverNow}>
       <VoterFlowProvider brand={{ branded: false, name: 'Ateneu' }}>
         <Probe />
@@ -176,10 +177,10 @@ const tree = (serverNow?: number) => (
     </VoterServerNow.Provider>
   </AllProviders>
 )
-const renderFlow = async (serverNow?: number) => {
-  const view = render(tree(serverNow))
+const renderFlow = async (serverNow?: number, queryClient?: QueryClient) => {
+  const view = render(tree(serverNow, queryClient))
   await waitFor(() => expect(probe.current?.facts.membership).toBe('ok'))
-  return { ...view, reread: () => view.rerender(tree(serverNow)) }
+  return { ...view, reread: () => view.rerender(tree(serverNow, queryClient)) }
 }
 
 beforeEach(() => {
@@ -290,7 +291,7 @@ describe('VoterFlowProvider, question by question', () => {
     sdk.q3Votes = 2
     reread()
     await waitFor(() => expect(probe.current?.facts.room?.voteState).toBe('paused'))
-    expect(probe.current?.screen).toMatchObject({ kind: 'question', paused: true, set: true })
+    expect(probe.current?.screen).toMatchObject({ kind: 'roomSet', paused: true, set: [1, 2] })
     act(() => probe.current?.park(1))
     expect(probe.current?.state.parked).toBe('q2,q3')
     act(() => probe.current?.skip(1))
@@ -550,7 +551,7 @@ describe('VoterFlowProvider, question by question', () => {
   it('casts the open set together once every question of it is answered (SDK signs them all)', async () => {
     sdk.statuses = ['RESULTS', 'ONGOING', 'ONGOING']
     await renderFlow()
-    expect(probe.current?.screen).toEqual({ kind: 'question', index: 1, paused: false, set: true })
+    expect(probe.current?.screen).toEqual({ kind: 'roomSet', set: [1, 2], paused: false })
     act(() => sdk.watch?.({ '1': '0' }, { name: '1' }))
     await act(async () => {
       await probe.current?.castQuestion(1)
@@ -623,19 +624,19 @@ describe('VoterFlowProvider, question by question', () => {
     expect(probe.current?.state).toMatchObject({ castError: 'validation.required', castQuestionId: 'q3' })
   })
 
-  // An open set of two is one form: question, question, review, then one cast of both answers (SDK #118 signs both).
-  it('answers an open set of two as one form and casts it once from review', async () => {
+  // An open set of two is one screen: both questions, one cast of both answers (SDK #118 signs both).
+  it('answers an open set of two on one screen and casts it once', async () => {
     sdk.statuses = ['RESULTS', 'ONGOING', 'ONGOING']
     await renderFlow()
-    expect(probe.current?.screen).toEqual({ kind: 'question', index: 1, paused: false, set: true })
+    expect(probe.current?.screen).toEqual({ kind: 'roomSet', set: [1, 2], paused: false })
     act(() => sdk.watch?.({ '1': '0' }, { name: '1' }))
-    await waitFor(() => expect(probe.current?.screen).toEqual({ kind: 'question', index: 2, paused: false, set: true }))
+    expect(probe.current?.screen).toEqual({ kind: 'roomSet', set: [1, 2], paused: false })
     act(() => sdk.watch?.({ '2': '1' }, { name: '2' }))
-    await waitFor(() => expect(probe.current?.screen).toEqual({ kind: 'review', paused: false, set: true, index: 2 }))
+    expect(probe.current?.screen).toEqual({ kind: 'roomSet', set: [1, 2], paused: false })
     expect(probe.current?.form).toEqual([1, 2])
     expect(sdk.vote).not.toHaveBeenCalled()
     await act(async () => {
-      await probe.current?.cast()
+      await probe.current?.castQuestion(1)
     })
     expect(sdk.vote).toHaveBeenCalledTimes(1)
     expect(sdk.vote.mock.calls[0][0]).toEqual({ '1': '0', '2': '1' })
@@ -778,7 +779,7 @@ describe('VoterFlowProvider, question by question', () => {
         answerBoth()
         sdk.vote.mockResolvedValueOnce(false)
         await act(async () => {
-          await probe.current?.cast()
+          await probe.current?.castQuestion(1)
         })
         sdk.statuses = ['RESULTS', 'RESULTS', 'RESULTS']
         vi.setSystemTime(endedAt + 2_000)
@@ -799,7 +800,7 @@ describe('VoterFlowProvider, question by question', () => {
         return false
       })
       await act(async () => {
-        await probe.current?.cast()
+        await probe.current?.castQuestion(1)
       })
       sdk.statuses = ['RESULTS', 'RESULTS', 'RESULTS']
       reread()
@@ -820,7 +821,7 @@ describe('VoterFlowProvider, question by question', () => {
         return false
       })
       await act(async () => {
-        await probe.current?.cast()
+        await probe.current?.castQuestion(1)
       })
       expect(probe.current?.state).toMatchObject({
         votedElsewhere: null,
@@ -829,7 +830,25 @@ describe('VoterFlowProvider, question by question', () => {
       })
     })
 
-    it('a set that grows while the voter is on it: the step is kept, the new question is asked', async () => {
+    it('a set that changes to another set moves the focus to its heading', async () => {
+      sdk.statuses = ['ONGOING', 'ONGOING', 'ONGOING']
+      sdk.notEligible = ['q1']
+      sdk.checkVoted = []
+      // A second mount on the same client: the check is cached, so the first screen is already the set.
+      const queryClient = createTestQueryClient()
+      const first = await renderFlow(undefined, queryClient)
+      first.unmount()
+      const { reread } = await renderFlow(undefined, queryClient)
+      expect(probe.current?.screen).toEqual({ kind: 'roomSet', set: [1, 2], paused: false })
+      expect(probe.current?.moved).toBe(false)
+      sdk.statuses = ['ONGOING', 'RESULTS', 'ONGOING']
+      sdk.notEligible = []
+      reread()
+      await waitFor(() => expect(probe.current?.screen).toEqual({ kind: 'roomSet', set: [0, 2], paused: false }))
+      expect(probe.current?.moved).toBe(true)
+    })
+
+    it('a set that grows while the voter is on it: the answer is kept, the new question joins the same screen', async () => {
       sdk.statuses = ['RESULTS', 'ONGOING', 'PAUSED']
       const { reread } = await renderFlow()
       act(() => sdk.watch?.({ '1': '0' }, { name: '1' }))
@@ -837,9 +856,10 @@ describe('VoterFlowProvider, question by question', () => {
       sdk.statuses = ['RESULTS', 'ONGOING', 'ONGOING']
       reread()
       await waitFor(() => expect(probe.current?.form).toEqual([1, 2]))
-      expect(probe.current?.screen).toEqual({ kind: 'question', index: 2, paused: false, set: true })
+      expect(probe.current?.screen).toEqual({ kind: 'roomSet', set: [1, 2], paused: false })
+      expect(probe.current?.state.answers['1']).toBe('0')
       act(() => sdk.watch?.({ '2': '1' }, { name: '2' }))
-      await waitFor(() => expect(probe.current?.screen).toEqual({ kind: 'review', paused: false, set: true, index: 2 }))
+      expect(probe.current?.screen).toEqual({ kind: 'roomSet', set: [1, 2], paused: false })
     })
 
     it('a set that shrinks to one: its answer to a question that closed is not sent', async () => {
@@ -870,11 +890,11 @@ describe('VoterFlowProvider, question by question', () => {
       expect(Object.keys(sdk.vote.mock.calls[0][0])).toEqual(['1', '2'])
     })
 
-    it('"Enrere" from the set\'s second question, with the first locked, parks the set rather than going to welcome', async () => {
+    it("'Enrere' on the set screen, with a member locked, parks the set", async () => {
       setOpen()
       sdk.pendingVotes = { q2: true }
       await renderFlow()
-      act(() => probe.current?.back(2))
+      act(() => probe.current?.park(2))
       expect(probe.current?.screen).toEqual({ kind: 'roomOpen', index: 2 })
     })
   })

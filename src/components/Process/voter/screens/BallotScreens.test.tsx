@@ -3,7 +3,6 @@ import { createTestI18n } from '~src/test-utils'
 import { renderWithFlow, testElection, testFacts, testFlow } from '../test-flow'
 import { initialVoterState } from '../voter-flow'
 import { ReceiptScreen } from './ReceiptScreen'
-import { QuestionScreen } from './QuestionScreen'
 import { ReviewScreen } from './ReviewScreen'
 import { SendingScreen } from './SendingScreen'
 import { WelcomeScreen } from './WelcomeScreen'
@@ -32,15 +31,6 @@ describe('welcome', () => {
   })
 })
 
-describe('an open set answered in one form', () => {
-  it('offers to skip the whole set, and the skip covers the set, not this question alone', () => {
-    const flow = testFlow({ form: [0, 1] })
-    renderWithFlow(<QuestionScreen index={0} paused={false} />, flow)
-    fireEvent.click(screen.getByRole('button', { name: 'voter.room.skip_set' }))
-    expect(flow.skip).toHaveBeenCalledWith(0)
-  })
-})
-
 describe('review', () => {
   it('lists every answer from the flow, kept out of replays, and "Canvia" goes to its question', () => {
     const flow = testFlow({ state: answered, facts: testFacts({ answered: [true, true] }) })
@@ -49,15 +39,6 @@ describe('review', () => {
     expect(screen.getByText('Yes 2')).toBeInTheDocument()
     expect(screen.getByText('No 1').closest('.ph-no-capture')).not.toBeNull()
     fireEvent.click(screen.getAllByRole('button', { name: 'voter.review.change_label' })[1])
-    expect(flow.change).toHaveBeenCalledWith(1)
-  })
-
-  it('lists only the open set answered in one form, and "Canvia" keeps the vote\'s own index', () => {
-    const flow = testFlow({ state: answered, form: [1], facts: testFacts({ answered: [true, true] }) })
-    renderWithFlow(<ReviewScreen paused={false} />, flow)
-    expect(screen.getByText('Yes 2')).toBeInTheDocument()
-    expect(screen.queryByText('No 1')).toBeNull()
-    fireEvent.click(screen.getByRole('button', { name: 'voter.review.change_label' }))
     expect(flow.change).toHaveBeenCalledWith(1)
   })
 

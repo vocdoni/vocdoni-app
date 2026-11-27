@@ -48,6 +48,8 @@ export type VoterScreen =
   | { kind: 'unavailable'; refused?: true }
   | { kind: 'roomNotStarted' }
   | { kind: 'roomOpen'; index: number }
+  // An open set of two or more questions: all its questions on one screen, cast once, no review.
+  | { kind: 'roomSet'; set: number[]; paused: boolean }
   | { kind: 'roomQuestion'; index: number; paused: boolean }
   | { kind: 'roomVoted'; index: number; record: RoomRecord }
   | { kind: 'roomSkipped'; index: number }
@@ -55,8 +57,8 @@ export type VoterScreen =
   | { kind: 'roomClosedVoted'; index: number }
   | { kind: 'roomNone' }
   | { kind: 'welcome' }
-  | { kind: 'question'; index: number; paused: boolean; set?: true }
-  | { kind: 'review'; paused: boolean; set?: true; index?: number }
+  | { kind: 'question'; index: number; paused: boolean }
+  | { kind: 'review'; paused: boolean }
   | { kind: 'sending' }
   | { kind: 'receipt' }
   | { kind: 'alreadyVoted' }
@@ -465,8 +467,8 @@ const shownOpenIndex = (questions: readonly RoomQuestion[], answered: readonly b
 }
 
 /**
- * The questions the voter answers together in one form: the open set's, when there are two or more. One question is the
- * room's single question. The questions this voter may not vote are not in the form either.
+ * The questions the voter answers together, on one screen and cast once: the open set's, when there are two or more.
+ * One question is the room's single question. The questions this voter may not vote are not in the set either.
  */
 export const roomFormSet = (questions: readonly RoomQuestion[], voteState: VoteState = 'live'): number[] | null => {
   const set = roomHeldSet(questions, voteState)
@@ -484,21 +486,6 @@ export const roomHeldSet = (questions: readonly RoomQuestion[], voteState: VoteS
   return questions.flatMap((question, index) =>
     question.state === 'paused' && !isRoomCast(question) && isRoomEligible(question) ? [index] : []
   )
-}
-
-/** The form's screens for an open set: its questions in order, then review; "Canvia" returns to a question of the set. */
-const roomFormScreen = (
-  set: readonly number[],
-  answered: readonly boolean[],
-  step: VoterStep,
-  paused = false
-): VoterScreen => {
-  const left = set.find((index) => !answered[index])
-  if (step.name === 'question' && set.includes(step.index)) {
-    return { kind: 'question', index: step.index, paused, set: true }
-  }
-  if (left !== undefined) return { kind: 'question', index: left, paused, set: true }
-  return { kind: 'review', paused, set: true, index: set[set.length - 1] }
 }
 
 /**
@@ -525,7 +512,7 @@ const deriveRoomScreen = (
     if (local.skipped.includes(question.id)) return { kind: 'roomSkipped', index: open }
     if (local.parked === roomGroupKey(questions)) return { kind: 'roomOpen', index: open }
     const set = roomFormSet(questions, voteState)
-    if (set) return roomFormScreen(set, facts.answered, local.step)
+    if (set) return { kind: 'roomSet', set, paused: false }
     return { kind: 'roomQuestion', index: open, paused: false }
   }
   if (voteState === 'paused') {
@@ -535,7 +522,7 @@ const deriveRoomScreen = (
       set &&
       !set.some((index) => parked.includes(questions[index].id) || local.skipped.includes(questions[index].id))
     ) {
-      return roomFormScreen(set, facts.answered, local.step, true)
+      return { kind: 'roomSet', set, paused: true }
     }
     const held = questions.findIndex((question) => question.state === 'paused' && isRoomEligible(question))
     const question = questions[held]

@@ -297,11 +297,10 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
   useEffect(() => {
     dispatch({ type: 'openChanged', questionId: openKey })
   }, [openKey])
-  // The set answered in one form (`roomFormSet`): its questions only, in the classic navigation.
-  // Kept by its key: `room` is rebuilt on every render, and the navigation callbacks below depend on the set.
+  // The open set (`roomFormSet`), shown together on the room's set screen: its questions only. Kept by its key:
+  // `room` is rebuilt on every render.
   const formKey = room ? (roomFormSet(room.questions, room.voteState) ?? []).join(',') : ''
   const form = useMemo(() => (formKey ? formKey.split(',').map(Number) : null), [formKey])
-  const inForm = useCallback((index: number) => !form || form.includes(index), [form])
 
   const facts: VoterFacts = {
     loaded: !!election,
@@ -351,20 +350,20 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
   const openQuestionAfter = useCallback(
     (index: number) => {
       for (let i = index + 1; i < questions.length; i++) {
-        if (inForm(i) && !lockedNotice(questions[i].id)) return i
+        if (!lockedNotice(questions[i].id)) return i
       }
       return -1
     },
-    [questions, lockedNotice, inForm]
+    [questions, lockedNotice]
   )
   const openQuestionBefore = useCallback(
     (index: number) => {
       for (let i = Math.min(index, questions.length) - 1; i >= 0; i--) {
-        if (inForm(i) && !lockedNotice(questions[i].id)) return i
+        if (!lockedNotice(questions[i].id)) return i
       }
       return -1
     },
-    [questions, lockedNotice, inForm]
+    [questions, lockedNotice]
   )
 
   // Results: the process read carries the figures and keeps polling (spec D5); it is read fresh when a view opens.
@@ -375,7 +374,12 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
 
   // The heading of a new screen takes the focus, but not on the first paint.
   // The question's index is part of the key: a question that opens moves the focus to its title (auto-navigation).
-  const screenKey = 'index' in screen ? `${screen.kind}:${screen.index}` : screen.kind
+  const screenKey =
+    screen.kind === 'roomSet'
+      ? `roomSet:${screen.set.join(',')}`
+      : 'index' in screen
+        ? `${screen.kind}:${screen.index}`
+        : screen.kind
   const [firstScreen] = useState(screenKey)
   const movedRef = useRef(false)
   if (screenKey !== firstScreen) movedRef.current = true
@@ -591,16 +595,13 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
     next,
     back: (index) => {
       const previous = openQuestionBefore(index)
-      // Nothing before it in the form (its first question, or the ones before it are locked): the room, where the set waits.
-      if (previous === -1 && form) return park(index)
       go(previous === -1 ? WELCOME : { name: 'question', index: previous })
     },
     goTo: (index) => go({ name: 'question', index }),
     change: (index) => go({ name: 'question', index }, true),
     review: () => go({ name: 'review' }),
     chooseBlank: (index, on) => fmethods.setValue(String(index), on ? [] : ''),
-    // The form's review casts the set; a single room question casts through the same ballot.
-    cast: form ? () => castQuestion(form[0]) : cast,
+    cast,
     form,
     // The open set is one unit for "Enrere", "No votar aquesta pregunta" and "Torna-la a votar" (its key parks it).
     park,

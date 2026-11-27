@@ -1,4 +1,4 @@
-import { Alert } from '@chakra-ui/react'
+import { Alert, Heading } from '@chakra-ui/react'
 import type { VotingProcessQuestion } from '@vocdoni/api-types'
 import { BallotType, questionSelectionRange, tryInferQuestionBallotType } from '@vocdoni/ballot'
 import { ElectionQuestion, useQuestionsForm, useReactComponentsLocalize } from '@vocdoni/react-components'
@@ -36,11 +36,20 @@ const helpFor = (t: TFunction, question: VotingProcessQuestion): string => {
 const castBlockers = new Set(['unsupported', 'encode'])
 
 /**
- * A question as both modes draw it (boards V4VoterWide 4 to 6, V4VoterWideLive 2): the kicker, the title (the
- * screen's h1, focused after a screen change), its description, how to answer, and the SDK's fields through the
- * voter's slots, or the notice that replaces them (a vote on its way, a ballot type that cannot be cast).
+ * A question as both modes draw it: kicker, title, description, help and the SDK's fields, or the notice that replaces
+ * them. `inSet`: one of several on a screen, so an h2 that does not take the focus.
  */
-export const QuestionBody = ({ index, kicker, helpId }: { index: number; kicker?: ReactNode; helpId?: string }) => {
+export const QuestionBody = ({
+  index,
+  kicker,
+  helpId,
+  inSet = false,
+}: {
+  index: number
+  kicker?: ReactNode
+  helpId?: string
+  inSet?: boolean
+}) => {
   const { t } = useTranslation()
   const localize = useReactComponentsLocalize()
   const { election, moved, lockedNotice } = useVoterFlow()
@@ -68,9 +77,15 @@ export const QuestionBody = ({ index, kicker, helpId }: { index: number; kicker?
   return (
     <>
       {kicker}
-      <ScreenHeading focus={moved} id={questionTitleId(String(index))} mt={kicker ? { base: '0', lg: '2' } : '0'}>
-        {textOf(question.title as Parameters<typeof textOf>[0])}
-      </ScreenHeading>
+      {inSet ? (
+        <Heading as='h2' id={questionTitleId(String(index))} textStyle='ballot-open-title' mt='1.5'>
+          {textOf(question.title as Parameters<typeof textOf>[0])}
+        </Heading>
+      ) : (
+        <ScreenHeading focus={moved} id={questionTitleId(String(index))} mt={kicker ? { base: '0', lg: '2' } : '0'}>
+          {textOf(question.title as Parameters<typeof textOf>[0])}
+        </ScreenHeading>
+      )}
       {description ? (
         // The vote's description look (`VoterMedia`); the help sits 10px below.
         <VoterDescription mt='2.5'>

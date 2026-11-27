@@ -13,10 +13,9 @@ import { ScreenHint, ScreenKicker, VoterScreenFrame } from '../parts/ScreenParts
 import { VoterActionBar } from '../parts/VoterActionBar'
 
 /**
- * Frame 2 of a question-by-question vote (board V4VoterWideLive 2; weight V4VoterWideMore 6; paused 2): the open
- * question, what will be sent ("Votaràs: A favor"), "No votar aquesta pregunta" set apart (it casts nothing, R12),
- * "Enrere" to the room and "Emet el vot", which casts the open set. One eligible open question is the room's own; two or
- * more are answered in the form (`roomFormSet`). No review: the note says it is final.
+ * Frame 2 of a question-by-question vote: the one open question the voter may vote, with "No votar aquesta pregunta"
+ * (casts nothing, R12), "Enrere" to the room and "Emet el vot". Two or more open are `RoomSetScreen`. No review: the
+ * note says it is final.
  */
 export const RoomQuestionScreen = ({ index, paused }: { index: number; paused: boolean }) => {
   const { t } = useTranslation()
