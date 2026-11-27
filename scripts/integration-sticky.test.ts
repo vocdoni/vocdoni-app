@@ -7,7 +7,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 const scriptPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'integration-sticky.sh')
 
-type Comment = { body: string; user: { login: string } }
+type Comment = { body: string; created_at?: string; user: { login: string } }
 
 // A fake `gh` on PATH: answers `repos/<repo>/collaborators/<login>/permission`
 // from FAKE_PERMS ("login=permission,..."), exits 1 for unknown logins, and
@@ -153,6 +153,24 @@ describe('integration-sticky.sh', () => {
           user: { login: WRITER },
         },
         { body: '/integration', user: { login: WRITER } },
+      ])
+    ).toBe(refs('', '', '', true))
+  })
+
+  it('a bare /integration from before bare comments stuck stays one-shot', () => {
+    expect(
+      sticky([
+        { body: '/integration saas-backend=feat/x', created_at: '2026-10-01T10:00:00Z', user: { login: WRITER } },
+        { body: '/integration', created_at: '2026-10-02T10:00:00Z', user: { login: WRITER } },
+      ])
+    ).toBe(refs('', 'feat/x'))
+  })
+
+  it('a bare /integration from after bare comments stuck drops the pins', () => {
+    expect(
+      sticky([
+        { body: '/integration saas-backend=feat/x', created_at: '2026-10-01T10:00:00Z', user: { login: WRITER } },
+        { body: '/integration', created_at: '2026-12-01T10:00:00Z', user: { login: WRITER } },
       ])
     ).toBe(refs('', '', '', true))
   })

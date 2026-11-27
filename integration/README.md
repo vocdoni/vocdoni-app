@@ -154,6 +154,7 @@ Each key is optional:
   `/integration reset`. After a bare `/integration` the pushes run against the
   `:main` images and the npm packages. A later sticky comment replaces the earlier
   one for all three keys, so a bare `/integration` after a pinned one drops the pins.
+  A bare `/integration` posted before 2026-11-27 (when it was one-shot) stays one-shot.
 - `/integration reset` clears the sticky state, and takes no other token.
 - Only sticky comments from users with write access count, checked the same way as
   comment runs. Other comments are ignored for this purpose.
