@@ -265,17 +265,10 @@ const sizes = defineTokens.sizes({
   bar: {
     thin: { value: '3px' },
   },
-  // The voter page: its column from `lg` (600px beside the agenda rail, narrower or wider on the centred screens), the
-  // rail, the organisation's logo and the Vocdoni symbol in the top bar, the credit's row inside the phone's action
+  // The voter page: its column from `lg` (600px on every screen, beside the agenda rail or not), the rail, the organisation's logo and the Vocdoni symbol in the top bar, the credit's row inside the phone's action
   // bar, and a one-time code's box (56 by 64; 48 by 58 below `md`).
   ballot: {
-    column: {
-      DEFAULT: { value: '600px' },
-      narrow: { value: '440px' },
-      code: { value: '480px' },
-      sending: { value: '520px' },
-      results: { value: '640px' },
-    },
+    column: { value: '600px' },
     rail: { value: '280px' },
     logo: { value: '30px' },
     symbol: { value: '22px' },

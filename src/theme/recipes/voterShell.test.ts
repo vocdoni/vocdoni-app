@@ -4,7 +4,8 @@ import { VoterShell } from './voterShell'
 
 type Rules = Record<string, unknown>
 const layer = (styles: unknown) => (styles as Record<string, Rules>)['@layer recipes']
-const at = (rules: Rules, min: '48rem' | '64rem') => rules[`@media screen and (min-width: ${min})`] as Rules | undefined
+const at = (rules: Rules, min: '48rem' | '64rem' | '80rem') =>
+  rules[`@media screen and (min-width: ${min})`] as Rules | undefined
 const shell = system.sva(VoterShell)
 const WITH_BAR = '&:has([data-scope="action-bar"][data-part="root"])'
 
@@ -47,22 +48,27 @@ describe('voter shell recipe', () => {
     expect(at(layer(styles.body), '64rem')).toMatchObject({ gap: 'var(--chakra-spacing-ballot-gutter)' })
   })
 
-  it.each([
-    ['rail', 'var(--chakra-sizes-ballot-column)'],
-    ['narrow', 'var(--chakra-sizes-ballot-column-narrow)'],
-    ['code', 'var(--chakra-sizes-ballot-column-code)'],
-    ['sending', 'var(--chakra-sizes-ballot-column-sending)'],
-    ['results', 'var(--chakra-sizes-ballot-column-results)'],
-  ] as const)('makes the %s column %s wide from lg and 560px on a tablet', (column, width) => {
+  it.each(['full', 'lead'] as const)('makes the %s column 600px wide from lg and 560px on a tablet', (column) => {
     const main = layer(shell({ column }).main)
     expect(at(main, '48rem')).toMatchObject({ maxWidth: 'var(--chakra-sizes-lead)' })
-    expect(at(main, '64rem')).toMatchObject({ maxWidth: width })
+    expect(at(main, '64rem')).toMatchObject({ maxWidth: 'var(--chakra-sizes-ballot-column)' })
   })
 
-  it('keeps a status column at 560px from md', () => {
-    const main = layer(shell({ column: 'status' }).main)
-    expect(at(main, '48rem')).toMatchObject({ maxWidth: 'var(--chakra-sizes-lead)' })
-    expect(at(main, '64rem')).not.toHaveProperty('maxWidth')
+  it('keeps a lead column at the 560px measure from lg, anchored left, and a full one at 600px', () => {
+    expect(at(layer(shell({ column: 'lead' }).main), '64rem')).toMatchObject({
+      paddingInlineEnd: 'calc(var(--chakra-sizes-ballot-column) - var(--chakra-sizes-lead))',
+    })
+    expect(at(layer(shell({ column: 'full' }).main), '64rem')).not.toHaveProperty('paddingInlineEnd')
+  })
+
+  it('holds the column in the centre track from xl, with the rail in the track on its left', () => {
+    expect(at(layer(styles.body), '80rem')).toEqual({
+      display: 'grid',
+      gridTemplateColumns:
+        'minmax(var(--chakra-sizes-ballot-rail), 1fr) var(--chakra-sizes-ballot-column) minmax(0, 1fr)',
+    })
+    expect(at(layer(styles.rail), '80rem')).toEqual({ gridColumn: '1', gridRow: '1', justifySelf: 'end' })
+    expect(at(layer(styles.main), '80rem')).toEqual({ gridColumn: '2', gridRow: '1' })
   })
 
   it('keeps the column clear of an action bar and hands it the credit below md', () => {

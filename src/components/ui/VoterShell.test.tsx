@@ -62,7 +62,7 @@ describe('VoterShell', () => {
         progress={<div>Pregunta 1 de 4</div>}
         rail={<ol aria-label='steps' />}
         railLabel='Preguntes a votar'
-        column='rail'
+        column='full'
         credit={credit}
       >
         <p>content</p>
