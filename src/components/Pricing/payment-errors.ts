@@ -188,6 +188,14 @@ export const censusGrowthPaymentErrorMessage = (t: TFunction, error: unknown): s
           shortfall: currency(shortfallCents),
         })
       }
+      // The wallet pays the growth outright: no card form is offered for it
+      if (hasNumbers(quote, 'shortfallCents') && shortfallCents === 0) {
+        return t('process.payment.error.census_growth_payment_wallet_covers', {
+          defaultValue:
+            'These members would grow the census of a voting process beyond what was paid for it. Growing it costs up to {{amount}} more (VAT excluded), which must be bought before adding these members. The wallet covers it, so it is charged from the wallet with no card payment.',
+          amount: currency(dueCents),
+        })
+      }
       return t('process.payment.error.census_growth_payment_required', {
         defaultValue:
           'These members would grow the census of a voting process beyond what was paid for it. Growing it costs up to {{amount}} more (VAT excluded), which must be bought before adding these members.',

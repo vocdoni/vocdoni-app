@@ -86,11 +86,11 @@
   "census": {
     "checkout": {
       "admin_only": "Solo los administradores pueden añadir plazas para votantes.",
-      "amount_net": "Plazas (sin IVA)",
       "back_to_members": "Volver a los miembros",
       "balance": "Tu wallet tiene {{balance}}.",
       "bought": "Plazas para votantes añadidas: se han cobrado {{amount}} de tu wallet. Vuelve a intentar añadir los miembros.",
       "buy": "Añadir plazas para votantes",
+      "credited": "Tu pago se ha añadido a la wallet, pero la wallet todavía no cubre estas plazas para votantes. Vuelve a intentar añadir los miembros para ver qué falta todavía.",
       "intro": "Plazas para {{size}} votantes, por {{due}} más (sin IVA).",
       "intro_no_price": "Plazas para {{size}} votantes.",
       "invalid": "Esta página necesita el número de votantes para el que añadir plazas. Ábrela desde el cambio rechazado.",
@@ -99,7 +99,12 @@
       "timeout": "Tu pago está confirmado; las plazas se añaden en cuanto se procese. Vuelve a intentar añadir los miembros en un momento.",
       "timeout_redirected": "Seguimos esperando a que se añadan las plazas. Vuelve a intentar añadir los miembros en un momento.",
       "title": "Añadir plazas para votantes",
-      "waiting": "Pago recibido. Añadiendo las plazas para votantes…"
+      "topup_intro": "Estas plazas para votantes cuestan {{due}} (sin IVA). Tu tarjeta paga una recarga de la wallet de {{amount}} (sin IVA), y después las plazas se cargan a la wallet.",
+      "topup_intro_no_price": "Tu tarjeta paga una recarga de la wallet de {{amount}} (sin IVA), y después las plazas para votantes se cargan a la wallet.",
+      "topup_net": "Recarga de la wallet (sin IVA)",
+      "topup_surplus": "{{surplus}} de la recarga se queda después en tu wallet.",
+      "waiting": "Pago recibido. Añadiendo las plazas para votantes…",
+      "wallet_covers": "Tu wallet lo cubre: las plazas se cargan a la wallet, sin pago con tarjeta."
     },
     "search": {
       "description": "Busca a un votante por sus credenciales para comprobar si está en el censo y si ya ha votado.",
@@ -1107,6 +1112,7 @@
         "census_growth_payment_in_progress": "Todavía se está procesando el pago de un proceso de votación que usa estos miembros. Vuelve a intentarlo cuando termine.",
         "census_growth_payment_required": "Estos miembros harían crecer el censo de un proceso de votación más allá de lo pagado. Ampliarlo cuesta hasta {{amount}} más (sin IVA) y debes comprarlo antes de añadir a estos miembros.",
         "census_growth_payment_shortfall": "Estos miembros harían crecer el censo de un proceso de votación más allá de lo pagado. Ampliarlo cuesta hasta {{amount}} más (sin IVA) y debes comprarlo antes de añadir a estos miembros. Tu wallet no cubre {{shortfall}} de ese importe.",
+        "census_growth_payment_wallet_covers": "Estos miembros harían crecer el censo de un proceso de votación más allá de lo pagado. Ampliarlo cuesta hasta {{amount}} más (sin IVA) y debes comprarlo antes de añadir a estos miembros. Tu wallet lo cubre, así que se cobra de la wallet sin pago con tarjeta.",
         "census_growth_quote_required": "Estos miembros harían que el censo de un proceso de votación superara los 50.000 votantes, lo que requiere un presupuesto personalizado. Contacta con nosotros para ampliarlo.",
         "census_growth_spend_cap_reached": "Estas plazas para votantes superarían el límite de gasto que la organización integradora ha fijado para esta organización. La integradora debe aumentarlo primero.",
         "census_growth_wallet_insufficient": "La wallet de la organización integradora no cubre el coste de añadir estos miembros a un proceso de votación. La integradora que gestiona esta organización debe recargar su wallet primero.",

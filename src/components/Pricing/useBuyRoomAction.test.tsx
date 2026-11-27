@@ -60,6 +60,25 @@ describe('useBuyRoomAction', () => {
     )
   })
 
+  it('calls onBuy once with the target, before it navigates', () => {
+    const { result } = renderHook(() => useBuyRoomAction())
+    const onBuy = vi.fn(() => expect(navigate).not.toHaveBeenCalled())
+
+    act(() => result.current(growth(), onBuy)?.onClick())
+
+    expect(onBuy).toHaveBeenCalledTimes(1)
+    expect(onBuy).toHaveBeenCalledWith({ processId, censusSize: 700, dueCents: 2000, shortfallCents: 1500 })
+    expect(navigate).toHaveBeenCalledTimes(1)
+  })
+
+  it('offers no action, and never calls onBuy, when the error is not a refusal to buy', () => {
+    const { result } = renderHook(() => useBuyRoomAction())
+    const onBuy = vi.fn()
+
+    expect(result.current(new Error('network down'), onBuy)).toBeUndefined()
+    expect(onBuy).not.toHaveBeenCalled()
+  })
+
   it('offers nothing to a non-admin, who could not add places', () => {
     access.canTopUp = false
     const { result } = renderHook(() => useBuyRoomAction())

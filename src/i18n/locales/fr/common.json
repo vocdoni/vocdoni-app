@@ -86,11 +86,11 @@
   "census": {
     "checkout": {
       "admin_only": "Seuls les administrateurs peuvent ajouter des places d'électeurs.",
-      "amount_net": "Places (HT)",
       "back_to_members": "Retour aux membres",
       "balance": "Votre wallet contient {{balance}}.",
       "bought": "Places d'électeurs ajoutées : {{amount}} ont été débités de votre wallet. Essayez à nouveau d'ajouter les membres.",
       "buy": "Ajouter des places d'électeurs",
+      "credited": "Votre paiement a été ajouté à votre wallet, mais le wallet ne couvre pas encore ces places d'électeurs. Essayez à nouveau d'ajouter les membres pour voir ce qui manque encore.",
       "intro": "Places pour {{size}} électeurs, pour {{due}} de plus (HT).",
       "intro_no_price": "Places pour {{size}} électeurs.",
       "invalid": "Cette page a besoin du nombre d'électeurs pour lequel ajouter des places. Ouvrez-la depuis la modification refusée.",
@@ -99,7 +99,12 @@
       "timeout": "Votre paiement est confirmé ; les places sont ajoutées dès leur traitement. Essayez à nouveau d'ajouter les membres dans quelques instants.",
       "timeout_redirected": "Nous attendons toujours l'ajout des places. Essayez à nouveau d'ajouter les membres dans quelques instants.",
       "title": "Ajouter des places d'électeurs",
-      "waiting": "Paiement reçu. Ajout des places d'électeurs en cours…"
+      "topup_intro": "Ces places d'électeurs coûtent {{due}} (TVA exclue). Votre carte paie un rechargement du wallet de {{amount}} (TVA exclue), puis les places sont débitées de votre wallet.",
+      "topup_intro_no_price": "Votre carte paie un rechargement du wallet de {{amount}} (TVA exclue), puis les places d'électeurs sont débitées de votre wallet.",
+      "topup_net": "Rechargement du wallet (TVA exclue)",
+      "topup_surplus": "{{surplus}} du rechargement restent ensuite dans votre wallet.",
+      "waiting": "Paiement reçu. Ajout des places d'électeurs en cours…",
+      "wallet_covers": "Votre wallet les couvre : les places sont débitées de votre wallet, sans paiement par carte."
     },
     "search": {
       "description": "Recherchez un électeur à partir de ses identifiants pour vérifier s'il figure sur la liste électorale et s'il a déjà voté.",
@@ -1107,6 +1112,7 @@
         "census_growth_payment_in_progress": "Le paiement d'un processus de vote utilisant ces membres est encore en cours de traitement. Réessayez une fois qu'il sera terminé.",
         "census_growth_payment_required": "Ces membres feraient croître la liste électorale d'un processus de vote au-delà de ce qui a été payé. L'agrandir coûte jusqu'à {{amount}} de plus (hors TVA) et doit être acheté avant d'ajouter ces membres.",
         "census_growth_payment_shortfall": "Ces membres feraient croître la liste électorale d'un processus de vote au-delà de ce qui a été payé. L'agrandir coûte jusqu'à {{amount}} de plus (hors TVA) et doit être acheté avant d'ajouter ces membres. Votre wallet ne couvre pas {{shortfall}} de ce montant.",
+        "census_growth_payment_wallet_covers": "Ces membres feraient croître la liste électorale d'un processus de vote au-delà de ce qui a été payé. L'agrandir coûte jusqu'à {{amount}} de plus (TVA exclue) et doit être acheté avant d'ajouter ces membres. Votre wallet la couvre : elle est débitée de votre wallet, sans paiement par carte.",
         "census_growth_quote_required": "Ces membres porteraient la liste électorale d'un processus de vote au-delà de 50 000 électeurs, ce qui nécessite un devis personnalisé. Contactez-nous pour l'agrandir.",
         "census_growth_spend_cap_reached": "Ces places d'électeurs dépasseraient le plafond de dépenses défini par l'intégrateur pour cette organisation. L'intégrateur doit d'abord le relever.",
         "census_growth_wallet_insufficient": "Le wallet de l'organisation intégratrice ne couvre pas le coût d'ajout de ces membres à un processus de vote. L'intégrateur qui gère cette organisation doit d'abord recharger le wallet.",

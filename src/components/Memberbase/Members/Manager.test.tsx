@@ -2,10 +2,12 @@ import '@testing-library/jest-dom'
 import { act, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ApiErrorCode } from '@vocdoni/api-client'
+import { StrictMode } from 'react'
 import { ApiError } from '~components/Auth/api'
 import { render } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { MemberManager } from './Manager'
+import { clearMemberDraft, markMemberDraftBought, saveMemberDraft, takeMemberDraft } from './memberDraft'
 
 const editMutate = vi.hoisted(() => vi.fn())
 const addMutate = vi.hoisted(() => vi.fn())
@@ -286,5 +288,228 @@ describe('MemberManager password', () => {
     await waitFor(() => expect(addMutate).toHaveBeenCalledTimes(1))
     expect(addMutate.mock.calls[0][0]).toEqual([expect.objectContaining({ name: 'Ada', password: S3CRET_HASH })])
     expect(JSON.stringify(addMutate.mock.calls)).not.toContain('s3cret')
+  })
+})
+
+describe('MemberManager refused add', () => {
+  const ORG = '0x00000000000000000000000000000000000000AA'
+  const OTHER = '0x00000000000000000000000000000000000000BB'
+  // hashMemberPassword(ORG, 's3cret'), the shared test vector
+  const S3CRET_HASH = '2f7e83a0b19a82fa9a5dc6ecc6ff44ec82679ea87012a7187bd3313366bf277e'
+  const processId = '6650f0c0c0c0c0c0c0c0c0c0'
+  const refusal = new ApiError(
+    {
+      error: 'payment required',
+      code: ApiErrorCode.PaymentRequired,
+      data: { processId, censusSize: 700, dueCents: 2000, totalCents: 31000 },
+    },
+    new Response(null, { status: 402 })
+  )
+  const values = { name: 'Ada', surname: 'Lovelace', email: 'ada@example.com', phone: '', weight: '' }
+
+  // The toast action: clicking it is the user choosing to buy the places for this process
+  const offerBuy = () =>
+    buyRoomAction.mockImplementation((_error: unknown, onBuy?: (target: unknown) => void) => ({
+      label: 'Add voter places',
+      onClick: () => onBuy?.({ processId, censusSize: 700, dueCents: 2000 }),
+    }))
+
+  const refuseAdd = () => addMutate.mockImplementation((_payload, options) => options.onError(refusal))
+
+  beforeEach(() => {
+    clearMemberDraft()
+    addMutate.mockReset()
+    editMutate.mockReset()
+    buyRoomAction.mockReset()
+    setReactProvidersMock({ useOrganization: () => ({ organization: { address: ORG } }) })
+  })
+
+  it('keeps the refused member once the user chooses to buy, without the plaintext password', async () => {
+    const user = userEvent.setup()
+    refuseAdd()
+    offerBuy()
+    render(<MemberManager open />)
+
+    await user.type(await screen.findByLabelText('Name'), 'Ada')
+    await user.type(screen.getByLabelText('Password'), 's3cret')
+    await user.click(screen.getByRole('button', { name: 'Save changes' }))
+    await user.click(await screen.findByRole('button', { name: 'Add voter places' }))
+
+    const draft = takeMemberDraft(ORG)
+    expect(draft).toEqual({
+      organization: ORG,
+      processId,
+      values: expect.objectContaining({ name: 'Ada', email: '' }),
+      passwordHash: S3CRET_HASH,
+      bought: false,
+    })
+    expect(draft?.values).not.toHaveProperty('password')
+    expect(JSON.stringify(draft)).not.toContain('s3cret')
+  })
+
+  it('keeps nothing when the refusal is not acted on', async () => {
+    const user = userEvent.setup()
+    refuseAdd()
+    offerBuy()
+    render(<MemberManager open />)
+
+    await user.type(await screen.findByLabelText('Name'), 'Ada')
+    await user.click(screen.getByRole('button', { name: 'Save changes' }))
+    await screen.findByRole('button', { name: 'Add voter places' })
+
+    expect(takeMemberDraft(ORG)).toBeUndefined()
+  })
+
+  it('keeps nothing for a refused edit', async () => {
+    const user = userEvent.setup()
+    editMutate.mockImplementation((_payload, options) => options.onError(refusal))
+    offerBuy()
+    render(<MemberManager member={member} open />)
+
+    await user.clear(await screen.findByLabelText('Email'))
+    await user.click(screen.getByRole('button', { name: 'Save changes' }))
+    await user.click(await screen.findByRole('button', { name: 'Add voter places' }))
+
+    expect(buyRoomAction).toHaveBeenCalledWith(refusal)
+    expect(takeMemberDraft(ORG)).toBeUndefined()
+  })
+
+  it('reopens an unbought draft filled in, with the password empty, and sends nothing', async () => {
+    saveMemberDraft({ organization: ORG, processId, values, passwordHash: S3CRET_HASH })
+    render(<MemberManager restoreDraft />)
+
+    expect(await screen.findByLabelText('Name')).toHaveValue('Ada')
+    expect(screen.getByLabelText('Surname')).toHaveValue('Lovelace')
+    expect(screen.getByLabelText('Password')).toHaveValue('')
+    expect(screen.getByText(/a password is set/i)).toBeInTheDocument()
+    expect(addMutate).not.toHaveBeenCalled()
+  })
+
+  it('sends a bought draft once with the kept password hash, and reports success', async () => {
+    addMutate.mockImplementation((_payload, options) => options.onSuccess())
+    saveMemberDraft({ organization: ORG, processId, values, passwordHash: S3CRET_HASH })
+    markMemberDraftBought(processId)
+    render(
+      <StrictMode>
+        <MemberManager restoreDraft />
+      </StrictMode>
+    )
+
+    expect(await screen.findByText('Member added successfully!')).toBeInTheDocument()
+    expect(addMutate).toHaveBeenCalledTimes(1)
+    expect(addMutate.mock.calls[0][0]).toEqual([
+      expect.objectContaining({ name: 'Ada', surname: 'Lovelace', email: 'ada@example.com', password: S3CRET_HASH }),
+    ])
+    expect(takeMemberDraft(ORG)).toBeUndefined()
+  })
+
+  it('offers the purchase again when the resend is refused, keeping the fields and the draft', async () => {
+    const user = userEvent.setup()
+    refuseAdd()
+    offerBuy()
+    saveMemberDraft({ organization: ORG, processId, values, passwordHash: S3CRET_HASH })
+    markMemberDraftBought(processId)
+    render(<MemberManager restoreDraft />)
+
+    await user.click(await screen.findByRole('button', { name: 'Add voter places' }))
+
+    expect(addMutate).toHaveBeenCalledTimes(1)
+    expect(screen.getByLabelText('Name')).toHaveValue('Ada')
+    expect(takeMemberDraft(ORG)).toEqual({
+      organization: ORG,
+      processId,
+      values,
+      passwordHash: S3CRET_HASH,
+      bought: false,
+    })
+  })
+
+  it('neither shows nor sends another organization draft', () => {
+    saveMemberDraft({ organization: OTHER, processId, values, passwordHash: S3CRET_HASH })
+    markMemberDraftBought(processId)
+    render(<MemberManager restoreDraft />)
+
+    expect(screen.queryByLabelText('Name')).not.toBeInTheDocument()
+    expect(addMutate).not.toHaveBeenCalled()
+    expect(takeMemberDraft(OTHER)).toBeUndefined()
+  })
+
+  it('reopens empty after a reopened draft is cancelled', async () => {
+    const user = userEvent.setup()
+    saveMemberDraft({ organization: ORG, processId, values, passwordHash: S3CRET_HASH })
+    render(<MemberManager restoreDraft control={<button type='button'>Open</button>} />)
+
+    expect(await screen.findByLabelText('Name')).toHaveValue('Ada')
+    await user.click(screen.getByRole('button', { name: 'Cancel' }))
+    await waitFor(() => expect(screen.queryByRole('button', { name: 'Cancel' })).not.toBeInTheDocument())
+    await user.click(screen.getByRole('button', { name: 'Open' }))
+
+    expect(await screen.findByLabelText('Name')).toHaveValue('')
+    expect(screen.queryByText(/a password is set/i)).not.toBeInTheDocument()
+  })
+
+  it('sends a typed password instead of the kept hash', async () => {
+    const user = userEvent.setup()
+    saveMemberDraft({ organization: ORG, processId, values, passwordHash: S3CRET_HASH })
+    render(<MemberManager restoreDraft />)
+
+    await user.type(await screen.findByLabelText('Password'), 'abc123')
+    await user.click(screen.getByRole('button', { name: 'Save changes' }))
+
+    await waitFor(() => expect(addMutate).toHaveBeenCalledTimes(1))
+    const password = addMutate.mock.calls[0][0][0].password
+    expect(password).toMatch(/^[0-9a-f]{64}$/)
+    expect(password).not.toBe(S3CRET_HASH)
+  })
+
+  it('leaves the draft in the store for an instance that does not restore it', () => {
+    saveMemberDraft({ organization: ORG, processId, values, passwordHash: S3CRET_HASH })
+    render(<MemberManager open />)
+
+    expect(takeMemberDraft(ORG)).toMatchObject({ organization: ORG, processId })
+  })
+
+  it('reopens empty after a restored draft was added', async () => {
+    const user = userEvent.setup()
+    addMutate.mockImplementation((_payload, options) => options.onSuccess())
+    saveMemberDraft({ organization: ORG, processId, values, passwordHash: S3CRET_HASH })
+    render(<MemberManager restoreDraft control={<button type='button'>Open</button>} />)
+
+    await user.click(await screen.findByRole('button', { name: 'Save changes' }))
+    await screen.findByText('Member added successfully!')
+    await waitFor(() => expect(screen.queryByRole('button', { name: 'Cancel' })).not.toBeInTheDocument())
+    await user.click(screen.getByRole('button', { name: 'Open' }))
+
+    expect(await screen.findByLabelText('Name')).toHaveValue('')
+  })
+
+  it('reopens empty after a bought draft was sent once', async () => {
+    const user = userEvent.setup()
+    addMutate.mockImplementation((_payload, options) => options.onSuccess())
+    saveMemberDraft({ organization: ORG, processId, values, passwordHash: S3CRET_HASH })
+    markMemberDraftBought(processId)
+    render(<MemberManager restoreDraft control={<button type='button'>Open</button>} />)
+
+    await screen.findByText('Member added successfully!')
+    await waitFor(() => expect(screen.queryByRole('button', { name: 'Cancel' })).not.toBeInTheDocument())
+    await user.click(screen.getByRole('button', { name: 'Open' }))
+
+    expect(await screen.findByLabelText('Name')).toHaveValue('')
+    expect(addMutate).toHaveBeenCalledTimes(1)
+  })
+
+  it('still sends the kept password after a character is typed and deleted again', async () => {
+    const user = userEvent.setup()
+    saveMemberDraft({ organization: ORG, processId, values, passwordHash: S3CRET_HASH })
+    render(<MemberManager restoreDraft />)
+
+    const password = await screen.findByLabelText('Password')
+    await user.type(password, 'x')
+    await user.clear(password)
+    expect(screen.getByText(/a password is set/i)).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Save changes' }))
+
+    await waitFor(() => expect(addMutate).toHaveBeenCalledTimes(1))
+    expect(addMutate.mock.calls[0][0]).toEqual([expect.objectContaining({ password: S3CRET_HASH })])
   })
 })
