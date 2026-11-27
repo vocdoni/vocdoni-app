@@ -125,6 +125,7 @@ export const RoomVotedScreen = ({ index, record }: { index: number; record: Room
     )
   }
   const keepCode = anonymous && !!voteIds[question.id]
+  const dropped = election.questions.flatMap((entry, at) => (state.dropped.includes(entry.id) ? [at + 1] : []))
   return (
     <VoterScreenFrame kind='roomVoted' privateContent>
       <SuccessDisc />
@@ -133,6 +134,16 @@ export const RoomVotedScreen = ({ index, record }: { index: number; record: Room
       </ScreenHeading>
       {/* "Emet el vot" found it already voted: the vote here is not the one on record (owner ruling 2026-11-24). */}
       {state.votedElsewhere === question.id && <ScreenHelp>{t('voter.room.voted_elsewhere')}</ScreenHelp>}
+      {/* Sent with this one, but closed before the cast arrived: no vote was cast for them, and the frame says so. */}
+      {dropped.length > 0 && (
+        <Alert.Root status='warning' layout='ballot' mt='5' role='status'>
+          <Alert.Content>
+            {dropped.map((number) => (
+              <Alert.Description key={number}>{t('voter.room.late_dropped', { number })}</Alert.Description>
+            ))}
+          </Alert.Content>
+        </Alert.Root>
+      )}
       {keepCode && (
         <>
           <Alert.Root status='warning' layout='ballot' mt='5' role='status'>

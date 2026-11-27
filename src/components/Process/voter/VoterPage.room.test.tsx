@@ -76,6 +76,8 @@ const server = {
   process: qbqProcess(['PAUSED', 'PAUSED', 'PAUSED']),
   voted: new Set<string>(),
   batches: [] as string[][],
+  /** Which batch of the test (1 is the first) the CSP fails with a 503; 0 for none. */
+  failBatch: 0,
 }
 const json = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } })
@@ -106,6 +108,8 @@ const fetchStub = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => 
     const ids = ballots.map((b) => QUESTION_OF[b.upstreamId])
     server.batches.push(ids)
     const closed = ids.findIndex((id) => server.process.questions.find((q) => q.id === id)?.status !== 'ONGOING')
+    // The nth batch of the test fails for another reason than a closed question.
+    if (server.batches.length === server.failBatch) return json(503, { error: 'unavailable', code: 50300 })
     if (closed >= 0) {
       return json(401, { error: `question is not open for voting: at index ${closed}`, code: 40001 })
     }
@@ -142,6 +146,7 @@ beforeEach(() => {
   server.process = qbqProcess(['PAUSED', 'PAUSED', 'PAUSED'])
   server.voted = new Set()
   server.batches = []
+  server.failBatch = 0
   lastBatch = []
   queryClient = createTestQueryClient()
 })
@@ -266,6 +271,58 @@ describe('question by question on the real SDK (boards V4VoterWideLive)', () => 
       expect(await screen.findByText('voter.room.voted_elsewhere')).toBeInTheDocument()
       // Nothing of this device's answer was sent.
       expect(server.batches).toEqual([])
+    })
+
+    // Two open questions are answered in one form and cast in one batch, which the CSP authorises whole or not at all.
+    const answerBoth = async () => {
+      server.process = qbqProcess(['ONGOING', 'ONGOING', 'PAUSED'])
+      renderPage(server.process)
+      await identify('question')
+      // A single choice moves on by itself: question 1, question 2, then the review.
+      fireEvent.click(within(current()).getByDisplayValue('0'))
+      await waitFor(() => expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Question 2'))
+      fireEvent.click(within(current()).getByDisplayValue('0'))
+      await onScreen('review')
+      // The review arms its button after a moment, against a double tap.
+      await waitFor(() => expect(screen.getByTestId('voter-cast')).toBeEnabled(), { timeout: 4000 })
+    }
+
+    it('casts an open set in one batch', async () => {
+      await answerBoth()
+      fireEvent.click(screen.getByTestId('voter-cast'))
+      await onScreen('roomVoted')
+      expect(server.batches).toEqual([['q1', 'q2']])
+      expect([...server.voted]).toEqual(['q1', 'q2'])
+      expect(screen.queryByText('voter.room.late_dropped')).toBeNull()
+    })
+
+    it.each([
+      { closes: 'the first', statuses: ['RESULTS', 'ONGOING', 'PAUSED'] as Status[], left: 'q2' },
+      { closes: 'another', statuses: ['ONGOING', 'RESULTS', 'PAUSED'] as Status[], left: 'q1' },
+    ])(
+      '$closes question of the set closes as it is cast: the rest is sent again and the closed one reads late',
+      async ({ statuses, left }) => {
+        await answerBoth()
+        // The backend closed it; the page has not read it yet, so the batch still carries it and is refused whole.
+        server.process = qbqProcess(statuses)
+        fireEvent.click(screen.getByTestId('voter-cast'))
+        await onScreen('roomVoted')
+        expect(server.batches).toEqual([['q1', 'q2'], [left]])
+        expect([...server.voted]).toEqual([left])
+        // No failure is shown: the vote that could still count was cast, and the frame names the one that was late.
+        expect(screen.queryByRole('alert')).toBeNull()
+        expect(screen.getByText('voter.room.late_dropped')).toBeInTheDocument()
+      }
+    )
+
+    it('sends the rest again only once: a second refusal shows as a failed cast', async () => {
+      await answerBoth()
+      server.process = qbqProcess(['RESULTS', 'ONGOING', 'PAUSED'])
+      server.failBatch = 2
+      fireEvent.click(screen.getByTestId('voter-cast'))
+      await waitFor(() => expect(screen.getByRole('alert')).toBeInTheDocument(), { timeout: 4000 })
+      expect(server.batches).toEqual([['q1', 'q2'], ['q2']])
+      expect(server.voted.size).toBe(0)
     })
 
     it('a question that closes as it is cast: nothing is signed, the facts show 3c', async () => {

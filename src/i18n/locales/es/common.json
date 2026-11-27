@@ -2040,6 +2040,7 @@
       "fold_more_note": "De la {{from}} a la {{to}}.",
       "kicker": "Las preguntas se abren una a una.",
       "kicker_set": "Las preguntas se abren juntas.",
+      "late_dropped": "Tu voto en la pregunta {{number}} llegó después de que se cerrara y no se ha contabilizado.",
       "late_help": "Tu voto llegó después de que se cerrara la pregunta y no se ha contabilizado.",
       "late_title": "Tu voto llegó demasiado tarde",
       "live": "En directo. Se actualiza sola.",

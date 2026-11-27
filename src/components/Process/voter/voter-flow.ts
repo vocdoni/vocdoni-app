@@ -153,6 +153,11 @@ export type VoterLocalState = {
   uncertain: readonly string[]
   /** Question by question: the questions whose refused cast came after they closed (`lateCastOf`). */
   late: readonly string[]
+  /**
+   * Question by question: the questions the last cast left out because they had closed before it reached the CSP, while
+   * the rest of its open set was sent again. The voted frame names them: no vote was cast for them.
+   */
+  dropped: readonly string[]
   /** Question by question: a cast here sent nothing because the check found the question already voted elsewhere. */
   votedElsewhere: string | null
   /** The questions the voter was seen ineligible for this session: kept once the check stops saying so (after the end). */
@@ -174,6 +179,7 @@ export type VoterAction =
   | { type: 'castFailed'; message: string; unconfirmed?: boolean; at?: number; questionId?: string }
   | { type: 'castFoundVoted'; questionId: string }
   | { type: 'castLate'; questionId: string }
+  | { type: 'castDropped'; questionIds: readonly string[] }
   | { type: 'castRefused'; questionId: string; message: string }
   | { type: 'ineligibleSeen'; questionIds: readonly string[] }
   | { type: 'openChanged'; questionId: string | null }
@@ -217,6 +223,7 @@ export const initialVoterState: VoterLocalState = {
   castSet: [],
   uncertain: [],
   late: [],
+  dropped: [],
   votedElsewhere: null,
   ineligible: [],
   notice: null,
@@ -246,6 +253,7 @@ export const voterReducer = (state: VoterLocalState, action: VoterAction): Voter
         viewResults: false,
         castQuestionId: action.questionId ?? null,
         castSet: action.questionIds ?? [],
+        dropped: [],
       }
     case 'questionCastSucceeded': {
       // Question by question: frame 3 follows from the SDK's state; the receipt is the all-at-once screen.
@@ -294,6 +302,13 @@ export const voterReducer = (state: VoterLocalState, action: VoterAction): Voter
       return { ...state, votedElsewhere: action.questionId }
     case 'castLate':
       return state.late.includes(action.questionId) ? state : { ...state, late: [...state.late, action.questionId] }
+    // Closed before the cast reached the CSP: late, and named on the frame of the questions that were sent again.
+    case 'castDropped':
+      return {
+        ...state,
+        late: [...state.late, ...action.questionIds.filter((questionId) => !state.late.includes(questionId))],
+        dropped: [...action.questionIds],
+      }
     case 'ineligibleSeen': {
       const added = action.questionIds.filter((questionId) => !state.ineligible.includes(questionId))
       return added.length ? { ...state, ineligible: [...state.ineligible, ...added] } : state

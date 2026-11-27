@@ -1299,3 +1299,14 @@ describe('voterReducer: an open set cast, every question of it', () => {
     })
   })
 })
+
+describe('voterReducer: a question dropped from a cast', () => {
+  it('reads late and is named on the voted frame until the next cast starts', () => {
+    const started = voterReducer(initialVoterState, { type: 'castStarted', questionId: 'q2', questionIds: ['q2'] })
+    const dropped = voterReducer(started, { type: 'castDropped', questionIds: ['q1'] })
+    expect(dropped).toMatchObject({ late: ['q1'], dropped: ['q1'], castSet: ['q2'] })
+    // Late is kept for the rail; the frame's notice belongs to that cast only.
+    const next = voterReducer(dropped, { type: 'castStarted', questionId: 'q3', questionIds: ['q3'] })
+    expect(next).toMatchObject({ late: ['q1'], dropped: [] })
+  })
+})

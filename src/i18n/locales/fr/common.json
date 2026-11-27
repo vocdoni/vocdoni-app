@@ -2040,6 +2040,7 @@
       "fold_more_note": "De la {{from}} à la {{to}}.",
       "kicker": "Les questions s'ouvrent une par une.",
       "kicker_set": "Les questions s'ouvrent ensemble.",
+      "late_dropped": "Votre vote sur la question {{number}} est arrivé après sa fermeture et n'a pas été comptabilisé.",
       "late_help": "Votre vote est arrivé après la fermeture de la question et n'a pas été comptabilisé.",
       "late_title": "Votre vote est arrivé trop tard",
       "live": "En direct. Se met à jour tout seul.",

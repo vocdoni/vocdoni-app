@@ -1,5 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { computeProcessStatus, isSecretUntilTheEnd, resolveEndDate } from '@vocdoni/api-client'
+import type { VotingProcessResponse } from '@vocdoni/api-types'
 import {
   electionQueryKeys,
   lockedQuestionNotice,
@@ -26,7 +27,13 @@ import { useNow } from '~utils/use-now'
 import { deriveQuestionState, deriveVoteState, hasEndedBySchedule } from '~utils/vote-state'
 import { voterSeesQuestionResult, voterSeesResults } from '~utils/voter-results'
 import { VoterFlowContext, type VoterFlow } from './flow-context'
-import { VOTER_CLOCK_TOLERANCE_MS, VOTER_POLL_MS, VOTER_STATE_GRACE_MS } from './live'
+import {
+  RECAST_RENDER_STEP_MS,
+  RECAST_RENDER_WAIT_MS,
+  VOTER_CLOCK_TOLERANCE_MS,
+  VOTER_POLL_MS,
+  VOTER_STATE_GRACE_MS,
+} from './live'
 import { useOwnedAnswers } from './use-owned-answers'
 import { useVoterCheck, voterCheckKey } from './use-voter-check'
 import {
@@ -258,6 +265,8 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
             ) {
               return 'late' as const
             }
+            // Closed before the cast reached the CSP, so nothing was signed for it (`castDropped`): late all the same.
+            if (base === 'none' && state.late.includes(question.id)) return 'late' as const
             return base
           })()
           // Once the vote ends the check stops saying so: a question seen ineligible, and not on chain, stays hidden.
@@ -383,6 +392,11 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
 
   const latest = useRef(state)
   latest.current = state
+  // The render's own process read and `vote()`: a cast that reads the process again sends its second batch with these.
+  const latestElection = useRef(election)
+  latestElection.current = election
+  const latestVote = useRef(vote)
+  latestVote.current = vote
   const latestRoom = useRef(room)
   latestRoom.current = room
   const castingRef = useRef(false)
@@ -441,6 +455,32 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
     }
   }, [answered, failCast, fmethods, id, localize, queryClient, questions, serverOffset, vote, voting])
 
+  // Reads the process again and tells which of these questions are still open, once this component has rendered with
+  // that read (the next `vote()` must come from it). Null when the read fails or the render does not follow in time.
+  const stillOpenOf = useCallback(
+    async (members: number[]): Promise<number[] | null> => {
+      if (!id) return null
+      const key = electionQueryKeys.election(id)
+      await queryClient.refetchQueries({ queryKey: key })
+      const read = queryClient.getQueryData<VotingProcessResponse>(key)
+      if (!read) return null
+      const statusOf = (process: VotingProcessResponse | null | undefined, member: number) =>
+        process?.questions.find((entry) => entry.id === questions[member]?.id)?.status
+      const rendered = () =>
+        members.every((member) => statusOf(latestElection.current, member) === statusOf(read, member))
+      for (let waited = 0; waited < RECAST_RENDER_WAIT_MS && !rendered(); waited += RECAST_RENDER_STEP_MS) {
+        await new Promise((resolve) => setTimeout(resolve, RECAST_RENDER_STEP_MS))
+      }
+      if (!rendered()) return null
+      const at = new Date(Date.now() + serverOffset)
+      return members.filter((member) => {
+        const entry = read.questions.find(({ id: questionId }) => questionId === questions[member]?.id)
+        return !!entry && deriveQuestionState(entry, read, at) === 'open'
+      })
+    },
+    [id, queryClient, questions, serverOffset]
+  )
+
   // The open set's cast: the open questions this voter may vote (answered in the form) and the question the cast was
   // pressed on. Only the asked set's answers are sent: the room leaves out the questions this voter may not vote.
   const castQuestion = useCallback(
@@ -472,48 +512,74 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
         questionIds: askedSet.map((member) => questions[member].id),
       })
       try {
-        // Only the asked set's answers: the SDK signs the batch it is given, and locks what its own form locks.
+        // Only the given set's answers: the SDK signs the batch it is given, and locks what its own form locks.
         const all = formValuesFor(latest.current) as Record<string, unknown> & { memo?: Record<string, string> }
-        const values: Record<string, unknown> = {}
-        const memo: Record<string, string> = {}
-        for (const member of askedSet) {
-          const key = String(member)
-          values[key] = all[key]
-          if (all.memo?.[key] !== undefined) memo[key] = all.memo[key]
+        const send = (members: number[]) => {
+          const values: Record<string, unknown> = {}
+          const memo: Record<string, string> = {}
+          for (const member of members) {
+            const key = String(member)
+            values[key] = all[key]
+            if (all.memo?.[key] !== undefined) memo[key] = all.memo[key]
+          }
+          if (Object.keys(memo).length) values.memo = memo
+          fmethods.clearErrors('root')
+          return latestVote.current(values)
         }
-        if (Object.keys(memo).length) values.memo = memo
-        fmethods.clearErrors('root')
-        const result = await vote(values)
-        // A sign-out or a lost session while the cast ran: its outcome belongs to the voter who left.
-        if (session !== sessionRef.current) return
-        const fresh = result === false ? await check().catch(() => null) : null
-        // A sign-out or a lost session while the re-check ran: the finding belongs to the voter who left.
-        if (session !== sessionRef.current) return
-        if (result === false) {
-          const failure = castFailureOf(
-            fmethods.formState.errors as FormErrors,
-            questions.length,
-            localize('errors.vote_unconfirmed')
-          )
-          // Landed in part: the failure shows on the first question still to vote, and no other device is blamed.
-          const landed = askedSet.filter(
+        const landedOf = (members: number[], checked: Awaited<ReturnType<typeof check>> | null) =>
+          members.filter(
             (member) =>
               !onChainAtPress.has(member) &&
-              fresh?.questions.some((entry) => entry.questionId === questions[member].id && entry.hasVoted)
+              checked?.questions.some((entry) => entry.questionId === questions[member].id && entry.hasVoted)
           )
-          const stillToVote = askedSet.find((member) => !landed.includes(member)) ?? askedSet[0]
+        const readFailure = () =>
+          castFailureOf(fmethods.formState.errors as FormErrors, questions.length, localize('errors.vote_unconfirmed'))
+
+        let sentSet = askedSet
+        let result = await send(sentSet)
+        // A sign-out or a lost session while the cast ran: its outcome belongs to the voter who left.
+        if (session !== sessionRef.current) return
+        let fresh = result === false ? await check().catch(() => null) : null
+        // A sign-out or a lost session while the re-check ran: the finding belongs to the voter who left.
+        if (session !== sessionRef.current) return
+        // A question of the set closed before the cast reached the CSP: it refuses the batch whole and signs nothing,
+        // so no vote was cast for the questions still open either. They are sent again, once, and the closed ones read
+        // late. Never after an unknown outcome or a part that landed: the SDK alone decides what those re-send.
+        if (result === false && sentSet.length > 1 && !readFailure().unconfirmed && !landedOf(sentSet, fresh).length) {
+          const left = await stillOpenOf(sentSet)
+          if (session !== sessionRef.current) return
+          if (left && left.length > 0 && left.length < sentSet.length) {
+            const closed = sentSet.filter((member) => !left.includes(member))
+            dispatch({
+              type: 'castStarted',
+              questionId: questions[left[0]].id,
+              questionIds: left.map((member) => questions[member].id),
+            })
+            dispatch({ type: 'castDropped', questionIds: closed.map((member) => questions[member].id) })
+            sentSet = left
+            result = await send(sentSet)
+            if (session !== sessionRef.current) return
+            fresh = result === false ? await check().catch(() => null) : null
+            if (session !== sessionRef.current) return
+          }
+        }
+        if (result === false) {
+          const failure = readFailure()
+          // Landed in part: the failure shows on the first question still to vote, and no other device is blamed.
+          const landed = landedOf(sentSet, fresh)
+          const stillToVote = sentSet.find((member) => !landed.includes(member)) ?? sentSet[0]
           failCast(failure, questions[stillToVote].id)
           // The set may have closed meanwhile ("not open for voting"): read the process again, the facts decide.
           if (id) void queryClient.invalidateQueries({ queryKey: electionQueryKeys.election(id) })
           // Every question of the cast is on chain, and none was before: another device or tab voted them first, and frame
           // 3 says so (owner ruling 2026-11-24). A part landed by this cast, or an unconfirmed one, never counts, nor
           // does a set of this device whose earlier cast had an unknown outcome: that one landed, and is this device's.
-          if (!failure.unconfirmed && landed.length === askedSet.length) {
-            const earlier = askedSet.some((member) => latest.current.uncertain.includes(questions[member].id))
+          if (!failure.unconfirmed && landed.length === sentSet.length) {
+            const earlier = sentSet.some((member) => latest.current.uncertain.includes(questions[member].id))
             dispatch(
               earlier
                 ? { type: 'questionCastSucceeded' }
-                : { type: 'castFoundVoted', questionId: questions[askedSet[0]].id }
+                : { type: 'castFoundVoted', questionId: questions[sentSet[0]].id }
             )
           }
         } else {
@@ -529,7 +595,7 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
         setCasting(false)
       }
     },
-    [check, failCast, fmethods, id, localize, lockedNotice, onChain, queryClient, questions, serverOffset, vote, voting]
+    [check, failCast, fmethods, id, localize, lockedNotice, onChain, queryClient, questions, stillOpenOf, voting]
   )
 
   const signOut = useCallback(() => {

@@ -1985,6 +1985,7 @@
       "fold_more_note": "{{from}}. galderatik {{to}}. galderara.",
       "kicker": "Galderak banan-banan irekitzen dira.",
       "kicker_set": "Galderak elkarrekin irekitzen dira.",
+      "late_dropped": "{{number}}. galderarako zure botoa galdera itxi ondoren iritsi zen eta ez da zenbatu.",
       "late_help": "Zure botoa galdera itxi ondoren iritsi zen eta ez da zenbatu.",
       "late_title": "Zure botoa berandu iritsi da",
       "live": "Zuzenean. Bere kabuz eguneratzen da.",
